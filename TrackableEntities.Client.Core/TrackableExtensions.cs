@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections;
 using System.Reflection;
 //using System.Text.Json;
 using Newtonsoft.Json;
@@ -10,12 +6,7 @@ using Newtonsoft.Json.Serialization;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.Client.Core
-{
-    public enum CloneMethod
-    {
-        JsonSerialized,
-        Memberwise
-    }
+{    
     public static class TrackableExtensions
     {
 
@@ -487,15 +478,13 @@ namespace TrackableEntities.Client.Core
             }
         }
 
-        private const CloneMethod DefaultCloneMethod = CloneMethod.Memberwise;
-
         /// <summary>
         /// Performs a deep copy using Json binary serializer.
         /// </summary>
         /// <typeparam name="T">Entity type</typeparam>
         /// <param name="item">Trackable object</param>
         /// <returns>Cloned Trackable object</returns>
-        public static T? Clone<T>(this T item, CloneMethod cloneMethod = DefaultCloneMethod) where T : class, ITrackable
+        public static T? Clone<T>(this T item, CloneMethod cloneMethod = CloneMethodSetting.Default) where T : class, ITrackable
         {            
             return CloneObject(item, cloneMethod: cloneMethod);
         }
@@ -506,7 +495,7 @@ namespace TrackableEntities.Client.Core
         /// <typeparam name="T">Entity type</typeparam>
         /// <param name="items">Collection of Trackable objects</param>
         /// <returns>Cloned collection of Trackable object</returns>
-        public static IEnumerable<T> Clone<T>(this IEnumerable<T> items, CloneMethod cloneMethod = DefaultCloneMethod) where T : class, ITrackable
+        public static IEnumerable<T> Clone<T>(this IEnumerable<T> items, CloneMethod cloneMethod = CloneMethodSetting.Default) where T : class, ITrackable
         {
             return CloneObject(new CollectionSerializationHelper<T>() { Result = items }, cloneMethod: cloneMethod)?.Result ?? Enumerable.Empty<T>();
         }
@@ -517,7 +506,7 @@ namespace TrackableEntities.Client.Core
             public IEnumerable<T> Result = Enumerable.Empty<T>();
         }
 
-        internal static T? CloneObject<T>(T item, IContractResolver? contractResolver = null, CloneMethod cloneMethod = DefaultCloneMethod)
+        internal static T? CloneObject<T>(T item, IContractResolver? contractResolver = null, CloneMethod cloneMethod = CloneMethodSetting.Default)
             where T : class
         {        
             if (cloneMethod == CloneMethod.Memberwise)
