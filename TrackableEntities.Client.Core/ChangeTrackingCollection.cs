@@ -253,7 +253,7 @@ namespace TrackableEntities.Client.Core
         /// collections with entities that have been added, modified or deleted.
         /// </summary>
         /// <returns>Collection containing only changed entities</returns>
-        public ChangeTrackingCollection<TEntity> GetChanges(CloneMethod cloneMethod = CloneMethod.Memberwise)
+        public ChangeTrackingCollection<TEntity> GetChanges(CloneMethod cloneMethod = CloneMethodSetting.Default)
         {
             // Temporarily restore deletes
             this.RestoreDeletes();
@@ -275,7 +275,7 @@ namespace TrackableEntities.Client.Core
 
             private readonly Dictionary<ITrackable, EntityChangedInfo> entityChangedInfos = new(ObjectReferenceEqualityComparer<ITrackable>.Default);
 
-            public static ChangeTrackingCollection<TEntity> GetChanges(ChangeTrackingCollection<TEntity> source, CloneMethod cloneMethod = CloneMethod.Memberwise)
+            public static ChangeTrackingCollection<TEntity> GetChanges(ChangeTrackingCollection<TEntity> source, CloneMethod cloneMethod = CloneMethodSetting.Default)
             {
                 var helper = new CloneChangesHelper();
                 var wrapper = new Wrapper { Result = source };
