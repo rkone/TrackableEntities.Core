@@ -130,8 +130,7 @@ namespace TrackableEntities.Client.Core
             // Prevent endless recursion
             if (!visitationHelper.TryVisit(item))
             {
-                bool result;
-                if (cachedResults.TryGetValue(item, out result)) return result;
+                if (cachedResults.TryGetValue(item, out bool result)) return result;
 
                 // if the circle closes and we reach again the item for which
                 // we are currently determining "HasChanges" and so far we encounter

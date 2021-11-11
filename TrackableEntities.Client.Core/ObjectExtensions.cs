@@ -107,7 +107,7 @@ namespace System
             public static void ForEach(this Array array, Action<Array, int[]> action)
             {
                 if (array.LongLength == 0) return;
-                ArrayTraverse walker = new ArrayTraverse(array);
+                ArrayTraverse walker = new(array);
                 do action(array, walker.Position);
                 while (walker.Step());
             }
@@ -116,7 +116,7 @@ namespace System
         internal class ArrayTraverse
         {
             public int[] Position;
-            private int[] maxLengths;
+            private readonly int[] maxLengths;
 
             public ArrayTraverse(Array array)
             {
