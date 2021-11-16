@@ -1035,9 +1035,9 @@ namespace TrackableEntities.EF.Core.Tests
             var context = _fixture.GetContext();
             var nw = new MockNorthwind();
 			var employee = nw.Employees[0];
-            var territory1 = employee.EmployeeTerritories[0].Territory;
-            var territory2 = employee.EmployeeTerritories[1].Territory;
-            var territory3 = employee.EmployeeTerritories[2].Territory;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
 
             // Act
             context.ApplyChanges(employee);
@@ -1056,8 +1056,8 @@ namespace TrackableEntities.EF.Core.Tests
 			var context = _fixture.GetContext();
 			var nw = new MockNorthwind();
 			var employee = nw.Employees[0];
-		    var territory1 = employee.EmployeeTerritories[0].Territory!;
-		    var territory2 = employee.EmployeeTerritories[1].Territory!;
+		    var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
             territory1.TrackingState = TrackingState.Added;
 		    territory2.TrackingState = TrackingState.Modified;
 
@@ -1080,7 +1080,7 @@ namespace TrackableEntities.EF.Core.Tests
 	        var context = _fixture.GetContext();
 	        var nw = new MockNorthwind();
 	        var employee = nw.Employees[0];
-	        var territory1 = employee.EmployeeTerritories[0].Territory!;
+	        var territory1 = employee.Territories[0];
 	        territory1.TrackingState = TrackingState.Deleted;
 
 	        // Act
@@ -1091,42 +1091,6 @@ namespace TrackableEntities.EF.Core.Tests
 	        Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
 	    }
 
-	    [Fact]
-        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Added_EmployeeTerritories_As_Added()
-        {
-            // Arrange
-            var context = _fixture.GetContext();
-            var nw = new MockNorthwind();
-            var employee = nw.Employees[0];
-            var empTerritory = employee.EmployeeTerritories[0];
-            empTerritory.TrackingState = TrackingState.Added;
-
-            // Act
-            context.ApplyChanges(employee);
-
-            // Assert
-            Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
-            Assert.Equal(EntityState.Added, context.Entry(empTerritory).State);
-        }
-
-        [Fact]
-        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Deleted_EmployeeTerritories_As_Deleted()
-        {
-            // Arrange
-            var context = _fixture.GetContext();
-            var nw = new MockNorthwind();
-            var employee = nw.Employees[0];
-            var empTerritory = employee.EmployeeTerritories[0];
-            empTerritory.TrackingState = TrackingState.Deleted;
-
-            // Act
-            context.ApplyChanges(employee);
-
-            // Assert
-            Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
-            Assert.Equal(EntityState.Deleted, context.Entry(empTerritory).State);
-        }
-
         [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_With_Modified_Area_As_Modified()
         {
@@ -1136,9 +1100,9 @@ namespace TrackableEntities.EF.Core.Tests
             var context = _fixture.GetContext();
             var nw = new MockNorthwind();
             var employee = nw.Employees[0];
-            var territory1 = employee.EmployeeTerritories[0].Territory;
-            var territory2 = employee.EmployeeTerritories[1].Territory;
-            var territory3 = employee.EmployeeTerritories[2].Territory;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
             var area = new Area
             {
                 AreaId = 1,
@@ -1152,8 +1116,8 @@ namespace TrackableEntities.EF.Core.Tests
 
             // Assert
             Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory1!).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory2!).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
             Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
             Assert.Equal(EntityState.Modified, context.Entry(area).State);
         }
@@ -1166,18 +1130,18 @@ namespace TrackableEntities.EF.Core.Tests
 			var nw = new MockNorthwind();
 			var employee = nw.Employees[0];
 			employee.TrackingState = TrackingState.Added;
-		    var territory1 = employee.EmployeeTerritories[0].Territory;
-		    var territory2 = employee.EmployeeTerritories[1].Territory;
-		    var territory3 = employee.EmployeeTerritories[2].Territory;
+		    var territory1 = employee.Territories[0];
+		    var territory2 = employee.Territories[1];
+		    var territory3 = employee.Territories[2];
 
             // Act
             context.ApplyChanges(employee);
 
 			// Assert
 			Assert.Equal(EntityState.Added, context.Entry(employee).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory1!).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory2!).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory3!).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
         }
 
 		[Fact]
@@ -1188,8 +1152,8 @@ namespace TrackableEntities.EF.Core.Tests
 			var nw = new MockNorthwind();
 			var employee = nw.Employees[0];
 			employee.TrackingState = TrackingState.Added;
-		    var territory1 = employee.EmployeeTerritories[0].Territory;
-		    var territory2 = employee.EmployeeTerritories[1].Territory;
+		    var territory1 = employee.Territories[0];
+		    var territory2 = employee.Territories[1];
 		    territory1!.TrackingState = TrackingState.Added;
 		    territory2!.TrackingState = TrackingState.Modified;
 
@@ -1213,7 +1177,7 @@ namespace TrackableEntities.EF.Core.Tests
 			var nw = new MockNorthwind();
 			var employee = nw.Employees[0];
 			employee.TrackingState = TrackingState.Added;
-		    var territory1 = employee.EmployeeTerritories[0].Territory;
+		    var territory1 = employee.Territories[0];
             territory1!.TrackingState = TrackingState.Deleted;
 
             // Act
@@ -1224,49 +1188,6 @@ namespace TrackableEntities.EF.Core.Tests
 		    Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
 		}
 
-	    [Fact]
-	    public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Unchanged_EmployeeTerritories_As_Added()
-	    {
-	        // NOTE: If parent is Added, M-M relation entity will be marked as Added,
-	        // even if it is marked as Unchanged.
-	
-            // Arrange
-            var context = _fixture.GetContext();
-	        var nw = new MockNorthwind();
-	        var employee = nw.Employees[0];
-	        var empTerritory = employee.EmployeeTerritories[0];
-	        employee.TrackingState = TrackingState.Added;
-
-	        // Act
-	        context.ApplyChanges(employee);
-
-	        // Assert
-	        Assert.Equal(EntityState.Added, context.Entry(employee).State);
-	        Assert.Equal(EntityState.Added, context.Entry(empTerritory).State);
-	    }
-
-	    [Fact]
-	    public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Deleted_EmployeeTerritories_As_Deleted()
-	    {
-            // NOTE: If parent is Added, M-M relation entity will be marked as Added,
-            // even if it is marked as Deleted.
-
-	        // Arrange
-	        var context = _fixture.GetContext();
-	        var nw = new MockNorthwind();
-	        var employee = nw.Employees[0];
-	        var empTerritory = employee.EmployeeTerritories[0];
-	        employee.TrackingState = TrackingState.Added;
-	        empTerritory.TrackingState = TrackingState.Deleted;
-
-	        // Act
-	        context.ApplyChanges(employee);
-
-	        // Assert
-	        Assert.Equal(EntityState.Added, context.Entry(employee).State);
-	        Assert.Equal(EntityState.Added, context.Entry(empTerritory).State);
-	    }
-
         [Fact]
         public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Unchanged_Territories_As_Unchanged()
         {
@@ -1275,18 +1196,18 @@ namespace TrackableEntities.EF.Core.Tests
             var nw = new MockNorthwind();
             var employee = nw.Employees[0];
             employee.TrackingState = TrackingState.Deleted;
-            var territory1 = employee.EmployeeTerritories[0].Territory;
-            var territory2 = employee.EmployeeTerritories[1].Territory;
-            var territory3 = employee.EmployeeTerritories[2].Territory;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
 
             // Act
             context.ApplyChanges(employee);
 
             // Assert
             Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory1!).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory2!).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(territory3!).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
         }
 
         [Fact]
@@ -1297,8 +1218,8 @@ namespace TrackableEntities.EF.Core.Tests
             var nw = new MockNorthwind();
             var employee = nw.Employees[0];
             employee.TrackingState = TrackingState.Deleted;
-            var territory1 = employee.EmployeeTerritories[0].Territory;
-            var territory2 = employee.EmployeeTerritories[1].Territory;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
             territory1!.TrackingState = TrackingState.Added;
             territory2!.TrackingState = TrackingState.Modified;
 
@@ -1322,7 +1243,7 @@ namespace TrackableEntities.EF.Core.Tests
             var nw = new MockNorthwind();
             var employee = nw.Employees[0];
             employee.TrackingState = TrackingState.Deleted;
-            var territory1 = employee.EmployeeTerritories[0].Territory;
+            var territory1 = employee.Territories[0];
             territory1!.TrackingState = TrackingState.Deleted;
 
             // Act
@@ -1331,50 +1252,7 @@ namespace TrackableEntities.EF.Core.Tests
             // Assert
             Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
             Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
-        }
-
-        [Fact]
-	    public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Unchanged_EmployeeTerritories_As_Deleted()
-	    {
-	        // NOTE: If parent is Deleted, M-M relation entity will be marked as Deleted,
-	        // even if it is marked as Unchanged.
-
-	        // Arrange
-	        var context = _fixture.GetContext();
-	        var nw = new MockNorthwind();
-	        var employee = nw.Employees[0];
-	        var empTerritory = employee.EmployeeTerritories[0];
-	        employee.TrackingState = TrackingState.Deleted;
-
-	        // Act
-	        context.ApplyChanges(employee);
-
-	        // Assert
-	        Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
-	        Assert.Equal(EntityState.Deleted, context.Entry(empTerritory).State);
-	    }
-
-	    [Fact]
-	    public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Added_EmployeeTerritories_As_Deleted()
-	    {
-	        // NOTE: If parent is Deleted, M-M relation entity will be marked as Deleted,
-	        // even if it is marked as Added.
-
-	        // Arrange
-	        var context = _fixture.GetContext();
-	        var nw = new MockNorthwind();
-	        var employee = nw.Employees[0];
-	        var empTerritory = employee.EmployeeTerritories[0];
-	        employee.TrackingState = TrackingState.Deleted;
-	        empTerritory.TrackingState = TrackingState.Added;
-
-            // Act
-            context.ApplyChanges(employee);
-
-	        // Assert
-	        Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
-	        Assert.Equal(EntityState.Deleted, context.Entry(empTerritory).State);
-	    }
+        }       
 
         #endregion
 

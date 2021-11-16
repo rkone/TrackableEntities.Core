@@ -33,8 +33,6 @@ namespace TrackableEntities.EF.Core.Tests.Contexts
                 .HasOne(p => p.ProductInfo)
                 .WithOne(p => p.Product)
                 .HasForeignKey<ProductInfo>(pi => pi.ProductId);
-            modelBuilder.Entity<EmployeeTerritory>()
-                .HasKey(et => new { et.EmployeeId, et.TerritoryId });
             modelBuilder.Entity<Area>().ToTable("Area");
         }
     }

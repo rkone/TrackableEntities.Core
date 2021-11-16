@@ -16,7 +16,7 @@ namespace TrackableEntities.EF.Core.Tests.NorthwindModels
         public DateTime? HireDate { get; set; }
         public string City { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
-        public List<EmployeeTerritory> EmployeeTerritories { get; set; } = new List<EmployeeTerritory>();
+        public List<Territory> Territories { get; set; } = new();
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }

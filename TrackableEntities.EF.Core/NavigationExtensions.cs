@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core
 {
@@ -15,8 +16,11 @@ namespace TrackableEntities.EF.Core
         /// <returns>Type of relationship between entities; null if INavigation is null.</returns>
         public static RelationshipType? GetRelationshipType(this INavigationBase navigation)
         {
-            var nav = navigation as INavigation;
-            if (nav == null) return null;
+            if (navigation is not INavigation nav)
+            {
+                if (typeof(IEnumerable<ITrackable>).IsAssignableFrom(navigation.ClrType)) return RelationshipType.ManyToMany;
+                return null;
+            }
             if (nav.ForeignKey.IsUnique)
                 return RelationshipType.OneToOne;
             return nav.IsOnDependent ? RelationshipType.OneToMany : RelationshipType.ManyToOne;

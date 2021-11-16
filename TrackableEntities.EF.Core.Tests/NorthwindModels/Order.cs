@@ -15,7 +15,7 @@ namespace TrackableEntities.EF.Core.Tests.NorthwindModels
         public string? CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public Customer? Customer { get; set; }
-        public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        public List<OrderDetail> OrderDetails { get; set; } = new();
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }

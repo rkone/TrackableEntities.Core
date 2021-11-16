@@ -13,7 +13,6 @@ namespace TrackableEntities.EF.Core.Tests.Mocks
         public List<Order> Orders { get; private set; }
         public List<Employee> Employees { get; set; }
         public List<Territory> Territories { get; set; }
-        public List<EmployeeTerritory> EmployeeTerritories { get; set; }
         public List<Area> Areas { get; set; }
         public MockNorthwind()
         {
@@ -124,29 +123,7 @@ namespace TrackableEntities.EF.Core.Tests.Mocks
                             new OrderDetail{ OrderDetailId = 15, ProductId = 60, OrderId = 10252, Quantity = 40, UnitPrice = 27.2000M, Product = Products[26] },
                         }},
             };
-            EmployeeTerritories = new List<EmployeeTerritory>
-            {
-                new EmployeeTerritory { EmployeeId = 1, TerritoryId = "01581" },
-                new EmployeeTerritory { EmployeeId = 1, TerritoryId = "01730" },
-                new EmployeeTerritory { EmployeeId = 1, TerritoryId = "01833" },
-                new EmployeeTerritory { EmployeeId = 2, TerritoryId = "01730" },
-                new EmployeeTerritory { EmployeeId = 2, TerritoryId = "01833" },
-                new EmployeeTerritory { EmployeeId = 3, TerritoryId = "01833" },
-                new EmployeeTerritory { EmployeeId = 3, TerritoryId = "02116" },
-                new EmployeeTerritory { EmployeeId = 4, TerritoryId = "02116" },
-                new EmployeeTerritory { EmployeeId = 4, TerritoryId = "02139" },
-                new EmployeeTerritory { EmployeeId = 5, TerritoryId = "02139" },
-                new EmployeeTerritory { EmployeeId = 5, TerritoryId = "02184" },
-                new EmployeeTerritory { EmployeeId = 6, TerritoryId = "02184" },
-                new EmployeeTerritory { EmployeeId = 6, TerritoryId = "02903" },
-                new EmployeeTerritory { EmployeeId = 7, TerritoryId = "02903" },
-                new EmployeeTerritory { EmployeeId = 7, TerritoryId = "03049" },
-                new EmployeeTerritory { EmployeeId = 8, TerritoryId = "03049" },
-                new EmployeeTerritory { EmployeeId = 8, TerritoryId = "03801" },
-                new EmployeeTerritory { EmployeeId = 9, TerritoryId = "03801" },
-                new EmployeeTerritory { EmployeeId = 9, TerritoryId = "06897" },
-            };
-
+            
             Areas = new List<Area>
             {
                 new Area { AreaId = 1, AreaName = "Northern"},
@@ -179,39 +156,24 @@ namespace TrackableEntities.EF.Core.Tests.Mocks
             Employees = new List<Employee>
             {
                 new Employee { EmployeeId = 1, LastName = "Davolio", FirstName = "Nancy", BirthDate = DateTime.Parse("1948-12-08"), HireDate = DateTime.Parse("1992-05-01"), City = "Seattle", Country = "USA",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[0], EmployeeTerritories[1], EmployeeTerritories[2] } },
+                  Territories = new List<Territory>{ Territories[0], Territories[1], Territories[2] } },
                 new Employee { EmployeeId = 2, LastName = "Fuller", FirstName = "Andrew", BirthDate = DateTime.Parse("1952-02-19"), HireDate = DateTime.Parse("1992-08-14"), City = "Tacoma", Country = "USA",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[3], EmployeeTerritories[4] } },
+                  Territories = new List<Territory>{ Territories[3], Territories[4] } },
                 new Employee { EmployeeId = 3, LastName = "Leverling", FirstName = "Janet", BirthDate = DateTime.Parse("1963-08-30"), HireDate = DateTime.Parse("1992-05-01"), City = "Kirkland", Country = "USA",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[5], EmployeeTerritories[6] } },
+                  Territories = new List<Territory>{ Territories[5], Territories[6] } },
                 new Employee { EmployeeId = 4, LastName = "Peacock", FirstName = "Margaret", BirthDate = DateTime.Parse("1937-09-19"), HireDate = DateTime.Parse("1993-05-03"), City = "Redmond", Country = "USA",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[7], EmployeeTerritories[8] } },
+                  Territories = new List<Territory>{ Territories[7], Territories[8] } },
                 new Employee { EmployeeId = 5, LastName = "Buchanan", FirstName = "Steven", BirthDate = DateTime.Parse("1955-03-04"), HireDate = DateTime.Parse("1993-10-17"), City = "London", Country = "UK",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[9], EmployeeTerritories[10] } },
+                  Territories = new List<Territory>{ Territories[9], Territories[10] } },
                 new Employee { EmployeeId = 6, LastName = "Suyama", FirstName = "Michael", BirthDate = DateTime.Parse("1963-07-02"), HireDate = DateTime.Parse("1993-10-17"), City = "London", Country = "UK",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[11], EmployeeTerritories[12] } },
+                  Territories = new List<Territory>{ Territories[11], Territories[12] } },
                 new Employee { EmployeeId = 7, LastName = "King", FirstName = "Robert", BirthDate = DateTime.Parse("1960-05-29"), HireDate = DateTime.Parse("1994-01-02"), City = "London", Country = "UK",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[13], EmployeeTerritories[14] } },
+                  Territories = new List<Territory>{ Territories[13], Territories[14] } },
                 new Employee { EmployeeId = 8, LastName = "Callahan", FirstName = "Laura", BirthDate = DateTime.Parse("1958-01-09"), HireDate = DateTime.Parse("1994-03-05"), City = "Seattle", Country = "USA",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[15], EmployeeTerritories[16] } },
+                  Territories = new List<Territory>{ Territories[15], Territories[16] } },
                 new Employee { EmployeeId = 9, LastName = "Dodsworth", FirstName = "Anne", BirthDate = DateTime.Parse("1966-01-27"), HireDate = DateTime.Parse("1994-11-15"), City = "London", Country = "UK",
-                  EmployeeTerritories = new List<EmployeeTerritory>{ EmployeeTerritories[17], EmployeeTerritories[18] } },
-            };
-            FixupEmployeeTerritories();
-        }
-
-        private void FixupEmployeeTerritories()
-        {
-            foreach (var employeeTerritory in EmployeeTerritories)
-            {
-                employeeTerritory.Employee = Employees.SingleOrDefault(e => e.EmployeeId == employeeTerritory.EmployeeId);
-                employeeTerritory.Territory = Territories.SingleOrDefault(t => t.TerritoryId == employeeTerritory.TerritoryId);
-            }
-            foreach (var territory in Territories)
-            {
-                var empTerritories = EmployeeTerritories.Where(et => et.TerritoryId == territory.TerritoryId);
-                territory.EmployeeTerritories.AddRange(empTerritories);
-            }
+                  Territories = new List<Territory>{ Territories[17], Territories[18] } },
+            };            
         }
     }
 }

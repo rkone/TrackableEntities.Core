@@ -10,7 +10,7 @@ namespace TrackableEntities.EF.Core.Tests.NorthwindModels
         [Key]
         public int AreaId { get; set; }
         public string AreaName { get; set; } = string.Empty;
-        public List<Territory> Territories { get; set; } = new List<Territory>();    
+        public List<Territory> Territories { get; set; } = new();    
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }
