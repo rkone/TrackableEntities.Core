@@ -10,7 +10,7 @@ namespace TrackableEntities.EF.Core.Tests.NorthwindModels
         [Key]
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
-        public List<Product> Products { get; set; } = new List<Product>();
+        public List<Product> Products { get; set; } = new();
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }

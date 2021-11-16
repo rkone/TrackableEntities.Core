@@ -15,9 +15,9 @@ namespace TrackableEntities.EF.Core.Tests.NorthwindModels
         [ForeignKey("TerritoryId")]
         public Territory? Territory { get; set; }
 
-        public List<Order> Orders { get; set; } = new List<Order>();
+        public List<Order> Orders { get; set; } = new();
         public CustomerSetting? CustomerSetting { get; set; }
-        public List<CustomerAddress> CustomerAddresses { get; set; } = new List<CustomerAddress>();
+        public List<CustomerAddress> CustomerAddresses { get; set; } = new();
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }
