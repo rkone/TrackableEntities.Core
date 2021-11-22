@@ -194,7 +194,8 @@ namespace TrackableEntities.Client.Core
                 item.SetTracking(Tracking, visitationHelper.Clone());
 
                 // Mark item and trackable collection properties
-                item.SetState(TrackingState.Added, visitationHelper.Clone());
+                // Seems to change to incorrect state
+                // item.SetState(TrackingState.Added, visitationHelper.Clone());
 
                 // Fire EntityChanged event
                 EntityChanged?.Invoke(this, EventArgs.Empty);
