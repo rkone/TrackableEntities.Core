@@ -26,18 +26,14 @@ namespace TrackableEntities.EF.Core
                 // Exit if not ITrackable
                 if (node.Entry.Entity is not ITrackable trackable) return;
 
-                var relationship = node.InboundNavigation?.GetRelationshipType();
-                
-                // If we have Many2Many with source unchanged and child modified, don't detach it as it will cause the skip navigation to change to added.
-                if (node.SourceEntry?.State != EntityState.Unchanged || relationship != RelationshipType.ManyToMany || trackable.TrackingState != TrackingState.Modified)
-                {
-                    // Detach node entity
-                    node.Entry.State = EntityState.Detached;
-                }
+                // Detach node entity
+                node.Entry.State = EntityState.Detached;
+
                 // Get related parent entity
                 if (node.SourceEntry != null)
                 {
-                    
+                    var relationship = node.InboundNavigation?.GetRelationshipType();
+
                     switch (relationship)
                     {
                         case RelationshipType.OneToOne:
@@ -80,7 +76,6 @@ namespace TrackableEntities.EF.Core
                             }
                             break;
                         case RelationshipType.OneToMany:
-                        case RelationshipType.ManyToMany:         
                             // If trackable is set deleted set entity state to unchanged,
                             // since it may be related to other entities.
                             if (trackable.TrackingState == TrackingState.Deleted)
@@ -88,13 +83,33 @@ namespace TrackableEntities.EF.Core
                                 SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
                                 return;
                             }
-                            break;                            
+                            break;
+                        case RelationshipType.ManyToMany:
+                            // If trackable is set modified, set entity state to unchanged before attaching.
+                            // this tells the skip navigation to be unchanged.
+                            if (trackable.TrackingState == TrackingState.Modified)
+                            {
+                                SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);                                
+                            }
+
+                            // If trackable is set deleted, mark as deleted to delete skip navigation,
+                            // then return return entity state to unchanged since it may be related to other entities.                            
+                            if (trackable.TrackingState == TrackingState.Deleted)
+                            {
+                                //not working.
+                                SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
+                                SetEntityState(node.Entry, TrackingState.Deleted.ToEntityState(), trackable);
+                                SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
+                                return;
+                            }
+                            break;
+
                     }
                 }
                 // Set entity state to tracking state
                 SetEntityState(node.Entry, trackable.TrackingState.ToEntityState(), trackable);
             });
-        }
+        } 
 
         /// <summary>
         /// Update entity state on DbContext for more than one object graph.
