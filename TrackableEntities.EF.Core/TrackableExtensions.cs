@@ -15,17 +15,13 @@ namespace TrackableEntities.EF.Core
         /// <returns>EF entity state</returns>
         public static EntityState ToEntityState(this TrackingState state)
         {
-            switch (state)
+            return state switch
             {
-                case TrackingState.Added:
-                    return EntityState.Added;
-                case TrackingState.Modified:
-                    return EntityState.Modified;
-                case TrackingState.Deleted:
-                    return EntityState.Deleted;
-                default:
-                    return EntityState.Unchanged;
-            }
+                TrackingState.Added => EntityState.Added,
+                TrackingState.Modified => EntityState.Modified,
+                TrackingState.Deleted => EntityState.Deleted,
+                _ => EntityState.Unchanged,
+            };
         }
 
         /// <summary>
@@ -35,17 +31,13 @@ namespace TrackableEntities.EF.Core
         /// <returns>Trackable entity state</returns>
         public static TrackingState ToTrackingState(this EntityState state)
         {
-            switch (state)
+            return state switch
             {
-                case EntityState.Added:
-                    return TrackingState.Added;
-                case EntityState.Modified:
-                    return TrackingState.Modified;
-                case EntityState.Deleted:
-                    return TrackingState.Deleted;
-                default:
-                    return TrackingState.Unchanged;
-            }
+                EntityState.Added => TrackingState.Added,
+                EntityState.Modified => TrackingState.Modified,
+                EntityState.Deleted => TrackingState.Deleted,
+                _ => TrackingState.Unchanged,
+            };
         }
     }
 }
