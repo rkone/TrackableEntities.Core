@@ -21,8 +21,7 @@ namespace TrackableEntities.Client.Core
     {
         #region Single Instance
 
-        private static Lazy<PortableReflectionHelper> _inst =
-            new Lazy<PortableReflectionHelper>(() => new PortableReflectionHelperImpl(), true);
+        private readonly static Lazy<PortableReflectionHelper> _inst = new(() => new PortableReflectionHelperImpl(), true);
 
         public static PortableReflectionHelper Instance => _inst.Value;
 
