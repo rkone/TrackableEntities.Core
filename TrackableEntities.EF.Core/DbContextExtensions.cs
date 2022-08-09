@@ -92,14 +92,13 @@ namespace TrackableEntities.EF.Core
                                 SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);                                
                             }
 
-                            // If trackable is set deleted, mark as deleted to delete skip navigation,
+                            // If trackable is set deleted, set skip navigation as deleted.
                             // then return return entity state to unchanged since it may be related to other entities.                            
                             if (trackable.TrackingState == TrackingState.Deleted)
-                            {
-                                //not working.
+                            {                                                 
                                 SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
-                                SetEntityState(node.Entry, TrackingState.Deleted.ToEntityState(), trackable);
-                                SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
+                                node.SourceEntry.Collection(node.InboundNavigation?.Name ?? string.Empty)?.Metadata?.GetCollectionAccessor()?
+                                    .Remove(node.SourceEntry.Entity, node.Entry.Entity);                                        
                                 return;
                             }
                             break;
