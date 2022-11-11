@@ -92,10 +92,7 @@ namespace TrackableEntities.Client.Core
                         if (navProp.Property is null || colProp.EntityCollection is null) continue;
                         var origItemsChangeTracker = origItem.GetEntityCollectionProperty<ITrackingCollection>(navProp.Property).EntityCollection;
                         // Merge changes into trackable children
-                        if (origItemsChangeTracker != null)
-                        {
-                            origItemsChangeTracker.MergeChanges(colProp.EntityCollection, visitationHelper);
-                        }
+                        origItemsChangeTracker?.MergeChanges(colProp.EntityCollection, visitationHelper);
                     }
                 }
 
