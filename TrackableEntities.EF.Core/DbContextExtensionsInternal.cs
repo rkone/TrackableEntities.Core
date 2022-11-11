@@ -25,7 +25,7 @@ namespace TrackableEntities.EF.Core.Internal
         {
 #pragma warning disable EF1001 // Internal EF Core API usage.
             IStateManager stateManager = context.Entry(item).GetInfrastructure().StateManager;
-            var node = new EntityEntryGraphNode<object>(stateManager.GetOrCreateEntry(item), null, null, null);
+            var node = new EntityEntryGraphNode<object>(stateManager.GetOrCreateEntry(item), new object(), null, null);
             IEntityEntryGraphIterator graphIterator = new EntityEntryGraphIterator();
 #pragma warning restore EF1001 // Internal EF Core API usage.
             var visited = new HashSet<object>();
@@ -58,7 +58,7 @@ namespace TrackableEntities.EF.Core.Internal
         {
 #pragma warning disable EF1001 // Internal EF Core API usage.
             IStateManager stateManager = context.Entry(item).GetInfrastructure().StateManager;
-            var node = new EntityEntryGraphNode<object>(stateManager.GetOrCreateEntry(item), null, null, null);
+            var node = new EntityEntryGraphNode<object>(stateManager.GetOrCreateEntry(item), new object(), null, null);
             IEntityEntryGraphIterator graphIterator = new EntityEntryGraphIterator();
 #pragma warning restore EF1001 // Internal EF Core API usage.
             var visited = new HashSet<int>();
