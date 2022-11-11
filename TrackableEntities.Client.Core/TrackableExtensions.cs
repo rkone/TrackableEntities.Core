@@ -404,7 +404,7 @@ namespace TrackableEntities.Client.Core
                             ITrackingCollection? refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property?.Name);
 
                             // Remove deletes on rep prop
-                            if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(visitationHelper);
+                            refChangeTracker?.RemoveRestoredDeletes(visitationHelper);
                         }
 
                         // Process 1-M and M-M properties
@@ -466,7 +466,7 @@ namespace TrackableEntities.Client.Core
                         ITrackingCollection? refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property?.Name);
 
                         // Restore deletes on rep prop
-                        if (refChangeTracker != null) refChangeTracker.RestoreDeletes(visitationHelper);
+                        refChangeTracker?.RestoreDeletes(visitationHelper);
                     }
 
                     // Process 1-M and M-M properties

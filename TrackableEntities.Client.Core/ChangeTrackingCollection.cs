@@ -161,8 +161,7 @@ namespace TrackableEntities.Client.Core
                     if (entity.TrackingState == TrackingState.Unchanged
                         || entity.TrackingState == TrackingState.Modified)
                     {
-                        if (entity.ModifiedProperties == null)
-                            entity.ModifiedProperties = new HashSet<string>();
+                        entity.ModifiedProperties ??= new HashSet<string>();
                         entity.ModifiedProperties.Add(e.PropertyName);
                     }
                 }
