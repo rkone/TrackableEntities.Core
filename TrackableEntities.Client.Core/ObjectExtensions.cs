@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using System.ArrayExtensions;
 using TrackableEntities.Common.Core;
-using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System
@@ -32,7 +30,7 @@ namespace System
             if (originalObject == null) return null;
             var typeToReflect = originalObject.GetType();
             if (IsPrimitive(typeToReflect)) return originalObject;
-            if (visited.ContainsKey(originalObject)) return visited[originalObject];
+            if (visited.TryGetValue(originalObject, out var result)) return result;
             if (typeof(Delegate).IsAssignableFrom(typeToReflect)) return null;            
             var cloneObject = CloneMethod.Invoke(originalObject, null) ?? new object();
             if (typeToReflect.IsArray)
