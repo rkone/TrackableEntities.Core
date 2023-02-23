@@ -242,7 +242,7 @@ namespace TrackableEntities.Client.Core
             foreach (var refProp in targetItem
                 .GetNavigationProperties(false)
                 .OfReferenceType()
-                .Where(np => np.Property.CanWrite))
+                .Where(np => np.Property?.CanWrite ?? false))
             {
                 if (refProp.Property is null) continue;
                 ITrackable? targetValue = refProp.EntityReference;
