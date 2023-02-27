@@ -533,9 +533,7 @@ namespace TrackableEntities.Client.Core
             var jsonReader = new JsonTextReader(reader);
             settings.ContractResolver = new EntityNavigationPropertyResolver();
             var serRd = JsonSerializer.Create(settings);
-            var copy = serRd.Deserialize<T>(jsonReader);
-            if (copy is null)
-                throw new InvalidCastException();
+            var copy = serRd.Deserialize<T>(jsonReader) ?? throw new InvalidCastException();
             return copy;
 
         }
