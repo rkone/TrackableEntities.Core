@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "TrackableEntities.EF.Core": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:54321;http://localhost:54322"
+    }
+  }
+}
