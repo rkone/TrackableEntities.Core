@@ -1,0 +1,417 @@
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Text;
+
+namespace TrackableEntities.IncrementalGenerator;
+
+[Generator(LanguageNames.CSharp)]
+public class TrackableEntityGenerator : IIncrementalGenerator
+{
+    private const string attributeText = @"
+using System;
+[AttributeUsage(AttributeTargets.Class)]
+[System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
+internal sealed class TrackableEntityAttribute : Attribute
+{
+    public TrackableEntityAttribute()
+    {
+    }        
+}
+[AttributeUsage(AttributeTargets.Property)]
+[System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
+internal sealed class TrackableEntityTrackedPropertyAttribute : Attribute
+{
+    public TrackableEntityTrackedPropertyAttribute()
+    {
+    }
+}
+[AttributeUsage(AttributeTargets.Property)]
+[System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
+internal sealed class TrackableEntityPropertyIgnoreAttribute : Attribute
+{
+    public TrackableEntityPropertyIgnoreAttribute()
+    {
+    }
+}
+[AttributeUsage(AttributeTargets.Property)]
+[System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
+internal sealed class TrackableEntityPropertyPostUpdateAttribute : Attribute
+{
+    public TrackableEntityPropertyPostUpdateAttribute()
+    {
+    }
+}
+[AttributeUsage(AttributeTargets.Class)]
+[System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
+internal sealed class TrackableEntityCopyAttribute : Attribute
+{
+    public TrackableEntityCopyAttribute()
+    {
+    }        
+}";
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
+
+    // determine the namespace the class/enum/struct is declared in, if any
+    static string GetNamespace(BaseTypeDeclarationSyntax syntax)
+    {
+        // If we don't have a namespace at all we'll return an empty string
+        // This accounts for the "default namespace" case
+        string nameSpace = string.Empty;
+
+        // Get the containing syntax node for the type declaration
+        // (could be a nested type, for example)
+        SyntaxNode? potentialNamespaceParent = syntax.Parent;
+
+        // Keep moving "out" of nested classes etc until we get to a namespace
+        // or until we run out of parents
+        while (potentialNamespaceParent != null &&
+                potentialNamespaceParent is not NamespaceDeclarationSyntax
+                && potentialNamespaceParent is not FileScopedNamespaceDeclarationSyntax)
+        {
+            potentialNamespaceParent = potentialNamespaceParent.Parent;
+        }
+
+        // Build up the final namespace by looping until we no longer have a namespace declaration
+        if (potentialNamespaceParent is BaseNamespaceDeclarationSyntax namespaceParent)
+        {
+            // We have a namespace. Use that as the type
+            nameSpace = namespaceParent.Name.ToString();
+
+            // Keep moving "out" of the namespace declarations until we 
+            // run out of nested namespace declarations
+            while (true)
+            {
+                if (namespaceParent.Parent is not NamespaceDeclarationSyntax parent)
+                {
+                    break;
+                }
+
+                // Add the outer namespace as a prefix to the final namespace
+                nameSpace = $"{namespaceParent.Name}.{nameSpace}";
+                namespaceParent = parent;
+            }
+        }
+
+        // return the final namespace
+        return nameSpace;
+    }
+
+    private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context, string attributeName)
+    {
+        // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
+        var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
+
+        // loop through all the attributes on the method
+        foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
+        {
+            foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
+            {
+                if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol)
+                {
+                    // weird, we couldn't get the symbol, ignore it
+                    continue;
+                }
+                INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
+                string fullName = attributeContainingTypeSymbol.ToDisplayString();
+
+                // Is the attribute the [TrackableEntity] attribute?
+                if (fullName == attributeName)
+                {
+                    // return the enum
+                    return classDeclarationSyntax;
+                }
+            }
+        }
+
+        // we didn't find the attribute we were looking for
+        return null;
+    }
+
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        if (!Debugger.IsAttached)
+        {
+            //Debugger.Launch();
+        }
+
+        context.RegisterPostInitializationOutput(ctx => ctx.AddSource("ClientTrackableEntitiesAttributes.g.cs", SourceText.From(attributeText, Encoding.UTF8)));
+
+        IncrementalValuesProvider<ClassDeclarationSyntax> trackedClassDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => IsSyntaxTargetForGeneration(s), // select classes with attributes
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx, "TrackableEntityAttribute")) // select the class with the [TrackableEntity] attribute
+            .Where(static m => m is not null)!; // filter out attributed classes that we don't care about
+
+        IncrementalValuesProvider<ClassDeclarationSyntax> unTrackedClassDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => IsSyntaxTargetForGeneration(s), // select classes with attributes
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx, "TrackableEntityCopyAttribute")) // select the class with the [TrackableEntityCopy] attribute
+            .Where(static m => m is not null)!;
+
+        // Combine the selected classes with the `Compilation`
+        IncrementalValueProvider<(Compilation, ImmutableArray<ClassDeclarationSyntax>)> compilationAndTrackedClasses
+            = context.CompilationProvider.Combine(trackedClassDeclarations.Collect());
+
+        IncrementalValueProvider<(Compilation, ImmutableArray<ClassDeclarationSyntax>)> compilationAndUnTrackedClasses
+            = context.CompilationProvider.Combine(unTrackedClassDeclarations.Collect());
+
+        // Generate the source using the compilation and enums
+        context.RegisterSourceOutput(compilationAndTrackedClasses,
+            static (spc, source) => ExecuteTrackedGeneration(source.Item1, source.Item2, spc));
+
+        context.RegisterSourceOutput(compilationAndUnTrackedClasses,
+            static (spc, source) => ExecuteUnTrackedGeneration(source.Item1, source.Item2, spc));
+    }
+
+    private static void ExecuteTrackedGeneration(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
+    {
+        if (classes.IsDefaultOrEmpty)
+        {
+            // nothing to do yet
+            return;
+        }
+        // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
+        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();        
+        // Convert each EnumDeclarationSyntax to an EnumToGenerate
+        var baseNameSpace = GetNamespace(distinctClasses.First());
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
+
+        // If there were errors in the EnumDeclarationSyntax, we won't create an
+        // EnumToGenerate for it, so make sure we have something to generate
+        if (entitiesToGenerate.Count > 0)
+        {
+            StringBuilder stringBuilder = new();
+            // generate the source code and add it to the output
+            foreach (var entity in entitiesToGenerate)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                stringBuilder.Append(GenerateClientEntity(entity));
+            }
+            string result = AddTrackedHeaders(stringBuilder.ToString(), baseNameSpace);
+            context.AddSource("ClientTrackableEntities.g.cs", SourceText.From(result, Encoding.UTF8));
+        }
+    }
+
+    private static void ExecuteUnTrackedGeneration(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
+    {
+        if (classes.IsDefaultOrEmpty)
+        {
+            // nothing to do yet
+            return;
+        }
+        // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
+        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
+        var baseNameSpace = GetNamespace(distinctClasses.First());
+        // Convert each EnumDeclarationSyntax to an EnumToGenerate
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
+
+        // If there were errors in the EnumDeclarationSyntax, we won't create an
+        // EnumToGenerate for it, so make sure we have something to generate
+        if (entitiesToGenerate.Count > 0)
+        {
+            StringBuilder stringBuilder = new();
+            // generate the source code and add it to the output
+            foreach (var entity in entitiesToGenerate)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                stringBuilder.Append(CopyClientEntity(entity));
+            }
+            string result = AddUnTrackedHeaders(stringBuilder.ToString(), baseNameSpace);
+            context.AddSource("ClientUnTrackedEntities.g.cs", SourceText.From(result, Encoding.UTF8));
+        }
+    }
+
+    private static List<ClientEntityToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classDeclarationSyntaxes, CancellationToken cancellationToken)
+    {
+        var entities = new List<ClientEntityToGenerate>();
+        INamedTypeSymbol? classAttribute = compilation.GetTypeByMetadataName("TrackableEntityAttribute");
+        if (classAttribute is null) return entities;
+        
+        foreach (var classDeclarationSyntax in classDeclarationSyntaxes)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
+            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol) continue;
+
+            var className = classDeclarationSyntax.Identifier.Text;
+            var modelOverride = false;
+            var properties = new List<ClientEntityProperty>();
+            foreach (var member in classDeclarationSyntax.Members)
+            {
+                if (member is not PropertyDeclarationSyntax property) continue;
+                if (property.Identifier.Text is "Id" or "TrackingState" or "ModifiedProperties" or "EntityIdentifier") continue;
+                var tracked = false;
+                var postUpdate = false;
+                if (property.AttributeLists.Count > 0)
+                {
+                    var ignored = false;
+                    foreach (var attribute in property.AttributeLists)
+                    {
+                        var name = attribute.ToString();
+                        if (name == "[TrackableEntityPropertyIgnore]")
+                            ignored = true;
+                        if (name == "[TrackableEntityTrackedProperty]")
+                            tracked = true;
+                        if (name == "[TrackableEntityPropertyPostUpdate]")
+                            postUpdate = true;
+                    }
+                    if (ignored) continue;
+                }
+                modelOverride |= tracked;
+                var setter = (property.AccessorList?.Accessors.Count ?? 0) == 2;
+                var collection = property.Type.ToString().Contains("ICollection");
+                var baseType = collection ? property.Type.ToString().Substring(12, property.Type.ToString().Length - 13) : property.Type.ToString().TrimEnd('?');
+                var initializer = property.Initializer?.Value.ToFullString();
+                bool nullable = collection ? !tracked : property.Type is NullableTypeSyntax;
+                var jsonIgnored = property.Type is GenericNameSyntax || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
+
+                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, postUpdate, jsonIgnored));
+            }
+            entities.Add(new ClientEntityToGenerate(className, modelOverride, properties));
+        }
+
+        return entities;
+    }
+
+    private static string AddTrackedHeaders(string body, string hostNamespace)
+    {
+        return @$"#nullable enable
+#if USECLIENTENTITIES
+using Newtonsoft.Json;
+using TrackableEntities.Client.Core;
+{(hostNamespace == string.Empty ? string.Empty : $"using {hostNamespace}.Shared;")}
+//Instructions: This file is auto-generated. Find the source in the {hostNamespace} project under:
+//Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntities.g.cs
+
+{(hostNamespace == string.Empty? string.Empty : $"namespace {hostNamespace}.Client;")}
+{body}
+#endif
+";
+    }
+
+
+    private static string AddUnTrackedHeaders(string body, string hostNamespace)
+    {
+        return @$"#nullable enable
+#if USECLIENTENTITIES
+{(hostNamespace == string.Empty ? string.Empty : $"using {hostNamespace}.Shared;")}
+//Instructions: This file is auto-generated. Find the source in the {hostNamespace} project under:
+//Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientUnTrackedEntities.g.cs
+
+{(hostNamespace == string.Empty ? string.Empty : $"namespace {hostNamespace}.Client;")}
+{body}
+#endif
+";
+    }
+
+    private static StringBuilder GenerateClientEntity(ClientEntityToGenerate entity)
+    {
+        var sourcebuilder = new StringBuilder(@$"
+public partial class {entity.ClassName} : ClientBase
+{{
+");
+        foreach (var prop in entity.Properties)
+        {
+            var n = prop.Nullable ? "?" : string.Empty;
+            if (prop.Tracked)
+            {
+                if (prop.Collection)
+                {
+                    sourcebuilder.Append($@"    private ChangeTrackingCollection<{prop.BaseType}> _{prop.Name} = new();
+    public ChangeTrackingCollection<{prop.BaseType}> {prop.Name}
+    {{ 
+        get => _{prop.Name}; 
+        set
+        {{
+            if (Equals(_{prop.Name}, value)) return;
+            _{prop.Name} = value;
+            NotifyPropertyChanged();
+        }}
+    }}
+");
+                }
+                else
+                {
+                    sourcebuilder.Append($@"    private ChangeTrackingCollection<{prop.BaseType}>? {prop.Name}ChangeTracker {{ get; set; }}
+    private {prop.BaseType}? _{prop.Name};
+    public {prop.BaseType}? {prop.Name} 
+    {{ 
+        get => _{prop.Name};
+        set
+        {{
+            if (Equals(value, _{prop.Name})) return;
+            _{prop.Name} = value;
+            {prop.Name}ChangeTracker = _{prop.Name} == null ? null : new ChangeTrackingCollection<{prop.BaseType}> {{ _{prop.Name} }};
+            NotifyPropertyChanged();
+        }}
+    }}
+");
+                }
+            }
+            else
+            {
+                if (prop.JsonIgnored || !prop.Setter)
+                    sourcebuilder.AppendLine("    [JsonIgnore]");
+                if (prop.Collection)
+                    sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
+                /*
+                else if (prop.PostUpdate)
+                {
+                    sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name} 
+    {{ 
+        get => _{prop.Name};{(prop.Setter ? $@"
+        set
+        {{
+            if (Equals(_{prop.Name}, value)) return;
+            _{prop.Name} = value;
+            {prop.Name}Set(value);
+            NotifyPropertyChanged();
+        }}" : string.Empty)}
+    }}
+    private {prop.BaseType}{n} _{prop.Name};");                    
+                }
+                */
+                else
+                {
+                    sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name}
+    {{ 
+        get => _{prop.Name};{(prop.Setter ? $@"
+        set
+        {{
+            if (Equals(_{prop.Name}, value)) return;
+            _{prop.Name} = value;
+            NotifyPropertyChanged();
+        }}" : string.Empty)}
+    }}
+    private {prop.BaseType}{n} _{prop.Name}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer}" )};");
+                }
+            }
+        }
+        sourcebuilder.AppendLine("}");
+        return sourcebuilder;
+    }
+
+    private static StringBuilder CopyClientEntity(ClientEntityToGenerate entity)
+    {
+        var sourcebuilder = new StringBuilder(@$"
+public partial class {entity.ClassName}
+{{
+");
+        foreach (var prop in entity.Properties)
+        {
+            var n = prop.Nullable ? "?" : string.Empty;
+                if (prop.Collection)
+                    sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
+                else
+                {
+                    sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name} {{get; {(prop.Setter ? "set; " : string.Empty)}}}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer};")}");
+                }
+        }
+        sourcebuilder.AppendLine("}");
+        return sourcebuilder;
+    }
+}
