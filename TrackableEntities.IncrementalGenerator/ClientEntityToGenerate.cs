@@ -22,9 +22,10 @@ public class ClientEntityProperty
     public bool Collection { get; }
     public bool Tracked { get; }    
     public bool PostUpdate { get; }
+    public bool AllowJsonIgnore { get; }
     public bool JsonIgnored { get; }
     public bool Setter { get; }
-    public ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool postUpdate, bool jsonIgnored)
+    public ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool postUpdate, bool allowJsonIgnore, bool jsonIgnored)
     {
         Name = name;
         BaseType = baseType;
@@ -34,6 +35,7 @@ public class ClientEntityProperty
         Tracked = tracked;
         Setter = setter;
         PostUpdate = postUpdate;
+        AllowJsonIgnore = allowJsonIgnore;
         JsonIgnored = jsonIgnored;
     }
 }

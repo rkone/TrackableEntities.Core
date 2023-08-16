@@ -10,15 +10,16 @@ namespace TrackableEntities.IncrementalGenerator;
 [Generator(LanguageNames.CSharp)]
 public class TrackableEntityGenerator : IIncrementalGenerator
 {
-    private const string attributeText = @"
+    private const string attributeText = @"#nullable enable
 using System;
 [AttributeUsage(AttributeTargets.Class)]
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
 internal sealed class TrackableEntityAttribute : Attribute
 {
-    public TrackableEntityAttribute()
-    {
-    }        
+    public bool UseSharedProject { get; }
+    public string? JsonPackageNameSpace { get; }  
+    public TrackableEntityAttribute(bool useSharedProject = false, string? jsonPackageNameSpace = null) 
+        => (UseSharedProject, JsonPackageNameSpace) = (useSharedProject, jsonPackageNameSpace);    
 }
 [AttributeUsage(AttributeTargets.Property)]
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
@@ -53,7 +54,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
     }        
 }";
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
-
+    
     // determine the namespace the class/enum/struct is declared in, if any
     static string GetNamespace(BaseTypeDeclarationSyntax syntax)
     {
@@ -117,9 +118,9 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
                 string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-                // Is the attribute the [TrackableEntity] attribute?
+                // Is the attribute the attributeName attribute?
                 if (fullName == attributeName)
-                {
+                {                                        
                     // return the enum
                     return classDeclarationSyntax;
                 }
@@ -135,7 +136,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         if (!Debugger.IsAttached)
         {
             //Debugger.Launch();
-        }
+        }        
 
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource("ClientTrackableEntitiesAttributes.g.cs", SourceText.From(attributeText, Encoding.UTF8)));
 
@@ -172,15 +173,18 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         {
             // nothing to do yet
             return;
-        }
+        }        
         // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
-        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();        
-        // Convert each EnumDeclarationSyntax to an EnumToGenerate
+        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();                
+        
+        // Convert each ClassDeclarationSyntax to a ClientEntityToGenerate
         var baseNameSpace = GetNamespace(distinctClasses.First());
-        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
+        var useShared = distinctClasses.Any(c => c.AttributeLists.Any(al => al.Attributes.Any(a => a.ArgumentList?.Arguments.Count > 0 && a.ArgumentList.Arguments[0].ToString() == "true")));
+        string? jsonSerializer = FindJsonSerializer(distinctClasses);
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, jsonSerializer != null, context.CancellationToken);
 
-        // If there were errors in the EnumDeclarationSyntax, we won't create an
-        // EnumToGenerate for it, so make sure we have something to generate
+        // If there were errors in the ClassDeclarationSyntax, we won't create an
+        // ClientEntityToGenerate for it, so make sure we have something to generate
         if (entitiesToGenerate.Count > 0)
         {
             StringBuilder stringBuilder = new();
@@ -190,9 +194,34 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 context.CancellationToken.ThrowIfCancellationRequested();
                 stringBuilder.Append(GenerateClientEntity(entity));
             }
-            string result = AddTrackedHeaders(stringBuilder.ToString(), baseNameSpace);
+            string result = AddTrackedHeaders(stringBuilder.ToString(), baseNameSpace, useShared, jsonSerializer);
             context.AddSource("ClientTrackableEntities.g.cs", SourceText.From(result, Encoding.UTF8));
         }
+    }
+
+    //find first TrackableEntity attribute that isn't true or false, assume it's the JsonSerializer
+    private static string? FindJsonSerializer(IEnumerable<ClassDeclarationSyntax> source)
+    {
+        foreach (var classSyntax in source)
+        {
+            foreach (var attributeList in classSyntax.AttributeLists)
+            {
+                foreach (var attribute in attributeList.Attributes)
+                {
+                    if (attribute.Name.ToString() == "TrackableEntity" && attribute.ArgumentList is not null)
+                    {
+                        foreach (var argument in attribute.ArgumentList.Arguments)
+                        {
+                            var value = argument.ToString();
+                            if (value is null || value == "true" || value == "false")
+                                continue;
+                            return value.Replace("\"", "");
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static void ExecuteUnTrackedGeneration(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
@@ -202,18 +231,14 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
             // nothing to do yet
             return;
         }
-        // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
         IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
         var baseNameSpace = GetNamespace(distinctClasses.First());
-        // Convert each EnumDeclarationSyntax to an EnumToGenerate
-        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
 
-        // If there were errors in the EnumDeclarationSyntax, we won't create an
-        // EnumToGenerate for it, so make sure we have something to generate
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, false, context.CancellationToken);
+
         if (entitiesToGenerate.Count > 0)
         {
             StringBuilder stringBuilder = new();
-            // generate the source code and add it to the output
             foreach (var entity in entitiesToGenerate)
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
@@ -224,7 +249,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         }
     }
 
-    private static List<ClientEntityToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classDeclarationSyntaxes, CancellationToken cancellationToken)
+    private static List<ClientEntityToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classDeclarationSyntaxes, bool allowJsonIgnore, CancellationToken cancellationToken)
     {
         var entities = new List<ClientEntityToGenerate>();
         INamedTypeSymbol? classAttribute = compilation.GetTypeByMetadataName("TrackableEntityAttribute");
@@ -232,8 +257,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         
         foreach (var classDeclarationSyntax in classDeclarationSyntaxes)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
+            cancellationToken.ThrowIfCancellationRequested();            
             SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
             if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol) continue;
 
@@ -243,7 +267,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
             foreach (var member in classDeclarationSyntax.Members)
             {
                 if (member is not PropertyDeclarationSyntax property) continue;
-                if (property.Identifier.Text is "Id" or "TrackingState" or "ModifiedProperties" or "EntityIdentifier") continue;
+                if (property.Identifier.Text is "TrackingState" or "ModifiedProperties" or "EntityIdentifier") continue;
                 var tracked = false;
                 var postUpdate = false;
                 if (property.AttributeLists.Count > 0)
@@ -269,7 +293,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 bool nullable = collection ? !tracked : property.Type is NullableTypeSyntax;
                 var jsonIgnored = property.Type is GenericNameSyntax || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
 
-                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, postUpdate, jsonIgnored));
+                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, postUpdate, allowJsonIgnore, jsonIgnored));
             }
             entities.Add(new ClientEntityToGenerate(className, modelOverride, properties));
         }
@@ -277,13 +301,13 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         return entities;
     }
 
-    private static string AddTrackedHeaders(string body, string hostNamespace)
+    private static string AddTrackedHeaders(string body, string hostNamespace, bool useSharedProject, string? jsonSerializer)
     {
         return @$"#nullable enable
 #if USECLIENTENTITIES
-using Newtonsoft.Json;
 using TrackableEntities.Client.Core;
-{(hostNamespace == string.Empty ? string.Empty : $"using {hostNamespace}.Shared;")}
+{(jsonSerializer == null ? string.Empty : $"using {jsonSerializer};")}
+{(!useSharedProject || hostNamespace == string.Empty ? string.Empty : $"using {hostNamespace}.Shared;")}
 //Instructions: This file is auto-generated. Find the source in the {hostNamespace} project under:
 //Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntities.g.cs
 
@@ -354,7 +378,7 @@ public partial class {entity.ClassName} : ClientBase
             }
             else
             {
-                if (prop.JsonIgnored || !prop.Setter)
+                if (prop.AllowJsonIgnore && (prop.JsonIgnored || !prop.Setter))
                     sourcebuilder.AppendLine("    [JsonIgnore]");
                 if (prop.Collection)
                     sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
