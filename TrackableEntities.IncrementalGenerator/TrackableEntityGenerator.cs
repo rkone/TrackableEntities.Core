@@ -312,6 +312,8 @@ using TrackableEntities.Client.Core;
 //Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntities.g.cs
 
 {(hostNamespace == string.Empty? string.Empty : $"namespace {hostNamespace}.Client;")}
+public partial class ClientBase : EntityBase {{}}
+public partial interface IClientBase {{}}
 {body}
 #endif
 ";
@@ -335,7 +337,7 @@ using TrackableEntities.Client.Core;
     private static StringBuilder GenerateClientEntity(ClientEntityToGenerate entity)
     {
         var sourcebuilder = new StringBuilder(@$"
-public partial class {entity.ClassName} : ClientBase
+public partial class {entity.ClassName} : ClientBase, IClientBase
 {{
 ");
         foreach (var prop in entity.Properties)
