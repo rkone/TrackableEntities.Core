@@ -16,10 +16,9 @@ using System;
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
 internal sealed class TrackableEntityAttribute : Attribute
 {
-    public bool UseSharedProject { get; }
-    public string? JsonPackageNameSpace { get; }  
-    public TrackableEntityAttribute(bool useSharedProject = false, string? jsonPackageNameSpace = null) 
-        => (UseSharedProject, JsonPackageNameSpace) = (useSharedProject, jsonPackageNameSpace);    
+    public string[] UsingDirectives { get; }  
+    public TrackableEntityAttribute(params string[] usingDirectives) 
+        => this.UsingDirectives = usingDirectives;
 }
 [AttributeUsage(AttributeTargets.Property)]
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
@@ -49,9 +48,9 @@ internal sealed class TrackableEntityPropertyPostUpdateAttribute : Attribute
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
 internal sealed class TrackableEntityCopyAttribute : Attribute
 {
-    public TrackableEntityCopyAttribute()
-    {
-    }        
+    public string[]? UsingDirectives { get; }  
+    public TrackableEntityCopyAttribute(params string[] usingDirectives)
+        => this.UsingDirectives = usingDirectives;
 }";
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
     
@@ -179,9 +178,9 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         
         // Convert each ClassDeclarationSyntax to a ClientEntityToGenerate
         var baseNameSpace = GetNamespace(distinctClasses.First());
-        var useShared = distinctClasses.Any(c => c.AttributeLists.Any(al => al.Attributes.Any(a => a.ArgumentList?.Arguments.Count > 0 && a.ArgumentList.Arguments[0].ToString() == "true")));
-        string? jsonSerializer = FindJsonSerializer(distinctClasses);
-        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, jsonSerializer != null, context.CancellationToken);
+        //var useShared = distinctClasses.Any(c => c.AttributeLists.Any(al => al.Attributes.Any(a => a.ArgumentList?.Arguments.Count > 0 && a.ArgumentList.Arguments[0].ToString() == "true")));
+        var usings = GetUsingDirectives("TrackableEntity", distinctClasses);
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, usings.Contains("System.Text.Json.Serialization") || usings.Contains("Newtonsoft.Json"), context.CancellationToken);
 
         // If there were errors in the ClassDeclarationSyntax, we won't create an
         // ClientEntityToGenerate for it, so make sure we have something to generate
@@ -194,34 +193,32 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 context.CancellationToken.ThrowIfCancellationRequested();
                 stringBuilder.Append(GenerateClientEntity(entity));
             }
-            string result = AddTrackedHeaders(stringBuilder.ToString(), baseNameSpace, useShared, jsonSerializer);
+            string result = AddTrackedHeaders(stringBuilder.ToString(), baseNameSpace, usings);
             context.AddSource("ClientTrackableEntities.g.cs", SourceText.From(result, Encoding.UTF8));
         }
     }
 
-    //find first TrackableEntity attribute that isn't true or false, assume it's the JsonSerializer
-    private static string? FindJsonSerializer(IEnumerable<ClassDeclarationSyntax> source)
+    //compile all using directives for the attribute
+    private static IEnumerable<string> GetUsingDirectives(string attributeName, IEnumerable<ClassDeclarationSyntax> source)
     {
+        List<string> usings = new();
         foreach (var classSyntax in source)
         {
             foreach (var attributeList in classSyntax.AttributeLists)
             {
                 foreach (var attribute in attributeList.Attributes)
                 {
-                    if (attribute.Name.ToString() == "TrackableEntity" && attribute.ArgumentList is not null)
+                    if (attribute.Name.ToString() == attributeName && attribute.ArgumentList is not null)
                     {
                         foreach (var argument in attribute.ArgumentList.Arguments)
                         {
-                            var value = argument.ToString();
-                            if (value is null || value == "true" || value == "false")
-                                continue;
-                            return value.Replace("\"", "");
+                            usings.Add(argument.ToString().Replace("\"", ""));
                         }
                     }
                 }
             }
         }
-        return null;
+        return usings.Distinct();
     }
 
     private static void ExecuteUnTrackedGeneration(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
@@ -233,7 +230,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         }
         IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
         var baseNameSpace = GetNamespace(distinctClasses.First());
-
+        var usings = GetUsingDirectives("TrackableEntityCopy", distinctClasses);
         List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, false, context.CancellationToken);
 
         if (entitiesToGenerate.Count > 0)
@@ -244,7 +241,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 context.CancellationToken.ThrowIfCancellationRequested();
                 stringBuilder.Append(CopyClientEntity(entity));
             }
-            string result = AddUnTrackedHeaders(stringBuilder.ToString(), baseNameSpace);
+            string result = AddUnTrackedHeaders(stringBuilder.ToString(), baseNameSpace, usings);
             context.AddSource("ClientUnTrackedEntities.g.cs", SourceText.From(result, Encoding.UTF8));
         }
     }
@@ -301,13 +298,19 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         return entities;
     }
 
-    private static string AddTrackedHeaders(string body, string hostNamespace, bool useSharedProject, string? jsonSerializer)
+    private static string AddTrackedHeaders(string body, string hostNamespace, IEnumerable<string> namespaces)
     {
-        return @$"#nullable enable
+        StringBuilder res = new();
+        res.Append(@"#nullable enable
 #if USECLIENTENTITIES
 using TrackableEntities.Client.Core;
-{(jsonSerializer == null ? string.Empty : $"using {jsonSerializer};")}
-{(!useSharedProject || hostNamespace == string.Empty ? string.Empty : $"using {hostNamespace}.Shared;")}
+");
+        
+        foreach (var ns in namespaces ?? Array.Empty<string>())
+        {
+            res.AppendLine($"using {ns};");
+        }
+        res.Append($@"
 //Instructions: This file is auto-generated. Find the source in the {hostNamespace} project under:
 //Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntities.g.cs
 
@@ -315,23 +318,30 @@ using TrackableEntities.Client.Core;
 public partial class ClientBase : EntityBase {{}}
 public partial interface IClientBase {{}}
 {body}
-#endif
-";
+#endif");
+        return res.ToString();
     }
 
 
-    private static string AddUnTrackedHeaders(string body, string hostNamespace)
+    private static string AddUnTrackedHeaders(string body, string hostNamespace, IEnumerable<string> namespaces)
     {
-        return @$"#nullable enable
+        StringBuilder res = new();
+        res.Append(@"#nullable enable
 #if USECLIENTENTITIES
-{(hostNamespace == string.Empty ? string.Empty : $"using {hostNamespace}.Shared;")}
+");
+        foreach (var ns in namespaces ?? Array.Empty<string>())
+        {
+            res.AppendLine($"using {ns};");
+        }
+        res.Append($@"
 //Instructions: This file is auto-generated. Find the source in the {hostNamespace} project under:
 //Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientUnTrackedEntities.g.cs
 
 {(hostNamespace == string.Empty ? string.Empty : $"namespace {hostNamespace}.Client;")}
 {body}
 #endif
-";
+");
+        return res.ToString();
     }
 
     private static StringBuilder GenerateClientEntity(ClientEntityToGenerate entity)
