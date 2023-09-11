@@ -180,7 +180,8 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         var baseNameSpace = GetNamespace(distinctClasses.First());
         //var useShared = distinctClasses.Any(c => c.AttributeLists.Any(al => al.Attributes.Any(a => a.ArgumentList?.Arguments.Count > 0 && a.ArgumentList.Arguments[0].ToString() == "true")));
         var usings = GetUsingDirectives("TrackableEntity", distinctClasses);
-        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, usings.Contains("System.Text.Json.Serialization") || usings.Contains("Newtonsoft.Json"), context.CancellationToken);
+        //if the user is using Newtonsoft, it will deserialize all provided data. We can mark untracked properties with JsonIgnore. With System.Text.Json, JsonIgnore properties are not deserialized, they can't have the attribute.
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, usings.Contains("Newtonsoft.Json"), context.CancellationToken);
 
         // If there were errors in the ClassDeclarationSyntax, we won't create an
         // ClientEntityToGenerate for it, so make sure we have something to generate
