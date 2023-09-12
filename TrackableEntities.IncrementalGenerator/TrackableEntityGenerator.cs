@@ -315,7 +315,10 @@ using TrackableEntities.Client.Core;
 //Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntities.g.cs
 
 {(hostNamespace == string.Empty? string.Empty : $"namespace {hostNamespace}.Client;")}
-public partial class ClientBase : EntityBase {{}}
+public partial class ClientBase : EntityBase 
+{{
+    protected partial void OnPropertySet(string propertyName, Type propertyType, object? value);
+}}
 public partial interface IClientBase {{}}
 {body}
 #endif");
@@ -421,6 +424,7 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
             if (Equals(_{prop.Name}, value)) return;
             _{prop.Name} = value;
             NotifyPropertyChanged();
+            OnPropertySet(nameof({prop.Name}), typeof({prop.BaseType}), value);
         }}" : string.Empty)}
     }}
     private {prop.BaseType}{n} _{prop.Name}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer}" )};");
