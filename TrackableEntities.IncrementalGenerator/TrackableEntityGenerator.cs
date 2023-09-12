@@ -36,14 +36,6 @@ internal sealed class TrackableEntityPropertyIgnoreAttribute : Attribute
     {
     }
 }
-[AttributeUsage(AttributeTargets.Property)]
-[System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
-internal sealed class TrackableEntityPropertyPostUpdateAttribute : Attribute
-{
-    public TrackableEntityPropertyPostUpdateAttribute()
-    {
-    }
-}
 [AttributeUsage(AttributeTargets.Class)]
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
 internal sealed class TrackableEntityCopyAttribute : Attribute
@@ -277,8 +269,6 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                             ignored = true;
                         if (name == "[TrackableEntityTrackedProperty]")
                             tracked = true;
-                        if (name == "[TrackableEntityPropertyPostUpdate]")
-                            postUpdate = true;
                     }
                     if (ignored) continue;
                 }
@@ -290,7 +280,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 bool nullable = collection ? !tracked : property.Type is NullableTypeSyntax;
                 var jsonIgnored = property.Type is GenericNameSyntax || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
 
-                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, postUpdate, allowJsonIgnore, jsonIgnored));
+                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, allowJsonIgnore, jsonIgnored));
             }
             entities.Add(new ClientEntityToGenerate(className, modelOverride, properties));
         }
@@ -397,24 +387,7 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
                 if (prop.AllowJsonIgnore && (prop.JsonIgnored || !prop.Setter))
                     sourcebuilder.AppendLine("    [JsonIgnore]");
                 if (prop.Collection)
-                    sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
-                /*
-                else if (prop.PostUpdate)
-                {
-                    sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name} 
-    {{ 
-        get => _{prop.Name};{(prop.Setter ? $@"
-        set
-        {{
-            if (Equals(_{prop.Name}, value)) return;
-            _{prop.Name} = value;
-            {prop.Name}Set(value);
-            NotifyPropertyChanged();
-        }}" : string.Empty)}
-    }}
-    private {prop.BaseType}{n} _{prop.Name};");                    
-                }
-                */
+                    sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");               
                 else
                 {
                     sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name}
