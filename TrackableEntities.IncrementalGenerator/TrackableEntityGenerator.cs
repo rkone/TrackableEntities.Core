@@ -386,6 +386,7 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
             _{prop.Name} = value;
             {prop.Name}ChangeTracker = _{prop.Name} == null ? null : new ChangeTrackingCollection<{prop.BaseType}> {{ _{prop.Name} }};
             NotifyPropertyChanged();
+            OnPropertySet(nameof({prop.Name}), typeof({prop.BaseType}), value);
         }}
     }}
 ");
