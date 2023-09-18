@@ -1,18 +1,17 @@
-﻿namespace TrackableEntities.Common.Core
+﻿namespace TrackableEntities.Common.Core;
+
+/// <summary>
+/// Interface implemented by entities that are change-tracked.
+/// </summary>
+public interface ITrackable
 {
     /// <summary>
-    /// Interface implemented by entities that are change-tracked.
+    /// Change-tracking state of an entity.
     /// </summary>
-    public interface ITrackable
-    {
-        /// <summary>
-        /// Change-tracking state of an entity.
-        /// </summary>
-        TrackingState TrackingState { get; set; }
+    TrackingState TrackingState { get; set; }
 
-        /// <summary>
-        /// Properties on an entity that have been modified.
-        /// </summary>
-        ICollection<string>? ModifiedProperties { get; set; }
-    }
+    /// <summary>
+    /// Properties on an entity that have been modified.
+    /// </summary>
+    ICollection<string>? ModifiedProperties { get; set; }
 }
