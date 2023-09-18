@@ -3,25 +3,24 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TrackableEntities.Common.Core;
 
-namespace TrackableEntities.EF.Core.Tests.NorthwindModels
+namespace TrackableEntities.EF.Core.Tests.NorthwindModels;
+
+public partial class Customer : ITrackable
 {
-    public partial class Customer : ITrackable
-    {
-        [Key]
-        public string? CustomerId { get; set; }
-        public string? CustomerName { get; set; }
+    [Key]
+    public string? CustomerId { get; set; }
+    public string? CustomerName { get; set; }
 
-        public string? TerritoryId { get; set; }
-        [ForeignKey("TerritoryId")]
-        public Territory? Territory { get; set; }
+    public string? TerritoryId { get; set; }
+    [ForeignKey("TerritoryId")]
+    public Territory? Territory { get; set; }
 
-        public List<Order> Orders { get; set; } = new();
-        public CustomerSetting? CustomerSetting { get; set; }
-        public List<CustomerAddress> CustomerAddresses { get; set; } = new();
+    public List<Order> Orders { get; set; } = new();
+    public CustomerSetting? CustomerSetting { get; set; }
+    public List<CustomerAddress> CustomerAddresses { get; set; } = new();
 
-        [NotMapped]
-        public TrackingState TrackingState { get; set; }
-        [NotMapped]
-        public ICollection<string>? ModifiedProperties { get; set; }
-    }
+    [NotMapped]
+    public TrackingState TrackingState { get; set; }
+    [NotMapped]
+    public ICollection<string>? ModifiedProperties { get; set; }
 }
