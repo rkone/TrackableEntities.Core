@@ -556,4 +556,58 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
     {
         _deletedEntities.Clear();
     }
+
+    /// <summary>
+    /// <para>Merge changed child items into the original trackable entity. 
+    /// This assumes GetChanges was called to update only changed items. 
+    /// Non-recursive - only direct children will be merged.</para> 
+    /// <code>Usage: MergeChanges(ref originalItem, updatedItem);</code>
+    /// </summary>
+    /// <param name="originalItem">Local entity containing unchanged child items.</param>
+    /// <param name="updatedItem">Entity returned by an update operation.</param>
+    [Obsolete("ChangeTrackingCollection.MergeChanges has been deprecated. Instead use ChangeTrackingCollection.MergeChanges.")]
+    public void MergeChanges(ref TEntity originalItem, TEntity updatedItem)
+    {
+        // Get unchanged child entities
+        foreach (var colProp in updatedItem.GetNavigationProperties().OfCollectionType<IList>())
+        {
+            if (colProp.Property is null || colProp.EntityCollection is null) continue;
+            var updatedItems = colProp.EntityCollection;
+            var originalItems = originalItem.GetEntityCollectionProperty(colProp.Property).EntityCollection;
+            if (originalItems != null)
+            {
+                foreach (ITrackable origTrackable in originalItems)
+                {
+                    if (origTrackable.TrackingState == TrackingState.Unchanged)
+                    {
+                        // Add unchanged original item to updated items
+                        updatedItems.Add(origTrackable);
+                        FixUpParentReference(origTrackable, updatedItem, Tracking);
+                    }
+                }
+            }
+        }
+
+        // Track updated item
+        bool tracking = Tracking;
+        Tracking = false;
+        Remove(originalItem);
+        Add(updatedItem);
+        Tracking = tracking;
+
+        // Set original item to updated item with unchanged items merged in
+        originalItem = updatedItem;
+    }
+    private void FixUpParentReference(ITrackable child, ITrackable parent, bool isTracking)
+    {
+        foreach (var refProp in child.GetNavigationProperties()
+            .OfReferenceType()
+            .Where(rp => rp.Property != null && PortableReflectionHelper.Instance.IsAssignable(rp.Property.PropertyType, parent.GetType()))
+            .Where(rp => !ReferenceEquals(rp.EntityReference, parent)))
+        {
+            Tracking = false;
+            refProp.Property?.SetValue(child, parent, null);
+            Tracking = isTracking;
+        }
+    }
 }
