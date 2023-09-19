@@ -101,4 +101,8 @@ public class Employee : EntityBase
             NotifyPropertyChanged(() => Territories);
         }
     }
+    public Employee()
+    {
+        _territories.Parent = this;
+    }
 }
