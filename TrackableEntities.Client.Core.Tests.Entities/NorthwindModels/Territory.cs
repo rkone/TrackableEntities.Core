@@ -97,4 +97,9 @@ public class Territory : EntityBase, IRefPropertyChangeTrackerResolver
     {
         return propertyName == "Area" ? AreaChangeTracker_NON_STANDARD : null;
     }
+
+    public Territory()
+    {
+        _employees.Parent = this;
+    }
 }
