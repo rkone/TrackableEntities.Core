@@ -561,7 +561,7 @@ public class ChangeTrackingCollectionWithChildrenTests
 
         // Merge updates into orig order
 #pragma warning disable 618
-        changeTracker.MergeChanges(origOrder, updatedOrder);  //test.core: removed ref from origOrder?
+        changeTracker.MergeChanges(ref origOrder, updatedOrder);
 #pragma warning restore 618
 
         // Assert
