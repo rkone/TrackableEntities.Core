@@ -1,5 +1,4 @@
 ﻿using TrackableEntities.Common.Core;
-using TrackableEntities.Client.Core;
 using TrackableEntities.Client.Core.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Core.Tests.Entities.NorthwindModels;
 using TrackableEntities.Client.Core.Tests.Entities.Mocks;
@@ -184,6 +183,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         modifiedDetail.UnitPrice++;
 
         // Assert
+        Assert.NotNull(modifiedDetail.ModifiedProperties);
         Assert.Contains("UnitPrice", modifiedDetail.ModifiedProperties);
     }
 
@@ -202,6 +202,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         modifiedDetail.UnitPrice++;
 
         // Assert
+        Assert.NotNull(modifiedDetail.ModifiedProperties);
         Assert.Contains("Quantity", modifiedDetail.ModifiedProperties);
         Assert.Contains("UnitPrice", modifiedDetail.ModifiedProperties);
     }
@@ -260,6 +261,7 @@ public class ChangeTrackingCollectionWithChildrenTests
 
         // Assert
         Assert.Equal(TrackingState.Modified, modifiedDetail.TrackingState);
+        Assert.NotNull(modifiedDetail.ModifiedProperties);
         Assert.Contains("UnitPrice", modifiedDetail.ModifiedProperties);
         Assert.DoesNotContain("Quantity", modifiedDetail.ModifiedProperties);
     }
@@ -318,14 +320,14 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Assert
         var changedOrder = changes.First();
         var changedOrder3 = changes[1];
-        var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
-        var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
-        var changedDeletedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == deletedDetail.ProductId);
+        var changedModifiedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == modifiedDetail.ProductId);
+        var changedAddedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == addedDetail.ProductId);
+        var changedDeletedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == deletedDetail.ProductId);
         Assert.Equal(TrackingState.Unchanged, changedOrder.TrackingState);
         Assert.Equal(3, changedOrder.OrderDetails.Count);
-        Assert.Equal(TrackingState.Modified, changedModifiedDetail.TrackingState);
-        Assert.Equal(TrackingState.Added, changedAddedDetail.TrackingState);
-        Assert.Equal(TrackingState.Deleted, changedDeletedDetail.TrackingState);
+        Assert.Equal(TrackingState.Modified, changedModifiedDetail?.TrackingState);
+        Assert.Equal(TrackingState.Added, changedAddedDetail?.TrackingState);
+        Assert.Equal(TrackingState.Deleted, changedDeletedDetail?.TrackingState);
         Assert.DoesNotContain(unchangedDetail, changedOrder.OrderDetails);
         Assert.NotNull(order.Customer);
         Assert.NotNull(order3.Customer);
@@ -363,14 +365,14 @@ public class ChangeTrackingCollectionWithChildrenTests
 
         // Assert
         var changedOrder = changes.First();
-        var changedExistingDetail = changedOrder.OrderDetails.Single(d => d.ProductId == unchangedDetail.ProductId);
-        var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
-        var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
+        var changedExistingDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == unchangedDetail.ProductId);
+        var changedModifiedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == modifiedDetail.ProductId);
+        var changedAddedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == addedDetail.ProductId);
         Assert.Equal(TrackingState.Added, changedOrder.TrackingState);
         Assert.Equal(3, changedOrder.OrderDetails.Count);
-        Assert.Equal(TrackingState.Added, changedModifiedDetail.TrackingState);
-        Assert.Equal(TrackingState.Added, changedAddedDetail.TrackingState);
-        Assert.Equal(TrackingState.Added, changedExistingDetail.TrackingState);
+        Assert.Equal(TrackingState.Added, changedModifiedDetail?.TrackingState);
+        Assert.Equal(TrackingState.Added, changedAddedDetail?.TrackingState);
+        Assert.Equal(TrackingState.Added, changedExistingDetail?.TrackingState);
         Assert.DoesNotContain(deletedDetail, changedOrder.OrderDetails);
     }
 
@@ -717,6 +719,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         modifiedTerritory.TerritoryDescription = "xxx";
 
         // Assert
+        Assert.NotNull(modifiedTerritory.ModifiedProperties);
         Assert.Contains("TerritoryDescription", modifiedTerritory.ModifiedProperties);
     }
 
@@ -734,6 +737,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         modifiedTerritory.Data = "xxx";
 
         // Assert
+        Assert.NotNull(modifiedTerritory.ModifiedProperties);
         Assert.Contains("TerritoryDescription", modifiedTerritory.ModifiedProperties);
         Assert.Contains("Data", modifiedTerritory.ModifiedProperties);
     }
@@ -773,6 +777,7 @@ public class ChangeTrackingCollectionWithChildrenTests
 
         // Assert
         Assert.Equal(TrackingState.Modified, modifiedTerritory.TrackingState);
+        Assert.NotNull(modifiedTerritory.ModifiedProperties);
         Assert.Contains("Data", modifiedTerritory.ModifiedProperties);
         Assert.DoesNotContain("TerritoryDescription", modifiedTerritory.ModifiedProperties);
     }
@@ -817,16 +822,16 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Act
         var changes = changeTracker.GetChanges();
         var changedEmployee = changes.First();
-        var changedModifiedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == modifiedTerritory.TerritoryId);
-        var changedAddedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == addedTerritory.TerritoryId);
-        var changedDeletedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == deletedTerritory.TerritoryId);
+        var changedModifiedTerritory = changedEmployee.Territories.SingleOrDefault(t => t.TerritoryId == modifiedTerritory.TerritoryId);
+        var changedAddedTerritory = changedEmployee.Territories.SingleOrDefault(t => t.TerritoryId == addedTerritory.TerritoryId);
+        var changedDeletedTerritory = changedEmployee.Territories.SingleOrDefault(t => t.TerritoryId == deletedTerritory.TerritoryId);
 
         // Assert
         Assert.Equal(TrackingState.Unchanged, changedEmployee.TrackingState);
         Assert.Equal(3, changedEmployee.Territories.Count);
-        Assert.Equal(TrackingState.Modified, changedModifiedTerritory.TrackingState);
-        Assert.Equal(TrackingState.Added, changedAddedTerritory.TrackingState);
-        Assert.Equal(TrackingState.Deleted, changedDeletedTerritory.TrackingState);
+        Assert.Equal(TrackingState.Modified, changedModifiedTerritory?.TrackingState);
+        Assert.Equal(TrackingState.Added, changedAddedTerritory?.TrackingState);
+        Assert.Equal(TrackingState.Deleted, changedDeletedTerritory?.TrackingState);
         Assert.DoesNotContain(unchangedTerritory, changedEmployee.Territories);
     }
 
@@ -853,13 +858,14 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Act
         var changes = changeTracker.GetChanges();
         var changedEmployee = changes.First();
-        var changedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == territory.TerritoryId);
-        var changedArea = changedTerritory.Area;
+        var changedTerritory = changedEmployee.Territories.SingleOrDefault(t => t.TerritoryId == territory.TerritoryId);
+        var changedArea = changedTerritory?.Area;
 
         // Assert
         Assert.Equal(TrackingState.Unchanged, changedEmployee.TrackingState);
-        Assert.Equal(TrackingState.Unchanged, changedTerritory.TrackingState);
+        Assert.Equal(TrackingState.Unchanged, changedTerritory?.TrackingState);
         Assert.Equal(TrackingState.Modified, changedArea?.TrackingState);
+        Assert.NotNull(area.ModifiedProperties);
         Assert.Contains("AreaName", area.ModifiedProperties);
     }
 
@@ -1265,6 +1271,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         order.Customer!.CustomerName = "xxx";
 
         // Assert
+        Assert.NotNull(order.Customer.ModifiedProperties);
         Assert.Contains("CustomerName", order.Customer.ModifiedProperties);
     }
 
@@ -1281,6 +1288,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         order.Customer.Data = "xxx";
 
         // Assert
+        Assert.NotNull(order.Customer.ModifiedProperties);
         Assert.Contains("CustomerName", order.Customer.ModifiedProperties);
         Assert.Contains("Data", order.Customer.ModifiedProperties);
     }
@@ -1300,7 +1308,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         changeTracker.Remove(order);
 
         // Assert
-        Assert.True(modifiedCustomer.ModifiedProperties.Count == 1);
+        Assert.True(modifiedCustomer.ModifiedProperties?.Count == 1);
         Assert.True(order.OrderDetails[0].ModifiedProperties == null);
     }
 
@@ -1717,6 +1725,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         customer.CustomerSetting.Setting = "xxx";
 
         // Assert
+        Assert.NotNull(customer.CustomerSetting.ModifiedProperties);
         Assert.Contains("Setting", customer.CustomerSetting.ModifiedProperties);
     }
 
