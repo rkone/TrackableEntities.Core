@@ -8,6 +8,18 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);USECLIENTENTITIES</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);USECLIENTENTITIES</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntities.g.cs" Link="ClientTrackableEntities.g.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\TrackableEntities.Client.Core\TrackableEntities.Client.Core.csproj" />
     <ProjectReference Include="..\TrackableEntities.Common.Core\TrackableEntities.Common.Core.csproj" />

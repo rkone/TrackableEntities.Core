@@ -5,6 +5,7 @@ using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.FamilyModels;
 
+[TrackableEntity]
 public class Parent : ITrackable
 {
     public Parent() { }
@@ -16,6 +17,7 @@ public class Parent : ITrackable
     [Key]
     public string Name { get; set; } = string.Empty;
     public string Hobby { get; set; } = string.Empty;
+    [TrackableEntityTrackedProperty]
     public List<Child> Children { get; set; } = new List<Child>();
 
     [NotMapped]

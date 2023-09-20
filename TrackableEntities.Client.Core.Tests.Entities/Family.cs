@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using TrackableEntities.Client.Core;
 
-namespace TrackableEntities.Client.Core.Tests.Entities.FamilyModels;
+namespace TrackableEntities.EF.Core.Tests.FamilyModels.Client;
 
 [JsonObject]
-public class Family : EntityBase
+public class Family : ClientBase
 {
     private Parent? _mother;
     private Parent? _father;

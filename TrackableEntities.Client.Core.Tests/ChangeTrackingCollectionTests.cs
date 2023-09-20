@@ -1,6 +1,6 @@
 ﻿using TrackableEntities.Common.Core;
-using TrackableEntities.Client.Core.Tests.Entities.NorthwindModels;
-using TrackableEntities.Client.Core.Tests.Entities.Mocks;
+using TrackableEntities.EF.Core.Tests.FamilyModels.Client;
+
 
 namespace TrackableEntities.Client.Core.Tests;
 

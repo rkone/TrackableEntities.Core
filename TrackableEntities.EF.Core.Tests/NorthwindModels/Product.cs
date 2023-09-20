@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.NorthwindModels;
-
+[TrackableEntity]
 public partial class Product : ITrackable
 {
     [Key]
@@ -15,14 +15,17 @@ public partial class Product : ITrackable
 
     public int CategoryId { get; set; }
     [ForeignKey("CategoryId")]
+    [TrackableEntityTrackedProperty]
     public Category? Category { get; set; }
 
     public int? PromoId { get; set; }
     [ForeignKey("PromoId")]
+    [TrackableEntityPropertyIgnore]
     public HolidayPromo? HolidayPromo { get; set; }
 
     public int? ProductInfoKey1 { get; set; }
     public int? ProductInfoKey2 { get; set; }
+    [TrackableEntityPropertyIgnore]
     public ProductInfo? ProductInfo { get; set; }
 
     [NotMapped]
