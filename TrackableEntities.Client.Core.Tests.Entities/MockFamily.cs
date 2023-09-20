@@ -1,6 +1,6 @@
-﻿using TrackableEntities.Client.Core.Tests.Entities.FamilyModels;
+﻿using TrackableEntities.Client.Core;
 
-namespace TrackableEntities.Client.Core.Tests.Entities.Mocks;
+namespace TrackableEntities.EF.Core.Tests.FamilyModels.Client;
 
 public class MockFamily
 {
@@ -17,7 +17,7 @@ public class MockFamily
         };
     }
 
-    IEnumerable<Child> CreateGrandChildren(string childName)
+    static IEnumerable<Child> CreateGrandChildren(string childName)
     {
         var grandChild1Name = childName + "-" + "GrandChild1";
         var grandChild1 = new Child(grandChild1Name)

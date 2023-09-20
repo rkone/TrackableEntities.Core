@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿namespace TrackableEntities.EF.Core.Tests.FamilyModels.Client;
 
-namespace TrackableEntities.Client.Core.Tests.Entities.NorthwindModels;
-
-[JsonObject(IsReference = true)]
 public class PromotionalProduct : Product
 {
     private string _giftCode = string.Empty;
@@ -13,7 +10,7 @@ public class PromotionalProduct : Product
         {
             if (value == _giftCode) return;
             _giftCode = value;
-            NotifyPropertyChanged(() => PromoCode);
+            NotifyPropertyChanged();
         }
     }
 }

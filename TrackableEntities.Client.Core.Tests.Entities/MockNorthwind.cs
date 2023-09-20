@@ -1,6 +1,6 @@
-﻿using TrackableEntities.Client.Core.Tests.Entities.NorthwindModels;
+﻿using TrackableEntities.Client.Core;
 
-namespace TrackableEntities.Client.Core.Tests.Entities.Mocks;
+namespace TrackableEntities.EF.Core.Tests.FamilyModels.Client;
 
 public class MockNorthwind
 {
@@ -173,7 +173,7 @@ public class MockNorthwind
             foreach (var territory in employee.Territories)
             {
                 if (territory.Employees == null)
-                    territory.Employees = new ChangeTrackingCollection<Employee>();
+                    territory.Employees = new ChangeTrackingCollection<Employee>() { Parent = territory};
                 if (!territory.Employees.Contains(employee))
                     territory.Employees.Add(employee);
             }

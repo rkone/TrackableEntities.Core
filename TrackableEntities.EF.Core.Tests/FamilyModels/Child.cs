@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.FamilyModels;
-
+[TrackableEntity]
 public class Child : ITrackable
 {
     public Child() { }
@@ -15,6 +15,7 @@ public class Child : ITrackable
 
     [Key]
     public string Name { get; set; } = string.Empty;
+    [TrackableEntityTrackedProperty]
     public List<Child> Children { get; set; } = new List<Child>();
 
     [NotMapped]

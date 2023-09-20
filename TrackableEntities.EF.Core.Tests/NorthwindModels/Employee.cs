@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.NorthwindModels;
-
+[TrackableEntity]
 public partial class Employee : ITrackable
 {
     [Key]
@@ -16,6 +16,7 @@ public partial class Employee : ITrackable
     public DateTime? HireDate { get; set; }
     public string City { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
+    [TrackableEntityTrackedProperty(true)]
     public List<Territory> Territories { get; set; } = new();
 
     [NotMapped]

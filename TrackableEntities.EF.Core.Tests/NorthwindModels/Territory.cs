@@ -4,14 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.NorthwindModels;
-
+[TrackableEntity]
 public partial class Territory : ITrackable
 {        
     [Key]
     public string TerritoryId { get; set; } = string.Empty;
     public string TerritoryDescription { get; set; } = string.Empty;
+    [TrackableEntityTrackedProperty(true)]
     public List<Employee> Employees { get; set; } = new();
+    [TrackableEntityTrackedProperty]
     public List<Customer> Customers { get; set; } = new();
+    [TrackableEntityTrackedProperty]
     public List<Area> Areas {  get; set; } = new();
 
     [NotMapped]

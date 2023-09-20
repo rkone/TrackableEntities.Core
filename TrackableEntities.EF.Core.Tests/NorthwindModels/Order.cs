@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.NorthwindModels;
-
+[TrackableEntity]
 public partial class Order : ITrackable
 {
     [Key]
@@ -14,7 +14,9 @@ public partial class Order : ITrackable
     [Column]
     public string? CustomerId { get; set; }
     [ForeignKey("CustomerId")]
+    [TrackableEntityTrackedProperty]
     public Customer? Customer { get; set; }
+    [TrackableEntityTrackedProperty]
     public List<OrderDetail> OrderDetails { get; set; } = new();
 
     [NotMapped]
