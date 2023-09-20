@@ -5,8 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>6.0.0.0</FileVersion>
-    <AssemblyVersion>6.0.0.0</AssemblyVersion>
+	  <PackageId>TrackableEntities.Client.Core</PackageId>
+	  <PackageVersion>7.0.0</PackageVersion>
+	  <Authors>Tony Sneed</Authors>
+	  <Company>Tony Sneed</Company>
+	  <Title>Trackable Entities Client</Title>
+	  <Description>Change-tracking utility for client applications that wish to transmit entities to a web service for batch updates.</Description>
+	  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	  <PackageReleaseNotes>https://github.com/TrackableEntities/TrackableEntities.Core/releases/tag/v7.0.0</PackageReleaseNotes>
+	  <PackageTags>change-tracking entity-framework n-tier wcf web-api</PackageTags>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageProjectUrl>https://github.com/TrackableEntities/TrackableEntities.Core</PackageProjectUrl>
+	  <PackageIcon>icon.png</PackageIcon>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
