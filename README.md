@@ -54,7 +54,7 @@ public class Product : ITrackable, IMergeable
 
 Server-side trackable entities can either be writen by hand or generated from an existing database using code-generation techniques. 
 
-##Client Entity Generation
+## Client Entity Generation
 
 This fork of Trackable Entities has an incremental generator that can create client entities. In your project containing the server-side trackable entities, add a reference to the TackableEntities.IncrementalGenerator project.  Then modify your project file, adding in the following:
 
