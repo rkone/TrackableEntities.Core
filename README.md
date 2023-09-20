@@ -38,6 +38,8 @@ public class Product : ITrackable, IMergeable
     public int ProductId { get; set; }
     public string ProductName { get; set; }
     public decimal? UnitPrice { get; set; }
+    public List<Territory> Territories { get; set;}
+    public Location Location { get; set; }
 
     [NotMapped]
     public TrackingState TrackingState { get; set; }
@@ -50,9 +52,56 @@ public class Product : ITrackable, IMergeable
 }
 ```
 
-Server-side trackable entities can either be writen by hand or generated from an existing database using code-generation techniques. Trackable Entities provides [CodeTemplates](https://www.nuget.org/packages?q=TrackableEntities.CodeTemplates) NuGet packages which add T4 templates to a traditional .NET class library for generating trackable entities using the Visual Studio wizard for adding an ADO.NET Entity Data Model. You can then add a NetStandard class library which links to the generated entities. See the [TE Core Sample](https://github.com/TrackableEntities/TrackableEntities.Core.Sample) project for an example of how to do this.
+Server-side trackable entities can either be writen by hand or generated from an existing database using code-generation techniques. 
+This fork of Trackable Entities an incremental generator for client entities. In your project containing the server-side trackable entities, add a reference to the TackableEntities.IncrementalGenerator project.  Then modify that project file, add in the following:
 
-> **Note**: The reason for the extra project with generated entities is that EF Core does not yet support _customizing_ scaffolded models for server-side entities. We will provide code generation packages for Trackable Entities as soon as EF Core tooling is updated to support customization.
+```
+ <PropertyGroup>
+   <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+   <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+ </PropertyGroup>
+ <ItemGroup>
+  <Compile Remove="Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntitiesAttributes.g.cs" />
+ </ItemGroup>
+```
+
+Also, for the TrackableEntities.IncrementalGenerator Project reference, Add OutputItemType="Analyzer" ReferenceOutputAssembly="false" so it looks like this:
+```
+   <ProjectReference Include="..\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+```
+
+I'd suggest creating a client entity project, but you can add the generated client entities directly to your client project.  From this project, create link to the Generated\TrackableEntities.IncrementalGenerate\TrackableEntities.IncrementalGenrater.TrackableEntityGenerator\ClientTrackableEntities.gs file.
+With this implementation, you also need to create another class file with the following:
+```csharp
+public partial class ClientBase
+{
+    protected partial void OnPropertySet(string propertyName, Type propertyType, object? value) { }
+}
+```
+
+Finally, you can apply attributes to your server side trackable entities to have the client entities created.
+```csharp
+[TrackableEntity]
+public class Product : ITrackable, IMergeable
+{
+    public int ProductId { get; set; }
+    public string ProductName { get; set; }
+    public decimal? UnitPrice { get; set; }
+    [TrackableEntityTrackedProperty]
+    public List<Territory> Territories { get; set;}
+    [TrackableEntityTrackedProperty]
+    public Location Location { get; set; }
+
+    [NotMapped]
+    public TrackingState TrackingState { get; set; }
+
+    [NotMapped]
+    public ICollection<string> ModifiedProperties { get; set; }
+
+    [NotMapped]
+    public Guid EntityIdentifier { get; set; }
+}
+```
 
 ## Usage
 
