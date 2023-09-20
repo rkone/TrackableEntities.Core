@@ -2,7 +2,9 @@
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.Client.Core;
-
+/// <summary>
+/// Interface implemented by trackable collections.
+/// </summary>
 public interface ITrackingCollection : ICollection
 {
     /// <summary>

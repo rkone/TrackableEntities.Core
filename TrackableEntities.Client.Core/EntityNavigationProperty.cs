@@ -31,7 +31,7 @@ public abstract class EntityNavigationProperty
     public PropertyInfo? Property { get; private set; }
 
     /// <summary>
-    /// Casts 'this' to EntityReferenceProperty<TEntity>>. Returns an empty enumerable
+    /// Casts 'this' to EntityReferenceProperty&lt;TEntity&gt;. Returns an empty enumerable
     /// if 'this' is not a reference property or the entity type is incompatible.
     /// </summary>
     /// <typeparam name="TEntity">Type of entity reference</typeparam>
@@ -54,7 +54,7 @@ public abstract class EntityNavigationProperty
     }
 
     /// <summary>
-    /// Casts 'this' to EntityCollectionProperty<TEntityCollection>. Returns an empty enumerable
+    /// Casts 'this' to EntityCollectionProperty&lt;TEntityCollection&gt;. Returns an empty enumerable
     /// if 'this' is not a collection property or the collection type is incompatible.
     /// </summary>
     /// <typeparam name="TEntityCollection">Type of entity collection</typeparam>

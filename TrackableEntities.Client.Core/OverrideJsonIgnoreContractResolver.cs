@@ -8,10 +8,17 @@ namespace TrackableEntities.Client.Core;
 //when using System.Text.Json, this class will allow sending more data to the client, and the client will return only tracked data.
 //On the client, add the OverrideJsonIgnoreContractResolver to the JsonSerializerOptions:
 //ie: JsonSerializerOptions DefaultJsonSerializerOptions = new() { ReferenceHandler = ReferenceHandler.Preserve, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault, TypeInfoResolver = new OverrideJsonIgnoreContractResolver() };
-
+/// <summary>
+/// JsonTypeInfoResolver that allows properties with the JsonIgnore attribute to be deserialized.
+/// </summary>
 public class OverrideJsonIgnoreContractResolver : DefaultJsonTypeInfoResolver
 {
-    //overrides properties that have the JsonIgnore attribute, allow them to be deserialized.
+    /// <summary>
+    /// Overrides the type's property setters that have the JsonIgnore attribute
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
     {
         var typeInfo = base.GetTypeInfo(type, options);
@@ -32,11 +39,19 @@ public class OverrideJsonIgnoreContractResolver : DefaultJsonTypeInfoResolver
     }
 }
 
+/// <summary>
+/// Creation of default getters and setters for properties
+/// </summary>
 // https://stackoverflow.com/questions/61869393/get-net-core-jsonserializer-to-serialize-private-members
 public static class JsonExtensions
 {
     delegate TValue RefFunc<TObject, TValue>(ref TObject arg);
-
+    /// <summary>
+    /// Creates a default getter for a property
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="method"></param>
+    /// <returns></returns>
     public static Func<object, object?>? CreateGetter(Type type, MethodInfo? method)
     {
         if (method == null)
@@ -62,6 +77,12 @@ public static class JsonExtensions
             return (o) => func((TObject)o);
         }
     }
+    /// <summary>
+    /// Creates a default setter for a property
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="method"></param>
+    /// <returns></returns>
     public static Action<object, object?>? CreateSetter(Type type, MethodInfo? method)
     {
         if (method == null)

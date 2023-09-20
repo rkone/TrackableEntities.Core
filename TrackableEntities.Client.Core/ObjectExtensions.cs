@@ -5,21 +5,39 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace System
 {
+    /// <summary>
+    /// Common extension methods for object cloning Trackable Entities.
+    /// </summary>
     public static class ObjectExtensions
     {
         [NotNull]
         private static readonly MethodInfo? CloneMethod = typeof(object).GetMethod(nameof(MemberwiseClone), BindingFlags.NonPublic | BindingFlags.Instance);
 
+        /// <summary>
+        /// Determines if a type is a primitive type or string.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>true when type is primitive or string</returns>
         public static bool IsPrimitive(this Type type)
         {
             if (type == typeof(string)) return true;
             return (type.IsValueType & type.IsPrimitive);
         }
 
+        /// <summary>
+        /// creates a deep copy of an object
+        /// </summary>
+        /// <param name="originalObject"></param>
+        /// <returns></returns>
         public static object? Copy(this object? originalObject)
         {
             return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
         }
+        /// <summary>
+        /// returns a copy of all changes to an object
+        /// </summary>
+        /// <param name="originalObject"></param>
+        /// <returns></returns>
         public static object? CopyChanges(this object? originalObject)
         {
             return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()), true);
@@ -81,16 +99,43 @@ namespace System
             }
         }
 
+        /// <summary>
+        /// Creates a deep copy of an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
         public static T? Copy<T>(this T original) => (T?)Copy((object?)original);
+        /// <summary>
+        /// Creates a copy of all changes to an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
         public static T? CopyChanges<T>(this T original) => (T?)CopyChanges((object?)original);        
     }
 
+    /// <summary>
+    /// Compares objects by their hash code or reference.
+    /// </summary>
     public class ReferenceEqualityComparer : EqualityComparer<Object>
     {
+        /// <summary>
+        /// Compares by reference
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public override bool Equals(object? x, object? y)
         {
             return ReferenceEquals(x, y);
         }
+
+        /// <summary>
+        /// compares by hashcode
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override int GetHashCode(object? obj)
         {
             if (obj == null) return 0;
@@ -100,8 +145,16 @@ namespace System
 
     namespace ArrayExtensions
     {
+        /// <summary>
+        /// Extension methods for arrays
+        /// </summary>
         public static class ArrayExtensions
         {
+            /// <summary>
+            /// apply action to all elements of an array
+            /// </summary>
+            /// <param name="array"></param>
+            /// <param name="action"></param>
             public static void ForEach(this Array array, Action<Array, int[]> action)
             {
                 if (array.LongLength == 0) return;

@@ -8,6 +8,10 @@ using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.Client.Core;
 
+/// <summary>
+/// Collection responsible for tracking changes to entities.
+/// </summary>
+/// <typeparam name="TEntity">Trackable entity type</typeparam>
 public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, ITrackingCollection<TEntity>, ITrackingCollection
     where TEntity : class, ITrackable, INotifyPropertyChanged
 {
