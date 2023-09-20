@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TrackableEntities.IncrementalGenerator;
@@ -16,7 +17,7 @@ using System;
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
 internal sealed class TrackableEntityAttribute : Attribute
 {
-    public string[] UsingDirectives { get; }  
+    public string[]? UsingDirectives { get; }  
     public TrackableEntityAttribute(params string[] usingDirectives) 
         => this.UsingDirectives = usingDirectives;
 }
@@ -24,9 +25,9 @@ internal sealed class TrackableEntityAttribute : Attribute
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
 internal sealed class TrackableEntityTrackedPropertyAttribute : Attribute
 {
-    public TrackableEntityTrackedPropertyAttribute()
-    {
-    }
+    public bool IsManyToMany { get; }
+    public TrackableEntityTrackedPropertyAttribute(bool isManyToMany = false)
+        => this.IsManyToMany = isManyToMany;
 }
 [AttributeUsage(AttributeTargets.Property)]
 [System.Diagnostics.Conditional(""TrackableEntityGenerator_DEBUG"")]
@@ -258,28 +259,40 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 if (member is not PropertyDeclarationSyntax property) continue;
                 if (property.Identifier.Text is "TrackingState" or "ModifiedProperties" or "EntityIdentifier") continue;
                 var tracked = false;
+                var manyToMany = false;
                 if (property.AttributeLists.Count > 0)
                 {
                     var ignored = false;
                     foreach (var attribute in property.AttributeLists)
                     {
-                        var name = attribute.ToString();
-                        if (name == "[TrackableEntityPropertyIgnore]")
+                        if (!attribute.Attributes.Any()) continue;
+                        var name = attribute.Attributes[0].Name.ToString();
+                        if (name == "TrackableEntityPropertyIgnore")
                             ignored = true;
-                        if (name == "[TrackableEntityTrackedProperty]")
+                        if (name == "TrackableEntityTrackedProperty")
+                        {
                             tracked = true;
+                            if (attribute.Attributes[0].ArgumentList?.Arguments.ToString() == "true")
+                                manyToMany = true;
+                        }
                     }
                     if (ignored) continue;
                 }
                 modelOverride |= tracked;
                 var setter = (property.AccessorList?.Accessors.Count ?? 0) == 2;
-                var collection = property.Type.ToString().Contains("ICollection");
-                var baseType = collection ? property.Type.ToString().Substring(12, property.Type.ToString().Length - 13) : property.Type.ToString().TrimEnd('?');
+                var genericType = property.Type as GenericNameSyntax;
+                var collection = false;
+                var baseType = property.Type.ToString().TrimEnd('?');
+                if (genericType is not null)
+                {
+                    collection = new[] { "List", "ICollection", "IEnumerable" }.Contains(genericType.Identifier.Text);
+                    baseType = genericType.TypeArgumentList.Arguments[0].ToString();
+                }
                 var initializer = property.Initializer?.Value.ToFullString();
                 bool nullable = collection ? !tracked : property.Type is NullableTypeSyntax;
-                var jsonIgnored = property.Type is GenericNameSyntax || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
+                var jsonIgnored = genericType is not null || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
 
-                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, allowJsonIgnore, jsonIgnored));
+                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, allowJsonIgnore, jsonIgnored, manyToMany));
             }
             entities.Add(new ClientEntityToGenerate(className, modelOverride, properties));
         }
@@ -338,6 +351,7 @@ public partial interface IClientBase {{}}
 
     private static StringBuilder GenerateClientEntity(ClientEntityToGenerate entity)
     {
+        var manyToManyProperties = new List<string>();
         var sourcebuilder = new StringBuilder(@$"
 public partial class {entity.ClassName} : ClientBase, IClientBase
 {{
@@ -349,22 +363,27 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
             {
                 if (prop.Collection)
                 {
-                    sourcebuilder.Append($@"    private ChangeTrackingCollection<{prop.BaseType}> _{prop.Name} = new();
+                    sourcebuilder.AppendLine($@"    private ChangeTrackingCollection<{prop.BaseType}> _{prop.Name} = new();
     public ChangeTrackingCollection<{prop.BaseType}> {prop.Name}
     {{ 
         get => _{prop.Name}; 
         set
-        {{
-            if (Equals(_{prop.Name}, value)) return;
+        {{");
+
+                    if (prop.ManyToMany)
+                    {
+                        sourcebuilder.AppendLine($@"            value.Parent = this;");
+                        manyToManyProperties.Add(prop.Name);
+                    }
+                    sourcebuilder.AppendLine($@"            if (Equals(_{prop.Name}, value)) return;
             _{prop.Name} = value;
             NotifyPropertyChanged();
         }}
-    }}
-");
+    }}");
                 }
                 else
                 {
-                    sourcebuilder.Append($@"    private ChangeTrackingCollection<{prop.BaseType}>? {prop.Name}ChangeTracker {{ get; set; }}
+                    sourcebuilder.AppendLine($@"    private ChangeTrackingCollection<{prop.BaseType}>? {prop.Name}ChangeTracker {{ get; set; }}
     private {prop.BaseType}? _{prop.Name};
     public {prop.BaseType}? {prop.Name} 
     {{ 
@@ -377,8 +396,7 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
             NotifyPropertyChanged();
             OnPropertySet(nameof({prop.Name}), typeof({prop.BaseType}), value);
         }}
-    }}
-");
+    }}");
                 }
             }
             else
@@ -403,6 +421,16 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
     private {prop.BaseType}{n} _{prop.Name}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer}" )};");
                 }
             }
+        }
+        if (manyToManyProperties.Count > 0)
+        {
+            sourcebuilder.AppendLine($@"    public {entity.ClassName}() 
+    {{");
+            foreach (var prop in manyToManyProperties)
+            {
+                sourcebuilder.AppendLine($"        _{prop}.Parent = this;");
+            }
+            sourcebuilder.AppendLine("    }");
         }
         sourcebuilder.AppendLine("}");
         return sourcebuilder;
