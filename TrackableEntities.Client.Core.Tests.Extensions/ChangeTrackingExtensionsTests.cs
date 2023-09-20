@@ -994,7 +994,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         order.Customer!.CustomerSetting = new CustomerSetting
         {
-            CustomerId = order.CustomerId,
+            CustomerId = order.CustomerId!,
             Customer = order.Customer,
             Setting = "Setting1"
         };
@@ -1015,7 +1015,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         order.Customer!.CustomerSetting = new CustomerSetting
         {
-            CustomerId = order.CustomerId,
+            CustomerId = order.CustomerId!,
             Customer = order.Customer,
             Setting = "Setting1"
         };
@@ -1039,7 +1039,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         order.Customer!.CustomerSetting = new CustomerSetting
         {
-            CustomerId = order.CustomerId,
+            CustomerId = order.CustomerId!,
             Customer = order.Customer,
             Setting = "Setting1"
         };
