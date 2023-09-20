@@ -84,25 +84,6 @@ public static class DbContextExtensions
                             return;
                         }
                         break;
-                    case RelationshipType.ManyToMany:
-                        // If trackable is set modified, set entity state to unchanged before attaching.
-                        // this tells the skip navigation to be unchanged.
-                        if (trackable.TrackingState == TrackingState.Modified)
-                        {
-                            SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);                                
-                        }
-
-                        // If trackable is set deleted, set skip navigation as deleted.
-                        // then return return entity state to unchanged since it may be related to other entities.                            
-                        if (trackable.TrackingState == TrackingState.Deleted)
-                        {                                                 
-                            SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
-                            node.SourceEntry.Collection(node.InboundNavigation?.Name ?? string.Empty)?.Metadata?.GetCollectionAccessor()?
-                                .Remove(node.SourceEntry.Entity, node.Entry.Entity);                                        
-                            return;
-                        }
-                        break;
-
                 }
             }
             // Set entity state to tracking state
@@ -191,7 +172,6 @@ public static class DbContextExtensions
                 n.Entry.State = EntityState.Unchanged;
             foreach (var reference in n.Entry.References)
             {
-                Console.WriteLine(reference);
                 if (!reference.IsLoaded && reference.CurrentValue == null)
                     await reference.LoadAsync();
             }
