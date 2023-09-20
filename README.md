@@ -53,7 +53,7 @@ public class Product : ITrackable, IMergeable
 ```
 
 Server-side trackable entities can either be writen by hand or generated from an existing database using code-generation techniques. 
-This fork of Trackable Entities an incremental generator for client entities. In your project containing the server-side trackable entities, add a reference to the TackableEntities.IncrementalGenerator project.  Then modify that project file, add in the following:
+This fork of Trackable Entities has an incremental generator that can create client entities. In your project containing the server-side trackable entities, add a reference to the TackableEntities.IncrementalGenerator project.  Then modify that project file, add in the following:
 
 ```
  <PropertyGroup>
@@ -70,7 +70,8 @@ Also, for the TrackableEntities.IncrementalGenerator Project reference, Add Outp
    <ProjectReference Include="..\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 ```
 
-I'd suggest creating a client entity project, but you can add the generated client entities directly to your client project.  From this project, create link to the Generated\TrackableEntities.IncrementalGenerate\TrackableEntities.IncrementalGenrater.TrackableEntityGenerator\ClientTrackableEntities.gs file.
+I'd suggest creating a client entity project, but you can add the generated client entities directly to your client project.  From this project, create link to the Generated\TrackableEntities.IncrementalGenerate\TrackableEntities.IncrementalGenrater.TrackableEntityGenerator\ClientTrackableEntities.gs file.  Also, edit the project propertes and add USECLIENTENTITIES conditional compilation symbols for both Debug and Release builds.
+
 With this implementation, you also need to create another class file with the following:
 ```csharp
 public partial class ClientBase
