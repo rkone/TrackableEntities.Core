@@ -24,7 +24,8 @@ public class ClientEntityProperty
     public bool AllowJsonIgnore { get; }
     public bool JsonIgnored { get; }
     public bool Setter { get; }
-    public ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool allowJsonIgnore, bool jsonIgnored)
+    public bool ManyToMany { get; }
+    public ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool allowJsonIgnore, bool jsonIgnored, bool manyToMany)
     {
         Name = name;
         BaseType = baseType;
@@ -35,5 +36,6 @@ public class ClientEntityProperty
         Setter = setter;
         AllowJsonIgnore = allowJsonIgnore;
         JsonIgnored = jsonIgnored;
+        ManyToMany = manyToMany;
     }
 }
