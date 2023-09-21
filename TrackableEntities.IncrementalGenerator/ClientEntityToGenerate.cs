@@ -21,11 +21,12 @@ public class ClientEntityProperty
     public string? Initializer { get; }
     public bool Collection { get; }
     public bool Tracked { get; }    
-    public bool AllowJsonIgnore { get; }
+    public bool UseNewtonsoftJson { get; }
+    public bool UseSystemTextJson { get; }
     public bool JsonIgnored { get; }
     public bool Setter { get; }
     public bool ManyToMany { get; }
-    public ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool allowJsonIgnore, bool jsonIgnored, bool manyToMany)
+    public ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool useNewtonsoftJson, bool useSystemTextJson, bool jsonIgnored, bool manyToMany)
     {
         Name = name;
         BaseType = baseType;
@@ -34,7 +35,8 @@ public class ClientEntityProperty
         Collection = collection;
         Tracked = tracked;
         Setter = setter;
-        AllowJsonIgnore = allowJsonIgnore;
+        UseNewtonsoftJson = useNewtonsoftJson;
+        UseSystemTextJson = useSystemTextJson;
         JsonIgnored = jsonIgnored;
         ManyToMany = manyToMany;
     }

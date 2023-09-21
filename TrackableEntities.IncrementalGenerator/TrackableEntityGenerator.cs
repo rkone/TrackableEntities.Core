@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TrackableEntities.IncrementalGenerator;
@@ -46,7 +45,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         => this.UsingDirectives = usingDirectives;
 }";
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
-    
+
     // determine the namespace the class/enum/struct is declared in, if any
     static string GetNamespace(BaseTypeDeclarationSyntax syntax)
     {
@@ -112,7 +111,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
 
                 // Is the attribute the attributeName attribute?
                 if (fullName == attributeName)
-                {                                        
+                {
                     // return the enum
                     return classDeclarationSyntax;
                 }
@@ -128,7 +127,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         if (!Debugger.IsAttached)
         {
             //Debugger.Launch();
-        }        
+        }
 
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource("ClientTrackableEntitiesAttributes.g.cs", SourceText.From(attributeText, Encoding.UTF8)));
 
@@ -165,15 +164,15 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         {
             // nothing to do yet
             return;
-        }        
+        }
         // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
-        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();                
-        
+        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
+
         // Convert each ClassDeclarationSyntax to a ClientEntityToGenerate
         var baseNameSpace = GetNamespace(distinctClasses.First());
         //var useShared = distinctClasses.Any(c => c.AttributeLists.Any(al => al.Attributes.Any(a => a.ArgumentList?.Arguments.Count > 0 && a.ArgumentList.Arguments[0].ToString() == "true")));
         var usings = GetUsingDirectives("TrackableEntity", distinctClasses);
-        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, usings.Contains("Newtonsoft.Json") || usings.Contains("System.Text.Json.Serialization"), context.CancellationToken);
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, usings.Contains("Newtonsoft.Json"), usings.Contains("System.Text.Json.Serialization"), context.CancellationToken);
 
         // If there were errors in the ClassDeclarationSyntax, we won't create an
         // ClientEntityToGenerate for it, so make sure we have something to generate
@@ -224,7 +223,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
         var baseNameSpace = GetNamespace(distinctClasses.First());
         var usings = GetUsingDirectives("TrackableEntityCopy", distinctClasses);
-        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, false, context.CancellationToken);
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, false, false, context.CancellationToken);
 
         if (entitiesToGenerate.Count > 0)
         {
@@ -239,15 +238,15 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         }
     }
 
-    private static List<ClientEntityToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classDeclarationSyntaxes, bool allowJsonIgnore, CancellationToken cancellationToken)
+    private static List<ClientEntityToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classDeclarationSyntaxes, bool useNewtonsoftJson, bool useSytemTextJson, CancellationToken cancellationToken)
     {
         var entities = new List<ClientEntityToGenerate>();
         INamedTypeSymbol? classAttribute = compilation.GetTypeByMetadataName("TrackableEntityAttribute");
         if (classAttribute is null) return entities;
-        
+
         foreach (var classDeclarationSyntax in classDeclarationSyntaxes)
         {
-            cancellationToken.ThrowIfCancellationRequested();            
+            cancellationToken.ThrowIfCancellationRequested();
             SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
             if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol) continue;
 
@@ -292,7 +291,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 bool nullable = collection ? !tracked : property.Type is NullableTypeSyntax;
                 var jsonIgnored = genericType is not null || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
 
-                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, allowJsonIgnore, jsonIgnored, manyToMany));
+                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, useNewtonsoftJson, useSytemTextJson, jsonIgnored, manyToMany));
             }
             entities.Add(new ClientEntityToGenerate(className, modelOverride, properties));
         }
@@ -307,7 +306,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
 #if USECLIENTENTITIES
 using TrackableEntities.Client.Core;
 ");
-        
+
         foreach (var ns in namespaces ?? Array.Empty<string>())
         {
             res.AppendLine($"using {ns};");
@@ -316,7 +315,7 @@ using TrackableEntities.Client.Core;
 //Instructions: This file is auto-generated. Find the source in the {hostNamespace} project under:
 //Generated\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.TrackableEntityGenerator\ClientTrackableEntities.g.cs
 
-{(hostNamespace == string.Empty? string.Empty : $"namespace {hostNamespace}.Client;")}
+{(hostNamespace == string.Empty ? string.Empty : $"namespace {hostNamespace}.Client;")}
 public partial class ClientBase : EntityBase 
 {{
     protected partial void OnPropertySet(string propertyName, Type propertyType, object? value);
@@ -352,8 +351,7 @@ public partial interface IClientBase {{}}
     private static StringBuilder GenerateClientEntity(ClientEntityToGenerate entity)
     {
         var manyToManyProperties = new List<string>();
-        var sourcebuilder = new StringBuilder(@$"
-public partial class {entity.ClassName} : ClientBase, IClientBase
+        var sourcebuilder = new StringBuilder(@$"public partial class {entity.ClassName} : ClientBase, IClientBase
 {{
 ");
         foreach (var prop in entity.Properties)
@@ -401,10 +399,18 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
             }
             else
             {
-                if (prop.AllowJsonIgnore && (prop.JsonIgnored || !prop.Setter))
-                    sourcebuilder.AppendLine("    [JsonIgnore]");
+                if ((prop.JsonIgnored || !prop.Setter) && (prop.UseNewtonsoftJson || prop.UseSystemTextJson))
+                {
+                    if (prop.UseNewtonsoftJson && prop.UseSystemTextJson)
+                    {
+                        sourcebuilder.AppendLine("    [System.Text.Json.Serialization.JsonIgnore]");
+                        sourcebuilder.AppendLine("    [Newtonsoft.Json.JsonIgnore]");
+                    }
+                    else
+                        sourcebuilder.AppendLine("    [JsonIgnore]");
+                }
                 if (prop.Collection)
-                    sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");               
+                    sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
                 else
                 {
                     sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name}
@@ -418,7 +424,7 @@ public partial class {entity.ClassName} : ClientBase, IClientBase
             OnPropertySet(nameof({prop.Name}), typeof({prop.BaseType}), value);
         }}" : string.Empty)}
     }}
-    private {prop.BaseType}{n} _{prop.Name}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer}" )};");
+    private {prop.BaseType}{n} _{prop.Name}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer}")};");
                 }
             }
         }
@@ -445,10 +451,10 @@ public partial class {entity.ClassName}
         foreach (var prop in entity.Properties)
         {
             var n = prop.Nullable ? "?" : string.Empty;
-                if (prop.Collection)
-                    sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
-                else
-                    sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name} {{get; {(prop.Setter ? "set; " : string.Empty)}}}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer};")}");
+            if (prop.Collection)
+                sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
+            else
+                sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name} {{get; {(prop.Setter ? "set; " : string.Empty)}}}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer};")}");
         }
         sourcebuilder.AppendLine("}");
         return sourcebuilder;
