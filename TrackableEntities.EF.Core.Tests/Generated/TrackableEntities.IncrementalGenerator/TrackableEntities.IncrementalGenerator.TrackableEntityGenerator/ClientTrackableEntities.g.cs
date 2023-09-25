@@ -11,7 +11,6 @@ public partial class ClientBase : EntityBase
     protected partial void OnPropertySet(string propertyName, Type propertyType, object? value);
 }
 public partial interface IClientBase {}
-
 public partial class Child : ClientBase, IClientBase
 {
     public string Name
@@ -38,7 +37,6 @@ public partial class Child : ClientBase, IClientBase
         }
     }
 }
-
 public partial class Parent : ClientBase, IClientBase
 {
     public string Name
@@ -77,7 +75,6 @@ public partial class Parent : ClientBase, IClientBase
         }
     }
 }
-
 public partial class Area : ClientBase, IClientBase
 {
     public int AreaId
@@ -116,7 +113,6 @@ public partial class Area : ClientBase, IClientBase
         }
     }
 }
-
 public partial class Category : ClientBase, IClientBase
 {
     public int CategoryId
@@ -155,7 +151,6 @@ public partial class Category : ClientBase, IClientBase
         }
     }
 }
-
 public partial class Customer : ClientBase, IClientBase
 {
     public string CustomerId
@@ -224,7 +219,6 @@ public partial class Customer : ClientBase, IClientBase
         }
     }
 }
-
 public partial class CustomerSetting : ClientBase, IClientBase
 {
     public string CustomerId
@@ -266,7 +260,6 @@ public partial class CustomerSetting : ClientBase, IClientBase
         }
     }
 }
-
 public partial class Employee : ClientBase, IClientBase
 {
     public int EmployeeId
@@ -370,7 +363,6 @@ public partial class Employee : ClientBase, IClientBase
         _Territories.Parent = this;
     }
 }
-
 public partial class Order : ClientBase, IClientBase
 {
     public int OrderId
@@ -435,7 +427,6 @@ public partial class Order : ClientBase, IClientBase
         }
     }
 }
-
 public partial class OrderDetail : ClientBase, IClientBase
 {
     public int OrderDetailId
@@ -527,7 +518,6 @@ public partial class OrderDetail : ClientBase, IClientBase
     }
     private double _Quantity;
 }
-
 public partial class Product : ClientBase, IClientBase
 {
     public int ProductId
@@ -641,7 +631,6 @@ public partial class Product : ClientBase, IClientBase
     }
     private int? _ProductInfoKey2;
 }
-
 public partial class Territory : ClientBase, IClientBase
 {
     public string TerritoryId

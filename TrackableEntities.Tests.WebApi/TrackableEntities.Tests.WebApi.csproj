@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\Mocks\MockNorthwind.cs" Link="Services\MockNorthwind.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Area.cs" Link="NorthwindModels\Area.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Category.cs" Link="NorthwindModels\Category.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Customer.cs" Link="NorthwindModels\Customer.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\CustomerAddress.cs" Link="NorthwindModels\CustomerAddress.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\CustomerSetting.cs" Link="NorthwindModels\CustomerSetting.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Employee.cs" Link="NorthwindModels\Employee.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\HolidayPromo.cs" Link="NorthwindModels\HolidayPromo.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Order.cs" Link="NorthwindModels\Order.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\OrderDetail.cs" Link="NorthwindModels\OrderDetail.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Product.cs" Link="NorthwindModels\Product.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\ProductInfo.cs" Link="NorthwindModels\ProductInfo.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Promo.cs" Link="NorthwindModels\Promo.cs" />
+    <Compile Include="..\TrackableEntities.EF.Core.Tests\NorthwindModels\Territory.cs" Link="NorthwindModels\Territory.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="NorthwindModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrackableEntities.Common.Core\TrackableEntities.Common.Core.csproj" />
+    <ProjectReference Include="..\TrackableEntities.EF.Core\TrackableEntities.EF.Core.csproj" />
+    <ProjectReference Include="..\TrackableEntities.IncrementalGenerator\TrackableEntities.IncrementalGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>
