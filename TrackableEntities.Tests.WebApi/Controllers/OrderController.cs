@@ -53,7 +53,7 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Order>> PostOrder(Order order)
     {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid || string.IsNullOrWhiteSpace(order.CustomerId)) return BadRequest(ModelState);
         order.TrackingState = Common.Core.TrackingState.Added;
         _context.ApplyChanges(order);
         try
@@ -77,7 +77,7 @@ public class OrderController : ControllerBase
     public async Task<ActionResult<Order>> PutOrder(long id, Order order)
     {
         if (id != order.OrderId) return BadRequest();
-        if(!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         order.TrackingState = Common.Core.TrackingState.Modified;
         _context.ApplyChanges(order);
         try
