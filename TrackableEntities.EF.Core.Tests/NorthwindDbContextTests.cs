@@ -12,20 +12,20 @@ namespace TrackableEntities.EF.Core.Tests;
 
 [Collection("NorthwindDbContext")]
 public class NorthwindDbContextTests
-	{
-        private readonly NorthwindDbContextFixture _fixture;
+{
+    private readonly NorthwindDbContextFixture _fixture;
 
-        public NorthwindDbContextTests(NorthwindDbContextFixture fixture)
-        {
-            _fixture = fixture;
-            _fixture.Initialize();
-        }
+    public NorthwindDbContextTests(NorthwindDbContextFixture fixture)
+    {
+        _fixture = fixture;
+        _fixture.Initialize();
+    }
 
     #region Product: Single Entity
 
     [Fact]
-		public void Apply_Changes_Should_Mark_Product_Unchanged()
-		{
+    public void Apply_Changes_Should_Mark_Product_Unchanged()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var product = new Product { TrackingState = TrackingState.Unchanged };
@@ -33,36 +33,36 @@ public class NorthwindDbContextTests
         // Act
         context.ApplyChanges(product);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Product_Added()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Product_Added()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var product = new Product { TrackingState = TrackingState.Added };
         // Act
         context.ApplyChanges(product);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(product).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(product).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Product_Modified()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Product_Modified()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var product = new Product { TrackingState = TrackingState.Modified };
 
-			// Act
-			context.ApplyChanges(product);
+        // Act
+        context.ApplyChanges(product);
 
-			// Assert
-			Assert.Equal(EntityState.Modified, context.Entry(product).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Modified, context.Entry(product).State);
+    }
 
     [Fact]
     public void Apply_Changes_Should_Mark_Product_Property_Modified()
@@ -85,305 +85,305 @@ public class NorthwindDbContextTests
     }
 
     [Fact]
-		public void Apply_Changes_Should_Mark_Product_Deleted()
-		{
+    public void Apply_Changes_Should_Mark_Product_Deleted()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var product = new Product { TrackingState = TrackingState.Deleted };
 
-			// Act
-			context.ApplyChanges(product);
+        // Act
+        context.ApplyChanges(product);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(product).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(product).State);
+    }
 
-		#endregion
+    #endregion
 
-		#region Product: Multiple Entities
+    #region Product: Multiple Entities
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Products_Unchanged()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Products_Unchanged()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var products = new List<Product>
-			{
-				new Product {ProductId = 1}, 
-				new Product { ProductId = 2}
-			};
-			products.ForEach(p => p.TrackingState = TrackingState.Unchanged);
+            {
+                new Product {ProductId = 1},
+                new Product { ProductId = 2}
+            };
+        products.ForEach(p => p.TrackingState = TrackingState.Unchanged);
 
-			// Act
-			context.ApplyChanges(products);
+        // Act
+        context.ApplyChanges(products);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(products[1]).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(products[1]).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Products_Added()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Products_Added()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var products = new List<Product>
-			{
-				new Product {ProductId = 1}, 
-				new Product { ProductId = 2}
-			};
-			products.ForEach(p => p.TrackingState = TrackingState.Added);
+            {
+                new Product {ProductId = 1},
+                new Product { ProductId = 2}
+            };
+        products.ForEach(p => p.TrackingState = TrackingState.Added);
 
-			// Act
-			context.ApplyChanges(products);
+        // Act
+        context.ApplyChanges(products);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(products[0]).State);
-			Assert.Equal(EntityState.Added, context.Entry(products[1]).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(products[0]).State);
+        Assert.Equal(EntityState.Added, context.Entry(products[1]).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Products_Modified()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Products_Modified()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var products = new List<Product>
-			{
-				new Product {ProductId = 1}, 
-				new Product { ProductId = 2}
-			};
-			products.ForEach(p => p.TrackingState = TrackingState.Modified);
+            {
+                new Product {ProductId = 1},
+                new Product { ProductId = 2}
+            };
+        products.ForEach(p => p.TrackingState = TrackingState.Modified);
 
-			// Act
-			context.ApplyChanges(products);
+        // Act
+        context.ApplyChanges(products);
 
-			// Assert
-			Assert.Equal(EntityState.Modified, context.Entry(products[0]).State);
-			Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Modified, context.Entry(products[0]).State);
+        Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Products_Deleted()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Products_Deleted()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var products = new List<Product>
-			{
-				new Product {ProductId = 1}, 
-				new Product { ProductId = 2}
-			};
-			products.ForEach(p => p.TrackingState = TrackingState.Deleted);
+            {
+                new Product {ProductId = 1},
+                new Product { ProductId = 2}
+            };
+        products.ForEach(p => p.TrackingState = TrackingState.Deleted);
 
-			// Act
-			context.ApplyChanges(products);
+        // Act
+        context.ApplyChanges(products);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(products[0]).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(products[1]).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(products[0]).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(products[1]).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Products()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Products()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var products = new List<Product>
-			{
-				new Product { ProductId = 1}, 
-				new Product { ProductId = 2},
-				new Product { ProductId = 3},
-				new Product { ProductId = 4},
-			};
-			products[1].TrackingState = TrackingState.Modified;
-			products[2].TrackingState = TrackingState.Added;
-			products[3].TrackingState = TrackingState.Deleted;
+            {
+                new Product { ProductId = 1},
+                new Product { ProductId = 2},
+                new Product { ProductId = 3},
+                new Product { ProductId = 4},
+            };
+        products[1].TrackingState = TrackingState.Modified;
+        products[2].TrackingState = TrackingState.Added;
+        products[3].TrackingState = TrackingState.Deleted;
 
-			// Act
-			context.ApplyChanges(products);
+        // Act
+        context.ApplyChanges(products);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
-			Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
-			Assert.Equal(EntityState.Added, context.Entry(products[2]).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(products[3]).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
+        Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
+        Assert.Equal(EntityState.Added, context.Entry(products[2]).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(products[3]).State);
+    }
 
-		#endregion
+    #endregion
 
-		#region Order: One to Many
+    #region Order: One to Many
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Order_Unchanged()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Order_Unchanged()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-			var detail1 = order.OrderDetails[0];
-			var detail2 = order.OrderDetails[1];
-			var detail3 = order.OrderDetails[2];
-			var detail4 = order.OrderDetails[3];
+        var detail1 = order.OrderDetails[0];
+        var detail2 = order.OrderDetails[1];
+        var detail3 = order.OrderDetails[2];
+        var detail4 = order.OrderDetails[3];
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Order_Added()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Order_Added()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-			var detail1 = order.OrderDetails[0];
-			var detail2 = order.OrderDetails[1];
-			var detail3 = order.OrderDetails[2];
-			var detail4 = order.OrderDetails[3];
-			order.TrackingState = TrackingState.Added;
+        var detail1 = order.OrderDetails[0];
+        var detail2 = order.OrderDetails[1];
+        var detail3 = order.OrderDetails[2];
+        var detail4 = order.OrderDetails[3];
+        order.TrackingState = TrackingState.Added;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(order).State);
-			Assert.Equal(EntityState.Added, context.Entry(detail1).State);
-			Assert.Equal(EntityState.Added, context.Entry(detail2).State);
-			Assert.Equal(EntityState.Added, context.Entry(detail3).State);
-			Assert.Equal(EntityState.Added, context.Entry(detail4).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(order).State);
+        Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+        Assert.Equal(EntityState.Added, context.Entry(detail2).State);
+        Assert.Equal(EntityState.Added, context.Entry(detail3).State);
+        Assert.Equal(EntityState.Added, context.Entry(detail4).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Order_Deleted()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Order_Deleted()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-			order.CustomerId = null;
-			order.Customer = null;
-			var detail1 = order.OrderDetails[0];
-			var detail2 = order.OrderDetails[1];
-			var detail3 = order.OrderDetails[2];
-			var detail4 = order.OrderDetails[3];
-			order.TrackingState = TrackingState.Deleted;
+        order.CustomerId = null;
+        order.Customer = null;
+        var detail1 = order.OrderDetails[0];
+        var detail2 = order.OrderDetails[1];
+        var detail3 = order.OrderDetails[2];
+        var detail4 = order.OrderDetails[3];
+        order.TrackingState = TrackingState.Deleted;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(detail1).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(detail2).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(detail4).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(detail1).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(detail2).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(detail4).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Order_Only_Modified()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Order_Only_Modified()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-			var detail1 = order.OrderDetails[0];
-			var detail2 = order.OrderDetails[1];
-			var detail3 = order.OrderDetails[2];
-			var detail4 = order.OrderDetails[3];
-			order.TrackingState = TrackingState.Modified;
+        var detail1 = order.OrderDetails[0];
+        var detail2 = order.OrderDetails[1];
+        var detail3 = order.OrderDetails[2];
+        var detail4 = order.OrderDetails[3];
+        order.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Modified, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Modified, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Order_Details_Only_Modified()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Order_Details_Only_Modified()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-			var detail1 = order.OrderDetails[0];
-			var detail2 = order.OrderDetails[1];
-			var detail3 = order.OrderDetails[2];
-			var detail4 = order.OrderDetails[3];
-			detail1.TrackingState = TrackingState.Modified;
-			detail2.TrackingState = TrackingState.Modified;
-			detail3.TrackingState = TrackingState.Modified;
-			detail4.TrackingState = TrackingState.Modified;
+        var detail1 = order.OrderDetails[0];
+        var detail2 = order.OrderDetails[1];
+        var detail3 = order.OrderDetails[2];
+        var detail4 = order.OrderDetails[3];
+        detail1.TrackingState = TrackingState.Modified;
+        detail2.TrackingState = TrackingState.Modified;
+        detail3.TrackingState = TrackingState.Modified;
+        detail4.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail1).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail4).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail1).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail4).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Order_With_Details_Modified()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Order_With_Details_Modified()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-			var detail1 = order.OrderDetails[0];
-			var detail2 = order.OrderDetails[1];
-			var detail3 = order.OrderDetails[2];
-			var detail4 = order.OrderDetails[3];
-			order.TrackingState = TrackingState.Modified;
-			detail1.TrackingState = TrackingState.Modified;
-			detail2.TrackingState = TrackingState.Modified;
-			detail3.TrackingState = TrackingState.Modified;
-			detail4.TrackingState = TrackingState.Modified;
+        var detail1 = order.OrderDetails[0];
+        var detail2 = order.OrderDetails[1];
+        var detail3 = order.OrderDetails[2];
+        var detail4 = order.OrderDetails[3];
+        order.TrackingState = TrackingState.Modified;
+        detail1.TrackingState = TrackingState.Modified;
+        detail2.TrackingState = TrackingState.Modified;
+        detail3.TrackingState = TrackingState.Modified;
+        detail4.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Modified, context.Entry(order).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail1).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail4).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Modified, context.Entry(order).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail1).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail4).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Order_Unchanged_With_OrderDetails_Added_Modified_Deleted_Unchanged()
-		{
+    [Fact]
+    public void Apply_Changes_Should_Mark_Order_Unchanged_With_OrderDetails_Added_Modified_Deleted_Unchanged()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-			var detail1 = order.OrderDetails[0];
-		    detail1.OrderDetailId = 0;
-			var detail2 = order.OrderDetails[1];
-			var detail3 = order.OrderDetails[2];
-			var detail4 = order.OrderDetails[3];
-			detail1.TrackingState = TrackingState.Added;
-			detail2.TrackingState = TrackingState.Modified;
-			detail3.TrackingState = TrackingState.Deleted;
-			detail4.TrackingState = TrackingState.Unchanged;
+        var detail1 = order.OrderDetails[0];
+        detail1.OrderDetailId = 0;
+        var detail2 = order.OrderDetails[1];
+        var detail3 = order.OrderDetails[2];
+        var detail4 = order.OrderDetails[3];
+        detail1.TrackingState = TrackingState.Added;
+        detail2.TrackingState = TrackingState.Modified;
+        detail3.TrackingState = TrackingState.Deleted;
+        detail4.TrackingState = TrackingState.Unchanged;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-			Assert.Equal(EntityState.Added, context.Entry(detail1).State);
-			Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+        Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+        Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
+    }
 
     [Fact]
     public void Apply_Changes_Should_Mark_Order_Modified_With_OrderDetails_Added_Modified_Deleted_Unchanged()
@@ -469,7 +469,7 @@ public class NorthwindDbContextTests
         detail1.TrackingState = TrackingState.Added;
         detail2.TrackingState = TrackingState.Added;
         order.TrackingState = TrackingState.Modified;
-        order.ModifiedProperties = new List<string> {"OrderDate"};
+        order.ModifiedProperties = new List<string> { "OrderDate" };
 
         // Act
         context.ApplyChanges(order);
@@ -1029,12 +1029,12 @@ public class NorthwindDbContextTests
     #region Employee-Territory: Many to Many
 
     [Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_As_Unchanged()
-		{
+    public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_As_Unchanged()
+    {
         // Arrange
         var context = _fixture.GetContext();
         var nw = new MockNorthwind();
-			var employee = nw.Employees[0];
+        var employee = nw.Employees[0];
         var territory1 = employee.Territories[0];
         var territory2 = employee.Territories[1];
         var territory3 = employee.Territories[2];
@@ -1042,54 +1042,54 @@ public class NorthwindDbContextTests
         // Act
         context.ApplyChanges(employee);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
         Assert.Equal(EntityState.Unchanged, context.Entry(territory1!).State);
         Assert.Equal(EntityState.Unchanged, context.Entry(territory2!).State);
         Assert.Equal(EntityState.Unchanged, context.Entry(territory3!).State);
     }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Territories_As_Added_Modified()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var employee = nw.Employees[0];
-		    var territory1 = employee.Territories[0];
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Territories_As_Added_Modified()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var employee = nw.Employees[0];
+        var territory1 = employee.Territories[0];
         var territory2 = employee.Territories[1];
         territory1.TrackingState = TrackingState.Added;
-		    territory2.TrackingState = TrackingState.Modified;
+        territory2.TrackingState = TrackingState.Modified;
 
         // Act
         context.ApplyChanges(employee);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
         Assert.Equal(EntityState.Added, context.Entry(territory1).State);
         Assert.Equal(EntityState.Modified, context.Entry(territory2).State);
     }
 
-	    [Fact]
-	    public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Deleted_Territory_As_Unchanged()
-	    {
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Deleted_Territory_As_Unchanged()
+    {
         // NOTE: Deleting a related M-M entity will simply mark it as unchanged,
         // because it may have other related entities.
 
-	        // Arrange
-	        var context = _fixture.GetContext();
-	        var nw = new MockNorthwind();
-	        var employee = nw.Employees[0];
-	        var territory1 = employee.Territories[0];
-	        territory1.TrackingState = TrackingState.Deleted;
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var employee = nw.Employees[0];
+        var territory1 = employee.Territories[0];
+        territory1.TrackingState = TrackingState.Deleted;
 
-	        // Act
-	        context.ApplyChanges(employee);
+        // Act
+        context.ApplyChanges(employee);
 
-	        // Assert
-	        Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
-	        Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
-	    }
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+    }
 
     [Fact]
     public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_With_Modified_Area_As_Modified()
@@ -1122,71 +1122,71 @@ public class NorthwindDbContextTests
         Assert.Equal(EntityState.Modified, context.Entry(area).State);
     }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Unchanged_Territories_As_Unchanged()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var employee = nw.Employees[0];
-			employee.TrackingState = TrackingState.Added;
-		    var territory1 = employee.Territories[0];
-		    var territory2 = employee.Territories[1];
-		    var territory3 = employee.Territories[2];
-
-        // Act
-        context.ApplyChanges(employee);
-
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(employee).State);
-        Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
-        Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
-        Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
-    }
-
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Territories_As_Added_Modified()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var employee = nw.Employees[0];
-			employee.TrackingState = TrackingState.Added;
-		    var territory1 = employee.Territories[0];
-		    var territory2 = employee.Territories[1];
-		    territory1!.TrackingState = TrackingState.Added;
-		    territory2!.TrackingState = TrackingState.Modified;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Unchanged_Territories_As_Unchanged()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var employee = nw.Employees[0];
+        employee.TrackingState = TrackingState.Added;
+        var territory1 = employee.Territories[0];
+        var territory2 = employee.Territories[1];
+        var territory3 = employee.Territories[2];
 
         // Act
         context.ApplyChanges(employee);
 
         // Assert
-		    Assert.Equal(EntityState.Added, context.Entry(employee).State);
-		    Assert.Equal(EntityState.Added, context.Entry(territory1).State);
-		    Assert.Equal(EntityState.Modified, context.Entry(territory2).State);
-		}
+        Assert.Equal(EntityState.Added, context.Entry(employee).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Deleted_Territories_As_Unchanged()
-		{
-		    // NOTE: Deleting a related M-M entity will simply mark it as unchanged,
-		    // because it may have other related entities.
-			
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Territories_As_Added_Modified()
+    {
         // Arrange
         var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var employee = nw.Employees[0];
-			employee.TrackingState = TrackingState.Added;
-		    var territory1 = employee.Territories[0];
+        var nw = new MockNorthwind();
+        var employee = nw.Employees[0];
+        employee.TrackingState = TrackingState.Added;
+        var territory1 = employee.Territories[0];
+        var territory2 = employee.Territories[1];
+        territory1!.TrackingState = TrackingState.Added;
+        territory2!.TrackingState = TrackingState.Modified;
+
+        // Act
+        context.ApplyChanges(employee);
+
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(employee).State);
+        Assert.Equal(EntityState.Added, context.Entry(territory1).State);
+        Assert.Equal(EntityState.Modified, context.Entry(territory2).State);
+    }
+
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Deleted_Territories_As_Unchanged()
+    {
+        // NOTE: Deleting a related M-M entity will simply mark it as unchanged,
+        // because it may have other related entities.
+
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var employee = nw.Employees[0];
+        employee.TrackingState = TrackingState.Added;
+        var territory1 = employee.Territories[0];
         territory1!.TrackingState = TrackingState.Deleted;
 
         // Act
         context.ApplyChanges(employee);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(employee).State);
-		    Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(employee).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+    }
 
     [Fact]
     public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Unchanged_Territories_As_Unchanged()
@@ -1252,145 +1252,145 @@ public class NorthwindDbContextTests
         // Assert
         Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
         Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
-    }       
+    }
 
     #endregion
 
     #region Customer-CustomerSetting: One to One
 
     [Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Unchanged_Setting_As_Unchanged()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			var setting = customer.CustomerSetting = new CustomerSetting 
-				{ CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+    public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Unchanged_Setting_As_Unchanged()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        var setting = customer.CustomerSetting = new CustomerSetting
+        { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(setting).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Modified_Setting_As_Modified()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			var setting = customer.CustomerSetting = new CustomerSetting 
-				{ CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Modified;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Modified_Setting_As_Modified()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        var setting = customer.CustomerSetting = new CustomerSetting
+        { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.Equal(EntityState.Modified, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+        Assert.Equal(EntityState.Modified, context.Entry(setting).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Added_Setting_As_Added()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			var setting = customer.CustomerSetting = new CustomerSetting 
-				{ CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Added;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Added_Setting_As_Added()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        var setting = customer.CustomerSetting = new CustomerSetting
+        { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Added;
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.Equal(EntityState.Added, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+        Assert.Equal(EntityState.Added, context.Entry(setting).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Deleted_Setting_As_Deleted()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			var setting = customer.CustomerSetting = new CustomerSetting 
-				{ CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Deleted;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Deleted_Setting_As_Deleted()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        var setting = customer.CustomerSetting = new CustomerSetting
+        { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Deleted;
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Unchanged_Setting_As_Added()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			customer.TrackingState = TrackingState.Added;
-			var setting = customer.CustomerSetting = new CustomerSetting
-				{ CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Unchanged_Setting_As_Added()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        customer.TrackingState = TrackingState.Added;
+        var setting = customer.CustomerSetting = new CustomerSetting
+        { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(customer).State);
-			Assert.Equal(EntityState.Added, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(customer).State);
+        Assert.Equal(EntityState.Added, context.Entry(setting).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Modified_Setting_As_Added()
-		{
-			// NOTE: Because customer is added, modified setting will be added.
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Modified_Setting_As_Added()
+    {
+        // NOTE: Because customer is added, modified setting will be added.
 
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			customer.TrackingState = TrackingState.Added;
-			var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Modified;
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        customer.TrackingState = TrackingState.Added;
+        var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(customer).State);
-			Assert.Equal(EntityState.Added, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(customer).State);
+        Assert.Equal(EntityState.Added, context.Entry(setting).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Added_Setting_As_Added()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			customer.TrackingState = TrackingState.Added;
-			var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Added;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Added_Setting_As_Added()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        customer.TrackingState = TrackingState.Added;
+        var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Added;
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(customer).State);
-			Assert.Equal(EntityState.Added, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(customer).State);
+        Assert.Equal(EntityState.Added, context.Entry(setting).State);
+    }
 
     [Fact]
     public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Unchanged_Setting_Order_OrderDetail_As_Added()
@@ -1423,322 +1423,322 @@ public class NorthwindDbContextTests
         Assert.Equal(EntityState.Added, context.Entry(orderDetail).State);
     }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Customer_As_Modified_And_Deleted_Setting_As_Deleted()
-		{
-			// NOTE: Because customer is added, removing setting is ignored
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Customer_As_Modified_And_Deleted_Setting_As_Deleted()
+    {
+        // NOTE: Because customer is added, removing setting is ignored
 
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			customer.TrackingState = TrackingState.Added;
-			var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Deleted;
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        customer.TrackingState = TrackingState.Added;
+        var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Deleted;
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(customer).State);
-			Assert.Equal(EntityState.Added, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(customer).State);
+        Assert.Equal(EntityState.Added, context.Entry(setting).State);
+    }
 
     [Fact]
-		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			customer.TrackingState = TrackingState.Deleted;
-			var setting = customer.CustomerSetting = new CustomerSetting
-				{ CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+    public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        customer.TrackingState = TrackingState.Deleted;
+        var setting = customer.CustomerSetting = new CustomerSetting
+        { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
-		}
-
-    [Fact]
-		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			customer.TrackingState = TrackingState.Deleted;
-			var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Added;
-
-			// Act
-			context.ApplyChanges(customer);
-
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+    }
 
     [Fact]
-		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var customer = nw.Customers[0];
-			customer.TrackingState = TrackingState.Deleted;
-			var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
-			setting.TrackingState = TrackingState.Deleted;
+    public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        customer.TrackingState = TrackingState.Deleted;
+        var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Added;
 
-			// Act
-			context.ApplyChanges(customer);
+        // Act
+        context.ApplyChanges(customer);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
-			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+    }
 
-		#endregion
+    [Fact]
+    public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var customer = nw.Customers[0];
+        customer.TrackingState = TrackingState.Deleted;
+        var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId!, Setting = "Setting1", Customer = customer };
+        setting.TrackingState = TrackingState.Deleted;
 
-		#region Order-Customer: Many-to-One
+        // Act
+        context.ApplyChanges(customer);
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Unchanged_Customer_As_Unchanged()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			var customer = order.Customer;
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
+        Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+    }
 
-			// Act
-			context.ApplyChanges(order);
+    #endregion
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer!).State);
-		}
+    #region Order-Customer: Many-to-One
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Modified_Customer_As_Modified()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Modified;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Unchanged_Customer_As_Unchanged()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        var customer = order.Customer;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-			Assert.Equal(EntityState.Modified, context.Entry(customer).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer!).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Added_Customer_As_Added()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Added;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Modified_Customer_As_Modified()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-			Assert.Equal(EntityState.Added, context.Entry(customer).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+        Assert.Equal(EntityState.Modified, context.Entry(customer).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Deleted_Customer_As_Unchanged()
-		{
-			// NOTE: We ignore deletes of related M-1 entities to because it may be related
-			// to other entities.
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Added_Customer_As_Added()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Added;
 
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Deleted;
+        // Act
+        context.ApplyChanges(order);
 
-			// Act
-			context.ApplyChanges(order);
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+        Assert.Equal(EntityState.Added, context.Entry(customer).State);
+    }
 
-			// Assert
-			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
-		}
+    [Fact]
+    public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Deleted_Customer_As_Unchanged()
+    {
+        // NOTE: We ignore deletes of related M-1 entities to because it may be related
+        // to other entities.
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Unchanged_Customer_As_Unchanged()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Added;
-			var customer = order.Customer;
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Deleted;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer!).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Modified_Customer_As_Modified()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Added;
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Modified;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Unchanged_Customer_As_Unchanged()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Added;
+        var customer = order.Customer;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(order).State);
-			Assert.Equal(EntityState.Modified, context.Entry(customer).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer!).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Added_Customer_As_Added()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Added;
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Added;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Modified_Customer_As_Modified()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Added;
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(order).State);
-			Assert.Equal(EntityState.Added, context.Entry(customer).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(order).State);
+        Assert.Equal(EntityState.Modified, context.Entry(customer).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Deleted_Customer_As_Unchanged()
-		{
-			// NOTE: We ignore deletes of related M-1 entities to because it may be related
-			// to other entities.
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Added_Customer_As_Added()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Added;
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Added;
 
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Added;
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Deleted;
+        // Act
+        context.ApplyChanges(order);
 
-			// Act
-			context.ApplyChanges(order);
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(order).State);
+        Assert.Equal(EntityState.Added, context.Entry(customer).State);
+    }
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
-		}
+    [Fact]
+    public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Deleted_Customer_As_Unchanged()
+    {
+        // NOTE: We ignore deletes of related M-1 entities to because it may be related
+        // to other entities.
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Unchanged_Customer_As_Unchanged()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Deleted;
-			var customer = order.Customer;
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Added;
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Deleted;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer!).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Added, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Modified_Customer_As_Modified()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Deleted;
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Modified;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Unchanged_Customer_As_Unchanged()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Deleted;
+        var customer = order.Customer;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
-			Assert.Equal(EntityState.Modified, context.Entry(customer).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer!).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Added_Customer_As_Added()
-		{
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Deleted;
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Added;
+    [Fact]
+    public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Modified_Customer_As_Modified()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Deleted;
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Modified;
 
-			// Act
-			context.ApplyChanges(order);
+        // Act
+        context.ApplyChanges(order);
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
-			Assert.Equal(EntityState.Added, context.Entry(customer).State);
-		}
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+        Assert.Equal(EntityState.Modified, context.Entry(customer).State);
+    }
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Deleted_Customer_As_Unchanged()
-		{
-			// NOTE: We ignore deletes of related M-1 entities to because it may be related
-			// to other entities.
+    [Fact]
+    public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Added_Customer_As_Added()
+    {
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Deleted;
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Added;
 
-			// Arrange
-			var context = _fixture.GetContext();
-			var nw = new MockNorthwind();
-			var order = nw.Orders[0];
-			order.TrackingState = TrackingState.Deleted;
-			var customer = order.Customer;
-			customer!.TrackingState = TrackingState.Deleted;
+        // Act
+        context.ApplyChanges(order);
 
-			// Act
-			context.ApplyChanges(order);
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+        Assert.Equal(EntityState.Added, context.Entry(customer).State);
+    }
 
-			// Assert
-			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
-		}
+    [Fact]
+    public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Deleted_Customer_As_Unchanged()
+    {
+        // NOTE: We ignore deletes of related M-1 entities to because it may be related
+        // to other entities.
+
+        // Arrange
+        var context = _fixture.GetContext();
+        var nw = new MockNorthwind();
+        var order = nw.Orders[0];
+        order.TrackingState = TrackingState.Deleted;
+        var customer = order.Customer;
+        customer!.TrackingState = TrackingState.Deleted;
+
+        // Act
+        context.ApplyChanges(order);
+
+        // Assert
+        Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+        Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+    }
 
     #endregion
 
     #region OneToMany AcceptChanges Tests
-    
+
     [Fact]
     public void Accept_Changes_Should_Mark_Multiple_Orders_As_Unchanged()
     {
