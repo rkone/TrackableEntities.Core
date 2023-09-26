@@ -1,20 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TrackableEntities.EF.Core.Tests.NorthwindModels;
+﻿using TrackableEntities.EF.Core.Tests.NorthwindModels;
 using TrackableEntities.Tests.WebApi.Services;
-using Xunit;
 
 namespace TrackableEntities.Tests.Acceptance.Helpers;
 
 internal static class TestsHelper
 {
-    public static NorthwindTestDbContext CreateNorthwindDbContext(DbContextOptions<NorthwindTestDbContext> options)
-    {
-        // Create new context for all tests
-        var context = new NorthwindTestDbContext(options);
-        Assert.True(context.Products.Count() >= 0);
-        return context;
-    }
-
     public static void EnsureTestCustomer(this NorthwindTestDbContext context, string customerId, string customerName)
     {
         var customer = context.Customers
