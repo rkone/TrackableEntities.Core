@@ -24,7 +24,7 @@ public class CustomerController : ControllerBase
         return _context.Customers.AsAsyncEnumerable();
     }
 
-    // GET api/Customer/5
+    // GET api/Customer/ABCD
     [HttpGet("{id}")]
     public async Task<ActionResult<Customer>> GetCustomer(string id)
     {
@@ -56,7 +56,7 @@ public class CustomerController : ControllerBase
         return CreatedAtAction(nameof(GetCustomer), new { id = customer.CustomerId }, customer);
     }
 
-    // PUT api/Customer
+    // PUT api/Customer/ABCD
     [HttpPut("{id}")]
     public async Task<ActionResult<Customer>> PutCustomer(string id, Customer customer)
     {
