@@ -11,41 +11,41 @@ namespace TrackableEntities.Tests.Acceptance.Steps;
 public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private HttpClient _client = default!;
-    private readonly CustomWebApplicationFactory<Program> _factory = default!;
+    private readonly CustomWebApplicationFactory<Program> _factory;
     private readonly ScenarioContext _scenarioContext;
+    private IServiceScope _dbScope = default!;
 
     public BasicFeatureSteps(ScenarioContext scenarioContext, CustomWebApplicationFactory<Program> factory)
     {
-        _scenarioContext = scenarioContext;            
+        _scenarioContext = scenarioContext;
         _factory = factory;
     }
 
     [BeforeScenario]
     public void Setup()
     {
-        _client = _factory.CreateClient();            
+        _client = _factory.CreateClient();
+        _dbScope = _factory.Services.CreateScope();
     }
 
     [AfterScenario]
     public void TearDown()
     {
         _client.Dispose();
+        _dbScope.Dispose();
     }
 
     [Given(@"the following customers")]
     public void GivenTheFollowingCustomers(Table table)
     {
         var custIds = new List<string>();
-        using (var scope = _factory.Services.CreateScope())
+        var context = _dbScope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
+        foreach (var row in table.Rows)
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
-            foreach (var row in table.Rows)
-            {
-                string custId = row["CustomerId"];
-                string custName = row["CustomerName"];
-                dbContext.EnsureTestCustomer(custId, custName);
-                custIds.Add(custId);
-            }
+            string custId = row["CustomerId"];
+            string custName = row["CustomerName"];
+            context.EnsureTestCustomer(custId, custName);
+            custIds.Add(custId);
         }
         _scenarioContext.Add("CustIds", custIds);
     }
@@ -54,16 +54,13 @@ public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Progr
     public void GivenTheFollowingOrders(Table table)
     {
         var orders = new List<Order>();
-        using (var scope = _factory.Services.CreateScope())
+        var context = _dbScope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
+        foreach (var row in table.Rows)
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
-            foreach (var row in table.Rows)
-            {
-                string custId = row["CustomerId"];
-                dbContext.EnsureTestCustomer(custId, "Test Customer " + custId);
-                var order = dbContext.EnsureTestOrder(custId);
-                orders.Add(order.ToClientEntity()!);
-            }
+            string custId = row["CustomerId"];
+            context.EnsureTestCustomer(custId, "Test Customer " + custId);
+            var order = context.EnsureTestOrder(custId);
+            orders.Add(order.ToClientEntity()!);
         }
         _scenarioContext.Add("CustOrders", orders);
     }
@@ -72,17 +69,15 @@ public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Progr
     public void GivenTheFollowingNewCustomerOrders(Table table)
     {
         var orders = new List<Order>();
-        using (var scope = _factory.Services.CreateScope())
+        var context = _dbScope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
+        foreach (var row in table.Rows)
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
-            foreach (var row in table.Rows)
-            {
-                string custId = row["CustomerId"];
-                int[] productIds = dbContext.CreateTestProducts();
-                _scenarioContext.Add("ProductIds", productIds);
-                var clientOrder = EntityExtensions.CreateNewOrder(custId, productIds);
-                orders.Add(clientOrder);
-            }
+            string custId = row["CustomerId"];
+            context.EnsureTestCustomer(custId, "Test Customer " + custId);
+            int[] productIds = context.CreateTestProducts();
+            _scenarioContext.Add("ProductIds", productIds);
+            var clientOrder = EntityExtensions.CreateNewOrder(custId, productIds);
+            orders.Add(clientOrder);
         }
         _scenarioContext.Add("NewCustOrders", orders);
     }
@@ -91,18 +86,15 @@ public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Progr
     public void GivenTheFollowingExistingCustomerOrders(Table table)
     {
         var orders = new List<Order>();
-        using (var scope = _factory.Services.CreateScope())
+        var context = _dbScope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
+        foreach (var row in table.Rows)
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<NorthwindTestDbContext>();
-            foreach (var row in table.Rows)
-            {
-                string custId = row["CustomerId"];
-                dbContext.EnsureTestCustomer(custId, "Test Customer " + custId);
-                int[] productIds = dbContext.CreateTestProducts();
-                _scenarioContext.Add("ProductIds", productIds);
-                var order = dbContext.CreateTestOrder(custId, productIds);
-                orders.Add(order.ToClientEntity()!);
-            }
+            string custId = row["CustomerId"];
+            context.EnsureTestCustomer(custId, "Test Customer " + custId);
+            int[] productIds = context.CreateTestProducts();
+            _scenarioContext.Add("ProductIds", productIds);
+            var order = context.CreateTestOrder(custId, productIds);
+            orders.Add(order.ToClientEntity()!);
         }
         _scenarioContext.Add("ExistingCustOrders", orders);
     }
@@ -164,9 +156,9 @@ public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Progr
 
     [When(@"I submit a GET request for customer orders")]
     public void WhenISubmitGetRequestForCustomerOrders()
-    {        
+    {
         var order = _scenarioContext.Get<List<Order>>("CustOrders").First();
-        _scenarioContext.Add("CustomerOrdersResult", _client.GetEntitiesByKey<Order, string>("customerId", order?.CustomerId!));        
+        _scenarioContext.Add("CustomerOrdersResult", _client.GetEntitiesByKey<Order, string>("customerId", order?.CustomerId!));
     }
 
     [When(@"I submit a GET request for an order")]
@@ -201,7 +193,7 @@ public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Progr
         var orderResult = _client.UpdateEntity(changedOrder, changedOrder.OrderId);
         Assert.NotNull(orderResult);
         changeTracker.MergeChanges(orderResult);
-        _scenarioContext.Add("CustomerOrdersResult", new List<Order>{ clientOrder});
+        _scenarioContext.Add("CustomerOrdersResult", new List<Order> { clientOrder });
     }
 
     [When(@"I submit a DELETE to delete an order")]
@@ -210,7 +202,7 @@ public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Progr
         var clientOrder = _scenarioContext.Get<List<Order>>("ExistingCustOrders").First();
         _client.DeleteEntity<Order, int>(clientOrder.OrderId);
     }
-    
+
     [Then(@"the request should return the customers")]
     public void ThenTheRequestShouldReturnTheCustomers()
     {
@@ -265,7 +257,7 @@ public class BasicFeatureSteps : IClassFixture<CustomWebApplicationFactory<Progr
         Assert.Contains(updatedOrder.OrderDetails, d => d.ProductId == addedDetail1.ProductId);
         Assert.Contains(updatedOrder.OrderDetails, d => d.ProductId == addedDetail2.ProductId);
     }
-    
+
     [Then(@"the order should be deleted")]
     public void ThenTheOrderShouldBeDeleted()
     {
