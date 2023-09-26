@@ -81,13 +81,14 @@ namespace TrackableEntities.Tests.Acceptance.Features
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Create Customer Setting")]
+        [Xunit.SkippableFactAttribute(DisplayName="Create Customer Setting", Skip="Ignored")]
         [Xunit.TraitAttribute("FeatureTitle", "OneToOne Relations")]
         [Xunit.TraitAttribute("Description", "Create Customer Setting")]
         [Xunit.TraitAttribute("Category", "entity_relations")]
         public void CreateCustomerSetting()
         {
             string[] tagsOfScenario = new string[] {
+                    "ignore",
                     "entity_relations"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Customer Setting", null, tagsOfScenario, argumentsOfScenario, featureTags);
@@ -108,10 +109,10 @@ this.ScenarioInitialize(scenarioInfo);
                             "IJKL",
                             "Acme Company"});
 #line 8
- testRunner.Given("the following new customer", ((string)(null)), table1, "Given ");
+ testRunner.Given("the following new customers", ((string)(null)), table1, "Given ");
 #line hidden
 #line 11
- testRunner.When("I submit a POST to create a customer", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I submit POSTs to create customers", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 12
  testRunner.And("I add a customer setting", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

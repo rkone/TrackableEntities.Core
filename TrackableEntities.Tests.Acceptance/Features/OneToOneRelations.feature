@@ -5,10 +5,10 @@
 
 @ignore @entity_relations
 Scenario: Create Customer Setting
-	Given the following new customer
+	Given the following new customers
 	| CustomerId | CustomerName |
 	| IJKL       | Acme Company |
-	When I submit a POST to create a customer
+	When I submit POSTs to create customers
 	And I add a customer setting
 	And I submit a PUT to update the customer
 	Then the request should return the new customer
