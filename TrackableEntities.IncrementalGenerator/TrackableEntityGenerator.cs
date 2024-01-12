@@ -454,7 +454,7 @@ public partial class {entity.ClassName}
             if (prop.Collection)
                 sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
             else
-                sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name} {{get; {(prop.Setter ? "set; " : string.Empty)}}}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer};")}");
+                sourcebuilder.AppendLine($@"    public {prop.BaseType}{n} {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}{(prop.Initializer is null ? string.Empty : $" = {prop.Initializer};")}");
         }
         sourcebuilder.AppendLine("}");
         return sourcebuilder;
