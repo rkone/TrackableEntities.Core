@@ -15,7 +15,9 @@ public static class DbContextExtensions
     /// </summary>
     /// <param name="context">Used to query and save changes to a database</param>
     /// <param name="item">Object that implements ITrackable</param>
-    public static void ApplyChanges(this DbContext context, ITrackable item)
+    /// <param name="onApplyEntity">Action that allows modification of ITrackable entities before saving, ie to apply Modified/Created dates or users</param>
+    /// <param name="applyData">Data to be applied to the ITrackable entity by onApplyEntity</param>
+    public static void ApplyChanges(this DbContext context, ITrackable item, Action<ITrackable, object?>? onApplyEntity = null, object? applyData = null)
     {
         // Detach root entity
         context.Entry(item).State = EntityState.Detached;
@@ -25,6 +27,9 @@ public static class DbContextExtensions
         {
             // Exit if not ITrackable
             if (node.Entry.Entity is not ITrackable trackable) return;
+
+            // Allow caller to modify entity before saving
+            onApplyEntity?.Invoke(trackable, applyData);
 
             // Detach node entity
             node.Entry.State = EntityState.Detached;
@@ -49,13 +54,13 @@ public static class DbContextExtensions
                         else
                         {
                             SetEntityState(node.Entry, trackable.TrackingState.ToEntityState(), trackable);
-                        }
+                        }                        
                         return;
                     case RelationshipType.ManyToOne:
                         // If parent is added set to added
                         if (node.SourceEntry.State == EntityState.Added)
                         {
-                            SetEntityState(node.Entry, TrackingState.Added.ToEntityState(), trackable);
+                            SetEntityState(node.Entry, TrackingState.Added.ToEntityState(), trackable);                            
                             return;
                         }
                         // If parent is deleted set to deleted
