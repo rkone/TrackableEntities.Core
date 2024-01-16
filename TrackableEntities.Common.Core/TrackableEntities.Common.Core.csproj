@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	<ImplicitUsings>enable</ImplicitUsings>
 	<Nullable>enable</Nullable>
     <PackageId>TrackableEntities.Common.Core</PackageId>
-    <PackageVersion>7.0.0</PackageVersion>
+    <PackageVersion>8.0.0</PackageVersion>
     <Authors>Tony Sneed</Authors>
 	<Company>Tony Sneed</Company>
     <Title>Trackable Entities Common</Title>
