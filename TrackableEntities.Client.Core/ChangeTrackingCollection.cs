@@ -16,7 +16,7 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
     where TEntity : class, ITrackable, INotifyPropertyChanged
 {
     // Deleted entities cache
-    private readonly Collection<TEntity> _deletedEntities = new();
+    private readonly Collection<TEntity> _deletedEntities = [];
 
     /// <summary>
     /// Event for when an entity in the collection has changed its tracking state.
@@ -292,14 +292,14 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
 
         private class EntityChangedInfo
         {
-            public readonly HashSet<PropertyInfo> RefNavPropUnchanged = new();
+            public readonly HashSet<PropertyInfo> RefNavPropUnchanged = [];
 
-            public readonly Dictionary<PropertyInfo, HashSet<ITrackable>> ColNavPropChangedEntities = new();
+            public readonly Dictionary<PropertyInfo, HashSet<ITrackable>> ColNavPropChangedEntities = [];
         }
 
         private class Wrapper : ITrackable
         {
-            [JsonProperty] public ChangeTrackingCollection<TEntity> Result { get; set; } = new();
+            [JsonProperty] public ChangeTrackingCollection<TEntity> Result { get; set; } = [];
 
             public TrackingState TrackingState { get; set; }
 
@@ -418,7 +418,7 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
                                     ObjectReferenceEqualityComparer<ITrackable>.Default);
 
                                 // Set flag for downstream changes
-                                hasDownstreamChanges |= trackingCollChanges.Any();
+                                hasDownstreamChanges |= trackingCollChanges.Count != 0;
 
                                 // Memorize only changed items of collection
                                 EntityInfo(item).ColNavPropChangedEntities[colProp.Property] = trackingCollChanges;

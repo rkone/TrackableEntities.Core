@@ -1,43 +1,23 @@
 ﻿namespace TrackableEntities.IncrementalGenerator;
 
-public class ClientEntityToGenerate
+public class ClientEntityToGenerate(string className, bool modelOverride, IEnumerable<ClientEntityProperty> properties)
 {
-    public string ClassName { get; }
-    public bool ModelOverride { get; }
-    public IEnumerable<ClientEntityProperty> Properties { get; }
-    public ClientEntityToGenerate(string className, bool modelOverride, IEnumerable<ClientEntityProperty> properties)
-    {
-        ClassName = className;
-        ModelOverride = modelOverride;
-        Properties = properties;
-    }
+    public string ClassName { get; } = className;
+    public bool ModelOverride { get; } = modelOverride;
+    public IEnumerable<ClientEntityProperty> Properties { get; } = properties;
 }
 
-public class ClientEntityProperty
+public class ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool useNewtonsoftJson, bool useSystemTextJson, bool jsonIgnored, bool manyToMany)
 {
-    public string Name { get; }
-    public string BaseType { get; }
-    public bool Nullable { get; }
-    public string? Initializer { get; }
-    public bool Collection { get; }
-    public bool Tracked { get; }    
-    public bool UseNewtonsoftJson { get; }
-    public bool UseSystemTextJson { get; }
-    public bool JsonIgnored { get; }
-    public bool Setter { get; }
-    public bool ManyToMany { get; }
-    public ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool useNewtonsoftJson, bool useSystemTextJson, bool jsonIgnored, bool manyToMany)
-    {
-        Name = name;
-        BaseType = baseType;
-        Nullable = nullable;
-        Initializer = initializer;
-        Collection = collection;
-        Tracked = tracked;
-        Setter = setter;
-        UseNewtonsoftJson = useNewtonsoftJson;
-        UseSystemTextJson = useSystemTextJson;
-        JsonIgnored = jsonIgnored;
-        ManyToMany = manyToMany;
-    }
+    public string Name { get; } = name;
+    public string BaseType { get; } = baseType;
+    public bool Nullable { get; } = nullable;
+    public string? Initializer { get; } = initializer;
+    public bool Collection { get; } = collection;
+    public bool Tracked { get; } = tracked;
+    public bool UseNewtonsoftJson { get; } = useNewtonsoftJson;
+    public bool UseSystemTextJson { get; } = useSystemTextJson;
+    public bool JsonIgnored { get; } = jsonIgnored;
+    public bool Setter { get; } = setter;
+    public bool ManyToMany { get; } = manyToMany;
 }

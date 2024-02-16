@@ -257,7 +257,7 @@ public static class ChangeTrackingExtensions
         }
 
         // Nothing to do?
-        if (!actions.Any()) return;
+        if (actions.Count == 0) return;
 
         // Turn off change-tracking
         bool isTracking = changeTracker.Tracking;

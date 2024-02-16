@@ -57,7 +57,7 @@ public static class JsonExtensions
         if (method == null)
             return null;
         var myMethod = typeof(JsonExtensions).GetMethod(nameof(CreateGetterGeneric), BindingFlags.NonPublic | BindingFlags.Static)!;
-        return (Func<object, object?>)myMethod.MakeGenericMethod(new[] { type, method.ReturnType }).Invoke(null, new[] { method })!;
+        return (Func<object, object?>)myMethod.MakeGenericMethod([type, method.ReturnType]).Invoke(null, new[] { method })!;
     }
 
     static Func<object, object?> CreateGetterGeneric<TObject, TValue>(MethodInfo method)
@@ -88,7 +88,7 @@ public static class JsonExtensions
         if (method == null)
             return null;
         var myMethod = typeof(JsonExtensions).GetMethod(nameof(CreateSetterGeneric), BindingFlags.NonPublic | BindingFlags.Static)!;
-        return (Action<object, object?>)myMethod.MakeGenericMethod(new[] { type, method.GetParameters().Single().ParameterType }).Invoke(null, new[] { method })!;
+        return (Action<object, object?>)myMethod.MakeGenericMethod([type, method.GetParameters().Single().ParameterType]).Invoke(null, new[] { method })!;
     }
 
     static Action<object, object?>? CreateSetterGeneric<TObject, TValue>(MethodInfo method)
@@ -100,7 +100,7 @@ public static class JsonExtensions
             // TODO: find a performant way to do this.  Possibilities:
             // Box<T> from Microsoft.Toolkit.HighPerformance
             // https://stackoverflow.com/questions/18937935/how-to-mutate-a-boxed-struct-using-il
-            return (o, v) => method.Invoke(o, new[] { v });
+            return (o, v) => method.Invoke(o, [v]);
         }
         else
         {

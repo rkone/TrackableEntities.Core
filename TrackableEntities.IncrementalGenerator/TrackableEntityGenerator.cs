@@ -193,7 +193,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
     //compile all using directives for the attribute
     private static IEnumerable<string> GetUsingDirectives(string attributeName, IEnumerable<ClassDeclarationSyntax> source)
     {
-        List<string> usings = new();
+        List<string> usings = [];
         foreach (var classSyntax in source)
         {
             foreach (var attributeList in classSyntax.AttributeLists)

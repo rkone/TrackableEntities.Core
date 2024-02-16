@@ -509,7 +509,7 @@ public static class TrackableExtensions
     private class CollectionSerializationHelper<T>
     {
         [JsonProperty]
-        public List<T> Result = new();// Enumerable.Empty<T>();
+        public List<T> Result = [];// Enumerable.Empty<T>();
     }
 
     internal static T CloneObject<T>(T item, IContractResolver? contractResolver = null, CloneMethod cloneMethod = CloneMethodSetting.Default)
