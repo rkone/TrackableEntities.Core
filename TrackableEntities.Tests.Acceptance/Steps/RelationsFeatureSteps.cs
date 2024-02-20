@@ -9,18 +9,12 @@ using Xunit;
 namespace TrackableEntities.Tests.Acceptance.Steps;
 
 [Binding]
-public class RelationsFeatureSteps : IClassFixture<CustomWebApplicationFactory<Program>>
+public class RelationsFeatureSteps(ScenarioContext scenarioContext, CustomWebApplicationFactory<Program> factory) : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private HttpClient _client = default!;
-    private readonly CustomWebApplicationFactory<Program> _factory = default!;
-    private readonly ScenarioContext _scenarioContext;
+    private readonly CustomWebApplicationFactory<Program> _factory = factory;
+    private readonly ScenarioContext _scenarioContext = scenarioContext;
     private IServiceScope _dbScope = default!;
-
-    public RelationsFeatureSteps(ScenarioContext scenarioContext, CustomWebApplicationFactory<Program> factory)
-    {
-        _scenarioContext = scenarioContext;
-        _factory = factory;
-    }
 
     [BeforeScenario]
     public void Setup()

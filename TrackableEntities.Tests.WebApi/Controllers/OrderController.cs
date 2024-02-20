@@ -9,13 +9,9 @@ namespace TrackableEntities.Tests.Acceptance.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class OrderController : ControllerBase
+public class OrderController(NorthwindTestDbContext context) : ControllerBase
 {
-    private readonly NorthwindTestDbContext _context;
-    public OrderController(NorthwindTestDbContext context)
-    {
-        _context = context;
-    }
+    private readonly NorthwindTestDbContext _context = context;
 
     // GET api/Order
     [HttpGet]
