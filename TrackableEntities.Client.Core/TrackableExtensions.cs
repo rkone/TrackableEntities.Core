@@ -211,14 +211,9 @@ public static class TrackableExtensions
     /// DefaultNavigationPropertyInspector simply loops over all entity properties
     /// and yields those, whose values are either ITrackable or IEnumerable&lt;ITrackable&gt;.
     /// </summary>
-    private sealed class DefaultNavigationPropertyInspector : INavigationPropertyInspector
+    private sealed class DefaultNavigationPropertyInspector(ITrackable entity) : INavigationPropertyInspector
     {
-        private readonly ITrackable Entity;
-
-        public DefaultNavigationPropertyInspector(ITrackable entity)
-        {
-            Entity = entity;
-        }
+        private readonly ITrackable Entity = entity;
 
         public IEnumerable<EntityNavigationProperty> GetNavigationProperties()
         {

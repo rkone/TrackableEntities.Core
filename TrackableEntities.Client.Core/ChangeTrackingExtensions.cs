@@ -42,7 +42,7 @@ public static class ChangeTrackingExtensions
             where TEntity : class, ITrackable, IIdentifiable, INotifyPropertyChanged
     {
         // Check for no items
-        if (updatedItems == null) throw new ArgumentNullException(nameof(updatedItems));
+        ArgumentNullException.ThrowIfNull(updatedItems);
 
         // Recursively set tracking state for child collections
         changeTracker.MergeChanges(updatedItems, null);
@@ -80,7 +80,7 @@ public static class ChangeTrackingExtensions
                 {
                     if (refProp.EntityReference is null) continue;
                     ITrackingCollection? refPropChangeTracker = origItem.GetRefPropertyChangeTracker(navProp.Property?.Name);
-                    refPropChangeTracker?.MergeChanges(new[] { refProp.EntityReference }, visitationHelper, true);
+                    refPropChangeTracker?.MergeChanges([refProp.EntityReference], visitationHelper, true);
                 }
 
                 // Set 1-M and M-M properties

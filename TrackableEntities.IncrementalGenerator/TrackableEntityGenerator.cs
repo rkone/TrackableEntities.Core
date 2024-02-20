@@ -307,7 +307,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
 using TrackableEntities.Client.Core;
 ");
 
-        foreach (var ns in namespaces ?? Array.Empty<string>())
+        foreach (var ns in namespaces ?? [])
         {
             res.AppendLine($"using {ns};");
         }
@@ -333,7 +333,7 @@ public partial interface IClientBase {{}}
         res.Append(@"#nullable enable
 #if USECLIENTENTITIES
 ");
-        foreach (var ns in namespaces ?? Array.Empty<string>())
+        foreach (var ns in namespaces ?? [])
         {
             res.AppendLine($"using {ns};");
         }

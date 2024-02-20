@@ -38,7 +38,7 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
     public ChangeTrackingCollection(bool enableTracking)
     {
         // Initialize excluded properties
-        ExcludedProperties = new List<string>();
+        ExcludedProperties = [];
 
         // Enable or disable tracking
         Tracking = enableTracking;
@@ -64,7 +64,7 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
     public ChangeTrackingCollection(IEnumerable<TEntity> entities, bool disableTracking = false)
     {
         // Initialize excluded properties
-        ExcludedProperties = new List<string>();
+        ExcludedProperties = [];
 
         // Add items to the change tracking list
         foreach (TEntity item in entities)
@@ -165,7 +165,7 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
                 if (entity.TrackingState == TrackingState.Unchanged
                     || entity.TrackingState == TrackingState.Modified)
                 {
-                    entity.ModifiedProperties ??= new HashSet<string>();
+                    entity.ModifiedProperties ??= [];
                     entity.ModifiedProperties.Add(e.PropertyName);
                 }
             }
@@ -465,11 +465,11 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
             return property;
         }
 
-        private class CollectionValueProvider : IValueProvider
+        private class CollectionValueProvider(ChangeTrackingCollection<TEntity>.CloneChangesHelper resolver, MemberInfo member, IValueProvider valueProvider) : IValueProvider
         {
-            private readonly IValueProvider _valueProvider;
-            private readonly MemberInfo _member;
-            private readonly CloneChangesHelper _resolver;
+            private readonly IValueProvider _valueProvider = valueProvider;
+            private readonly MemberInfo _member = member;
+            private readonly CloneChangesHelper _resolver = resolver;
             private static readonly MethodInfo _genericCast;
 
             static CollectionValueProvider()
@@ -477,13 +477,6 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
                 Func<IEnumerable<ITrackable>, object> func = CastResult<int>;
                 _genericCast = PortableReflectionHelper.Instance.GetMethodInfo(func)
                     .GetGenericMethodDefinition();
-            }
-
-            public CollectionValueProvider(CloneChangesHelper resolver, MemberInfo member, IValueProvider valueProvider)
-            {
-                _resolver = resolver;
-                _member = member;
-                _valueProvider = valueProvider;
             }
 
             public void SetValue(object target, object? value)

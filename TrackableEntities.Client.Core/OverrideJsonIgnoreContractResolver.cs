@@ -62,8 +62,7 @@ public static class JsonExtensions
 
     static Func<object, object?> CreateGetterGeneric<TObject, TValue>(MethodInfo method)
     {
-        if (method == null)
-            throw new ArgumentNullException(nameof(method));
+        ArgumentNullException.ThrowIfNull(method);
         if (typeof(TObject).IsValueType)
         {
             // https://stackoverflow.com/questions/4326736/how-can-i-create-an-open-delegate-from-a-structs-instance-method
@@ -93,8 +92,7 @@ public static class JsonExtensions
 
     static Action<object, object?>? CreateSetterGeneric<TObject, TValue>(MethodInfo method)
     {
-        if (method == null)
-            throw new ArgumentNullException(nameof(method));
+        ArgumentNullException.ThrowIfNull(method);
         if (typeof(TObject).IsValueType)
         {
             // TODO: find a performant way to do this.  Possibilities:

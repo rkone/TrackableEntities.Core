@@ -92,22 +92,17 @@ public abstract class EntityNavigationProperty
 /// <summary>
 /// Represents an entity reference property (1-1 or M-1) of a default type 'ITrackable'.
 /// </summary>
-public class EntityReferenceProperty : EntityNavigationProperty
+/// <remarks>
+/// Creates a new EntityReferenceProperty.
+/// </remarks>
+/// <param name="propertyInfo">Property information</param>
+/// <param name="entityReference">Entity reference value</param>
+public class EntityReferenceProperty(PropertyInfo? propertyInfo, ITrackable? entityReference) : EntityNavigationProperty(propertyInfo)
 {
     /// <summary>
     /// Entity reference value
     /// </summary>
-    public ITrackable? EntityReference { get; private set; }
-
-    /// <summary>
-    /// Creates a new EntityReferenceProperty.
-    /// </summary>
-    /// <param name="propertyInfo">Property information</param>
-    /// <param name="entityReference">Entity reference value</param>
-    public EntityReferenceProperty(PropertyInfo? propertyInfo, ITrackable? entityReference) : base(propertyInfo)
-    {
-        EntityReference = entityReference;
-    }
+    public ITrackable? EntityReference { get; private set; } = entityReference;
 
     /// <summary>
     /// True if the property value is null
@@ -139,23 +134,17 @@ public class EntityReferenceProperty<TEntity> : EntityReferenceProperty where TE
 /// <summary>
 /// Represents an entity collection property (1-M or M-M) of a default type 'IEnumerable&lt;ITrackable&gt;'.
 /// </summary>
-public class EntityCollectionProperty : EntityNavigationProperty
+/// <remarks>
+/// Creates a new EntityCollectionProperty.
+/// </remarks>
+/// <param name="propertyInfo">Property</param>
+/// <param name="entityCollection">Entity collection value</param>
+public class EntityCollectionProperty(PropertyInfo? propertyInfo, IEnumerable<ITrackable>? entityCollection) : EntityNavigationProperty(propertyInfo)
 {
     /// <summary>
     /// Entity collection value
     /// </summary>
-    public IEnumerable<ITrackable>? EntityCollection { get; private set; }
-
-    /// <summary>
-    /// Creates a new EntityCollectionProperty.
-    /// </summary>
-    /// <param name="propertyInfo">Property</param>
-    /// <param name="entityCollection">Entity collection value</param>
-    public EntityCollectionProperty(PropertyInfo? propertyInfo, IEnumerable<ITrackable>? entityCollection)
-        : base(propertyInfo)
-    {
-        EntityCollection = entityCollection;
-    }
+    public IEnumerable<ITrackable>? EntityCollection { get; private set; } = entityCollection;
 
     /// <summary>
     /// True if the property value is null
