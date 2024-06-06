@@ -194,6 +194,9 @@ this.ScenarioInitialize(scenarioInfo);
 #line 30
  testRunner.Then("the request should return the added order details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
+#line 31
+ testRunner.And("the order details should have an OrderDetailId > 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
             }
             this.ScenarioCleanup();
         }
@@ -208,7 +211,7 @@ this.ScenarioInitialize(scenarioInfo);
                     "update_orders"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete Order", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 33
+#line 34
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -222,13 +225,13 @@ this.ScenarioInitialize(scenarioInfo);
                             "CustomerId"});
                 table10.AddRow(new string[] {
                             "ABCD"});
-#line 34
+#line 35
  testRunner.Given("the following existing customer orders", ((string)(null)), table10, "Given ");
 #line hidden
-#line 37
+#line 38
  testRunner.When("I submit a DELETE to delete an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 38
+#line 39
  testRunner.Then("the order should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

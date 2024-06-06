@@ -28,6 +28,7 @@ Scenario: Add Order Details
 	And order details are added
 	When I submit a PUT to modify an order
 	Then the request should return the added order details
+	And the order details should have an OrderDetailId > 0
 
 @update_orders
 Scenario: Delete Order

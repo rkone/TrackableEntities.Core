@@ -53,7 +53,7 @@ public class BasicFeatureSteps(ScenarioContext scenarioContext, CustomWebApplica
         {
             string custId = row["CustomerId"];
             context.EnsureTestCustomer(custId, "Test Customer " + custId);
-            var order = context.EnsureTestOrder(custId);
+            var order = context.EnsureTestOrder(custId);            
             orders.Add(order.ToClientEntity()!);
         }
         _scenarioContext.Add("CustOrders", orders);
@@ -72,7 +72,7 @@ public class BasicFeatureSteps(ScenarioContext scenarioContext, CustomWebApplica
             _scenarioContext.Add("ProductIds", productIds);
             var clientOrder = EntityExtensions.CreateNewOrder(custId, productIds);
             orders.Add(clientOrder);
-        }
+        }        
         _scenarioContext.Add("NewCustOrders", orders);
     }
 
@@ -178,7 +178,7 @@ public class BasicFeatureSteps(ScenarioContext scenarioContext, CustomWebApplica
     [When(@"I submit a PUT to modify an order")]
     public void WhenISubmitPutToModifyAnOrder()
     {
-        var clientOrder = _scenarioContext.Get<List<Order>>("ExistingCustOrders").First();
+        var clientOrder = _scenarioContext.Get<List<Order>>("ExistingCustOrders").First();        
         var changeTracker = _scenarioContext.Get<ChangeTrackingCollection<Order>>("ChangeTracker");
         var clonedOrder = changeTracker.Clone()[0];
         _scenarioContext["ExistingCustOrders"] = new List<Order> { clonedOrder };
@@ -250,6 +250,15 @@ public class BasicFeatureSteps(ScenarioContext scenarioContext, CustomWebApplica
         Assert.Equal(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
         Assert.Contains(updatedOrder.OrderDetails, d => d.ProductId == addedDetail1.ProductId);
         Assert.Contains(updatedOrder.OrderDetails, d => d.ProductId == addedDetail2.ProductId);
+    }
+
+    [Then(@"the order details should have an OrderDetailId > (.*)")]
+    public void ThenTheOrderDetailsShouldHaveAnOrderDetailId(int p0)
+    {
+        var addedDetail1 = _scenarioContext.Get<OrderDetail>("AddedDetail1");
+        var addedDetail2 = _scenarioContext.Get<OrderDetail>("AddedDetail2");
+        Assert.NotEqual(0, addedDetail1.OrderDetailId);
+        Assert.NotEqual(0, addedDetail2.OrderDetailId);
     }
 
     [Then(@"the order should be deleted")]

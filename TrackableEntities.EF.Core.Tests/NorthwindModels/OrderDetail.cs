@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.NorthwindModels;
 [TrackableEntity]
-public partial class OrderDetail : ITrackable
+public partial class OrderDetail : ITrackable, IMergeable
 {
     [Key, Column(Order = 1)]
     public int OrderDetailId { get; set; }
@@ -24,4 +25,6 @@ public partial class OrderDetail : ITrackable
     public TrackingState TrackingState { get; set; }
     [NotMapped]
     public ICollection<string>? ModifiedProperties { get; set; }
+    [NotMapped]
+    public Guid EntityIdentifier { get; set; }
 }

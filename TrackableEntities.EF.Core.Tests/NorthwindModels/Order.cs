@@ -6,7 +6,7 @@ using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.EF.Core.Tests.NorthwindModels;
 [TrackableEntity]
-public partial class Order : ITrackable
+public partial class Order : ITrackable, IMergeable
 {
     [Key]
     public int OrderId { get; set; }
@@ -23,4 +23,6 @@ public partial class Order : ITrackable
     public TrackingState TrackingState { get; set; }
     [NotMapped]
     public ICollection<string>? ModifiedProperties { get; set; }
+    [NotMapped]
+    public Guid EntityIdentifier { get; set; }
 }
