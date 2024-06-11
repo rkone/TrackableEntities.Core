@@ -1,9 +1,5 @@
 ﻿using System.Collections;
 using System.Reflection;
-using System.Text.Json.Serialization.Metadata;
-//using System.Text.Json;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.Client.Core;
@@ -485,8 +481,13 @@ public static class TrackableExtensions
     /// <param name="cloneMethod">Type of cloning to perform</param>
     /// <returns>Cloned Trackable object</returns>
     public static T? Clone<T>(this T item, CloneMethod cloneMethod = CloneMethodSetting.Default) where T : class, ITrackable
-    {            
-        return CloneObject(item, cloneMethod: cloneMethod);
+    {
+        return cloneMethod switch
+        {
+            CloneMethod.SystemTextJsonSerialized => CloneLibrarySystemTextJson.Clone(item),
+            CloneMethod.NewtonsoftJsonSerialized => CloneLibraryNewtonsoft.Clone(item),
+            _ => item.Copy() ?? throw new InvalidCastException()
+        };            
     }
 
     /// <summary>
@@ -498,99 +499,12 @@ public static class TrackableExtensions
     /// <returns>Cloned collection of Trackable object</returns>
     public static IEnumerable<T> Clone<T>(this IEnumerable<T> items, CloneMethod cloneMethod = CloneMethodSetting.Default) where T : class, ITrackable
     {
-        return CloneObject(new CollectionSerializationHelper<T>() { Result = items.ToList() }, cloneMethod: cloneMethod)?.Result ?? Enumerable.Empty<T>();
-    }
-
-    private class CollectionSerializationHelper<T>
-    {
-        [JsonProperty]
-        public List<T> Result = [];// Enumerable.Empty<T>();
-    }
-
-    internal static T CloneObject<T>(T item, IContractResolver? contractResolver = null, CloneMethod cloneMethod = CloneMethodSetting.Default)
-        where T : class
-    {
-        switch (cloneMethod)
-        {   
-            case CloneMethod.SystemTextJsonSerialized: 
-                // does not do smart cloning - pruning of unchanged entities when contractResolver is passed.
-                var textJsonSettings = new System.Text.Json.JsonSerializerOptions
-                {
-                    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
-                    TypeInfoResolver = new DefaultJsonTypeInfoResolver { Modifiers = { EntityNavigationPropertyModifier } }
-                };
-                return System.Text.Json.JsonSerializer.Deserialize<T?>(System.Text.Json.JsonSerializer.Serialize(item, textJsonSettings), textJsonSettings) ?? throw new InvalidCastException();                    
-            case CloneMethod.NewtonsoftJsonSerialized: 
-                // error with entity loops?
-                {
-                    using var stream = new MemoryStream();
-                    var writer = new StreamWriter(stream);
-                    using var jsonWriter = new JsonTextWriter(writer);
-                    var settings = new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Objects,
-                        ContractResolver = contractResolver ?? new EntityNavigationPropertyResolver(),
-                        PreserveReferencesHandling = PreserveReferencesHandling.All
-                    };
-                    var serWr = JsonSerializer.Create(settings);
-                    serWr.Serialize(jsonWriter, item);
-                    writer.Flush();
-
-                    stream.Position = 0;
-                    var reader = new StreamReader(stream);
-                    var jsonReader = new JsonTextReader(reader);
-                    settings.ContractResolver = new EntityNavigationPropertyResolver();
-                    var serRd = JsonSerializer.Create(settings);
-                    var copy = serRd.Deserialize<T>(jsonReader) ?? throw new InvalidCastException();
-                    return copy;
-                }                    
-            case CloneMethod.Memberwise:
-                //does not do smart cloning - pruning of unchanged entities. errors with entity loops.
-                return item.Copy() ?? throw new InvalidCastException(); 
-            default:
-                throw new ArgumentOutOfRangeException(nameof(cloneMethod), cloneMethod, null);
-        }            
-    }
-
-    private class EntityNavigationPropertyResolver : DefaultContractResolver
-    {
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        return cloneMethod switch
         {
-            JsonProperty property = base.CreateProperty(member, memberSerialization);
-            property.ShouldSerialize =
-                instance =>
-                {
-                    if (instance is not ITrackable entity) return true;
-
-                    // The current property is a navigation property and its value is null
-                    bool isEmptyNavProp =
-                        (from np in entity.GetNavigationProperties(false)
-                         where np.Property == member
-                         select np.ValueIsNull).Any(isNull => isNull);
-
-                    return !isEmptyNavProp;
-                };
-            return property;
-        }
-    }
-
-    private static void EntityNavigationPropertyModifier(JsonTypeInfo typeInfo)
-    {
-        foreach (JsonPropertyInfo property in typeInfo.Properties)
-        {
-            property.ShouldSerialize = (obj, value) =>
-               {
-                   if (obj is not ITrackable entity) return true;
-
-                   // The current property is a navigation property and its value is null
-                   bool isEmptyNavProp =
-                       (from np in entity.GetNavigationProperties(false)
-                        where np.Property == obj.GetType().GetProperty(property.Name)
-                        select np.ValueIsNull).Any(isNull => isNull);
-
-                   return !isEmptyNavProp;
-               };
-        }
+            CloneMethod.SystemTextJsonSerialized => CloneLibrarySystemTextJson.Clone(items),
+            CloneMethod.NewtonsoftJsonSerialized => CloneLibraryNewtonsoft.Clone(items),
+            _ => items.Copy() ?? throw new InvalidCastException()
+        };        
     }
 
     /// <summary>

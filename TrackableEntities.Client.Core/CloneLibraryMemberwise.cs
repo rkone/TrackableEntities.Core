@@ -2,13 +2,14 @@
 using System.ArrayExtensions;
 using TrackableEntities.Common.Core;
 using System.Diagnostics.CodeAnalysis;
+using TrackableEntities.Client.Core;
 
 namespace System
 {
     /// <summary>
     /// Common extension methods for object cloning Trackable Entities.
     /// </summary>
-    public static class ObjectExtensions
+    public static class CloneLibraryMemberwise
     {
         [NotNull]
         private static readonly MethodInfo? CloneMethod = typeof(object).GetMethod(nameof(MemberwiseClone), BindingFlags.NonPublic | BindingFlags.Instance);
@@ -28,28 +29,31 @@ namespace System
         /// creates a deep copy of an object
         /// </summary>
         /// <param name="originalObject"></param>
+        /// <param name="objectVisitationHelper"></param>
         /// <returns></returns>
-        public static object? Copy(this object? originalObject)
+        public static object? Copy(this object? originalObject, ObjectVisitationHelper objectVisitationHelper)
         {
-            return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
+            return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()), objectVisitationHelper);
         }
         /// <summary>
         /// returns a copy of all changes to an object
         /// </summary>
         /// <param name="originalObject"></param>
+        /// <param name="objectVisitationHelper"></param>
         /// <returns></returns>
-        public static object? CopyChanges(this object? originalObject)
+        public static object? CopyChanges(this object? originalObject, ObjectVisitationHelper objectVisitationHelper)
         {
-            return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()), true);
+            return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()), objectVisitationHelper, true);
         }
 
-        private static object? InternalCopy(object? originalObject, IDictionary<object, object> visited, bool changesOnly = false)
+        private static object? InternalCopy(object? originalObject, IDictionary<object, object> visited, ObjectVisitationHelper objectVisitationHelper, bool changesOnly = false)
         {
             if (originalObject == null) return null;
+            if (objectVisitationHelper.TryVisit(originalObject) == false) return objectVisitationHelper.FindVisited(originalObject);
             var typeToReflect = originalObject.GetType();
             if (IsPrimitive(typeToReflect)) return originalObject;
             if (visited.TryGetValue(originalObject, out var result)) return result;
-            if (typeof(Delegate).IsAssignableFrom(typeToReflect)) return null;            
+            if (typeof(Delegate).IsAssignableFrom(typeToReflect)) return null;
             var cloneObject = CloneMethod.Invoke(originalObject, null) ?? new object();
             if (typeToReflect.IsArray)
             {
@@ -60,33 +64,33 @@ namespace System
                     {
                         var trimmedObject = (object)trackedArray.Where(t => t != null && t.TrackingState != TrackingState.Unchanged).ToArray();
                         Array clonedArray = (Array)trimmedObject;
-                        clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited, changesOnly), indices));
+                        clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited, objectVisitationHelper, changesOnly), indices));
                     }
                     else
                     {
                         Array clonedArray = (Array)cloneObject;
-                        clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited, changesOnly), indices));
+                        clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited, objectVisitationHelper, changesOnly), indices));
                     }
                 }
 
             }
             visited.Add(originalObject, cloneObject);
-            CopyFields(originalObject, visited, cloneObject, typeToReflect, changesOnly: changesOnly);
-            RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect, changesOnly);
+            CopyFields(originalObject, visited, cloneObject, typeToReflect, objectVisitationHelper, changesOnly: changesOnly);
+            RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect, objectVisitationHelper, changesOnly);
             return cloneObject;
         }
 
-        private static void RecursiveCopyBaseTypePrivateFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, bool changesOnly = false)
+        private static void RecursiveCopyBaseTypePrivateFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, ObjectVisitationHelper objectVisitationHelper, bool changesOnly = false)
         {
             if (typeToReflect.BaseType != null)
             {
-                RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect.BaseType, changesOnly);
-                CopyFields(originalObject, visited, cloneObject, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate, changesOnly);
+                RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect.BaseType, objectVisitationHelper, changesOnly);
+                CopyFields(originalObject, visited, cloneObject, typeToReflect.BaseType, objectVisitationHelper, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate, changesOnly);
             }
         }
 
-        private static void CopyFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, 
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, 
+        private static void CopyFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, ObjectVisitationHelper objectVisitationHelper,
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
             Func<FieldInfo, bool>? filter = null, bool changesOnly = false)
         {
             foreach (FieldInfo fieldInfo in typeToReflect.GetFields(bindingFlags))
@@ -94,7 +98,7 @@ namespace System
                 if (filter != null && filter(fieldInfo) == false) continue;
                 if (IsPrimitive(fieldInfo.FieldType)) continue;
                 var originalFieldValue = fieldInfo.GetValue(originalObject);
-                var clonedFieldValue = InternalCopy(originalFieldValue, visited, changesOnly);
+                var clonedFieldValue = InternalCopy(originalFieldValue, visited, objectVisitationHelper, changesOnly);
                 fieldInfo.SetValue(cloneObject, clonedFieldValue);
             }
         }
@@ -105,20 +109,25 @@ namespace System
         /// <typeparam name="T"></typeparam>
         /// <param name="original"></param>
         /// <returns></returns>
-        public static T? Copy<T>(this T original) => (T?)Copy((object?)original);
+        public static T? Copy<T>(this T original) => (T?)Copy(original, new());
         /// <summary>
         /// Creates a copy of all changes to an object
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="original"></param>
         /// <returns></returns>
-        public static T? CopyChanges<T>(this T original) => (T?)CopyChanges((object?)original);        
-    }
+        public static T CopyChanges<T>(this T original) => (T)CopyChanges(new Wrapper<T> { Results = [original] }).Results;
+
+        private class Wrapper<T>
+        {
+            public IEnumerable<T> Results { get; set; } = [];
+        }
+    }     
 
     /// <summary>
     /// Compares objects by their hash code or reference.
     /// </summary>
-    public class ReferenceEqualityComparer : EqualityComparer<Object>
+    public class ReferenceEqualityComparer : EqualityComparer<object>
     {
         /// <summary>
         /// Compares by reference
