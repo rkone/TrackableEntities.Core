@@ -3,11 +3,11 @@ using System.Reflection;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.Client.Core;
-
+/// <summary>
+/// This class traverses a ITrackable collection, storing all ITrackable entities that have changes or reference other ITrackable entities with changes.
+/// </summary>
 internal class CloneChangeHelper
 {
-    public bool Empty() => entityChangedInfos.Count == 0;
-
     private readonly ObjectVisitationHelper visitationHelper = new();
     private readonly Dictionary<ITrackable, EntityChangedInfo> entityChangedInfos = new(ObjectReferenceEqualityComparer<ITrackable>.Default);
     private class EntityChangedInfo
@@ -125,6 +125,13 @@ internal class CloneChangeHelper
         }
     }
 
+    /// <summary>
+    /// After GetChanges has been called, this method can be used to determine if a 
+    /// reference navigation property should be included while cloning changes only.
+    /// </summary>
+    /// <param name="entity">The ITrackable we are deciding if we should include</param>
+    /// <param name="propertyInfo">The entity's reference property to inspect</param>
+    /// <returns>True if entity should be included in the collection with changes</returns>
     public bool IncludeReferenceProp(ITrackable entity, PropertyInfo propertyInfo)
     {
         if (!entityChangedInfos.TryGetValue(entity, out EntityChangedInfo? info))
@@ -133,6 +140,14 @@ internal class CloneChangeHelper
         return !info.RefNavPropUnchanged.Contains(propertyInfo);
     }
 
+    /// <summary>
+    /// After GetChanges has been called, this method can be used to determine if a
+    /// collection item should be included while cloning changes only.
+    /// </summary>
+    /// <param name="entity">The parent ITrackable that contains the collection</param>
+    /// <param name="propertyInfo">The Collection Reference property</param>
+    /// <param name="item">An item in the collection</param>
+    /// <returns>True if entity should be included in the collection with changes</returns>
     public bool IncludeCollectionItem(ITrackable entity, PropertyInfo propertyInfo, ITrackable item)
     {
         if (!entityChangedInfos.TryGetValue(entity, out EntityChangedInfo? info))

@@ -219,8 +219,8 @@ public static class ChangeTrackingExtensions
         {
             if (prop is null) continue;
             // Skip tracking properties
-            if (prop.Name == Constants.TrackingProperties.TrackingState
-                || prop.Name == Constants.TrackingProperties.ModifiedProperties)
+            if (prop.Name == nameof(ITrackable.TrackingState)
+                || prop.Name == nameof(ITrackable.ModifiedProperties))
                 continue;
 
             // Get source item prop value

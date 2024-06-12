@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\TrackableEntities.Client.Core\ChangeTrackingCollection.cs" Link="ChangeTrackingCollection.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\ChangeTrackingExtensions.cs" Link="ChangeTrackingExtensions.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\CloneChangeHelper.cs" Link="CloneChangeHelper.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\Constants.cs" Link="Constants.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\EntityBase.cs" Link="EntityBase.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\EntityNavigationProperty.cs" Link="EntityNavigationProperty.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\IIdentifiable.cs" Link="IIdentifiable.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\INavigationPropertyInspector.cs" Link="INavigationPropertyInspector.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\IRefPropertyChangeTrackerResolver.cs" Link="IRefPropertyChangeTrackerResolver.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\ITrackingCollection.cs" Link="ITrackingCollection.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\ITrackingCollectionOfT.cs" Link="ITrackingCollectionOfT.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\ObjectReferenceEqualityComparer.cs" Link="ObjectReferenceEqualityComparer.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\ObjectVisitationHelper.cs" Link="ObjectVisitationHelper.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\OverrideJsonIgnoreContractResolver.cs" Link="OverrideJsonIgnoreContractResolver.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\PortableReflectionHelper.cs" Link="PortableReflectionHelper.cs" />
+    <Compile Include="..\TrackableEntities.Client.Core\TrackableExtensions.cs" Link="TrackableExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrackableEntities.Common.Core\TrackableEntities.Common.Core.csproj" />
+  </ItemGroup>
+
+</Project>

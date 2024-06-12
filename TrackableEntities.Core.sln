@@ -29,7 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{317280BF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackableEntities.Tests.Acceptance", "TrackableEntities.Tests.Acceptance\TrackableEntities.Tests.Acceptance.csproj", "{92F5033C-FCAE-4AF1-8D76-A3D1008374C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Tests.WebApi", "TrackableEntities.Tests.WebApi\TrackableEntities.Tests.WebApi.csproj", "{C1F94990-3CED-46F4-A99F-BA36CFBE12BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackableEntities.Tests.WebApi", "TrackableEntities.Tests.WebApi\TrackableEntities.Tests.WebApi.csproj", "{C1F94990-3CED-46F4-A99F-BA36CFBE12BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Client.Core.Newtonsoft", "TrackableEntities.Client.Core.Newtonsoft\TrackableEntities.Client.Core.Newtonsoft.csproj", "{69204A5E-F74F-46F0-B2E2-0501CAABE3C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{C1F94990-3CED-46F4-A99F-BA36CFBE12BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1F94990-3CED-46F4-A99F-BA36CFBE12BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1F94990-3CED-46F4-A99F-BA36CFBE12BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69204A5E-F74F-46F0-B2E2-0501CAABE3C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69204A5E-F74F-46F0-B2E2-0501CAABE3C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69204A5E-F74F-46F0-B2E2-0501CAABE3C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69204A5E-F74F-46F0-B2E2-0501CAABE3C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

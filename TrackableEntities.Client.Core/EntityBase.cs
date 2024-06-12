@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.Client.Core;
@@ -10,7 +9,6 @@ namespace TrackableEntities.Client.Core;
 /// <summary>
 /// Base class for model entities
 /// </summary>
-[JsonObject(IsReference = true)]
 [DataContract(IsReference = true)]
 public abstract partial class EntityBase : INotifyPropertyChanged, ITrackable, IIdentifiable
 {

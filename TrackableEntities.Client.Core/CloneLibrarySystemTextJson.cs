@@ -6,15 +6,28 @@ namespace TrackableEntities.Client.Core;
 
 internal class CloneLibrarySystemTextJson
 {
+    /// <summary>
+    /// Create a deep clone of an object using System.Text.Json.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public static T Clone<T>(T item) where T : class, ITrackable
     {
         return CloneObject(item);
     }
 
+    /// <summary>
+    /// Create a deep clone of a collection using System.Text.Json.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="items"></param>
+    /// <returns></returns>
     public static IEnumerable<T> Clone<T>(IEnumerable<T> items)
     {
         return CloneObject(new CollectionSerializationHelper<T>() { Result = items.ToList() })?.Result ?? Enumerable.Empty<T>();
     }
+
     internal static T CloneObject<T>(T item) where T : class
     {
         var textJsonSettings = new JsonSerializerOptions
@@ -46,17 +59,28 @@ internal class CloneLibrarySystemTextJson
     private CloneChangeHelper _cloneChangeHelper = new();
     private static readonly JsonSerializerOptions ChangeTrackingDeserializerOptions = new() { ReferenceHandler = ReferenceHandler.Preserve };
 
-    public T CloneChanges<T>(T item, CloneChangeHelper helper) where T : class, ITrackable
+
+    /// <summary>
+    /// Create a deep clone of any changes to an ITrackable object using System.Text.Json.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidCastException"></exception>
+    public T CloneChanges<T>(T item) where T : class, ITrackable
     {   
-        //we need to keep track of _cloneChangeHelper specific to the current serialization.  CloneChanges must be run with a new instance of CloneLibrarySystemTextJson.
-        _cloneChangeHelper = helper;
-        var options = new JsonSerializerOptions
+        _cloneChangeHelper = new();
+        // Inspect the graph and collect entityChangedInfos
+        _ = _cloneChangeHelper.GetChanges([item]).ToList();
+#pragma warning disable CA1869 // Cache and reuse 'JsonSerializerOptions' instances. We can't cache as we're loading the ReferenceHandler with the supplied CloneChangeHelper.
+        var serializerOptions = new JsonSerializerOptions
         {
-            ReferenceHandler = new MyReferenceHandler(helper),  //allow keeping track of reference Ids, CloneChangeHelper across entire serialization
+            ReferenceHandler = new CloneChangeReferenceHandler(_cloneChangeHelper),  //allow keeping track of reference Ids, CloneChangeHelper across entire serialization
             Converters = { new ChangeTrackingCollectionChangesConverter() }, //refer to _cloneChangeHelper to see if collection items should be serialized
             TypeInfoResolver = new DefaultJsonTypeInfoResolver() { Modifiers = { GetChangedPropertyModifier } } //refer to _cloneChangeHelper to see if properties should be serialized
         };        
-        return JsonSerializer.Deserialize<T?>(JsonSerializer.Serialize(item, options), ChangeTrackingDeserializerOptions) ?? throw new InvalidCastException();
+#pragma warning restore CA1869 // Cache and reuse 'JsonSerializerOptions' instances
+        return JsonSerializer.Deserialize<T?>(JsonSerializer.Serialize(item, serializerOptions), ChangeTrackingDeserializerOptions) ?? throw new InvalidCastException();
     }
 
     private void GetChangedPropertyModifier(JsonTypeInfo typeInfo)
@@ -77,7 +101,7 @@ internal class CloneLibrarySystemTextJson
                     return _cloneChangeHelper.IncludeReferenceProp(entity, rp.Property);
                 }                
 
-                // inspect collection navigation props, don't return if there are 
+                // inspect collection navigation props, don't serialize property if there are no changes to the collection
                 foreach (var cp in np.AsCollectionProperty())
                 {
                     if (cp.Property is null || cp.EntityCollection is null) continue;
@@ -140,7 +164,7 @@ internal class CloneLibrarySystemTextJson
         /// <param name="options">Serializer options.</param>
         public override void Write(Utf8JsonWriter writer, IEnumerable<TEntity> value, JsonSerializerOptions options)
         {
-            var cloneChangeHelper = ((MyReferenceHandler)options.ReferenceHandler!).CloneChangeHelper;
+            var cloneChangeHelper = ((CloneChangeReferenceHandler)options.ReferenceHandler!).CloneChangeHelper;
             writer.WriteStartArray();
             foreach (var entity in value.Cast<ITrackable>())
             {
@@ -177,18 +201,13 @@ internal class CloneLibrarySystemTextJson
         }
     }
 
-    class MyReferenceHandler : ReferenceHandler
+    class CloneChangeReferenceHandler(CloneChangeHelper helper) : ReferenceHandler
     {
-        public MyReferenceHandler(CloneChangeHelper helper)
-        {
-            _rootedResolver = new MyReferenceResolver();
-            CloneChangeHelper = helper;
-        }
-        private readonly ReferenceResolver _rootedResolver;
-        public readonly CloneChangeHelper CloneChangeHelper;
+        private readonly ReferenceResolver _rootedResolver = new CloneChangeReferenceResolver();
+        public readonly CloneChangeHelper CloneChangeHelper = helper;
         public override ReferenceResolver CreateResolver() => _rootedResolver;
 
-        private class MyReferenceResolver : ReferenceResolver
+        private class CloneChangeReferenceResolver : ReferenceResolver
         {
             private uint _referenceCount;
             private readonly Dictionary<string, object> _referenceIdToObjectMap = [];

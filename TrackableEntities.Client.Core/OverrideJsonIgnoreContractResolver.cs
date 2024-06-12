@@ -57,7 +57,7 @@ public static class JsonExtensions
         if (method == null)
             return null;
         var myMethod = typeof(JsonExtensions).GetMethod(nameof(CreateGetterGeneric), BindingFlags.NonPublic | BindingFlags.Static)!;
-        return (Func<object, object?>)myMethod.MakeGenericMethod([type, method.ReturnType]).Invoke(null, new[] { method })!;
+        return (Func<object, object?>)myMethod.MakeGenericMethod([type, method.ReturnType]).Invoke(null, [method])!;
     }
 
     static Func<object, object?> CreateGetterGeneric<TObject, TValue>(MethodInfo method)
@@ -87,7 +87,7 @@ public static class JsonExtensions
         if (method == null)
             return null;
         var myMethod = typeof(JsonExtensions).GetMethod(nameof(CreateSetterGeneric), BindingFlags.NonPublic | BindingFlags.Static)!;
-        return (Action<object, object?>)myMethod.MakeGenericMethod([type, method.GetParameters().Single().ParameterType]).Invoke(null, new[] { method })!;
+        return (Action<object, object?>)myMethod.MakeGenericMethod([type, method.GetParameters().Single().ParameterType]).Invoke(null, [method])!;
     }
 
     static Action<object, object?>? CreateSetterGeneric<TObject, TValue>(MethodInfo method)

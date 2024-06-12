@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 using TrackableEntities.Common.Core;
 
 namespace TrackableEntities.Client.Core;
@@ -147,8 +148,8 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
                 return;
             }
 
-            if (e.PropertyName != Constants.TrackingProperties.TrackingState
-                && e.PropertyName != Constants.TrackingProperties.ModifiedProperties
+            if (e.PropertyName != nameof(ITrackable.TrackingState)
+                && e.PropertyName != nameof(ITrackable.ModifiedProperties)
                 && !ExcludedProperties.Contains(e.PropertyName))
             {
                 // If unchanged mark item as modified, fire EntityChanged event
@@ -253,25 +254,35 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
     /// collections with entities that have been added, modified or deleted.
     /// </summary>
     /// <returns>Collection containing only changed entities</returns>
-    public ChangeTrackingCollection<TEntity> GetChanges(CloneMethod cloneMethod = CloneMethodSetting.Default)
+    public ChangeTrackingCollection<TEntity> GetChanges()
     {
         // Temporarily restore deletes
         this.RestoreDeletes();
 
         try
         {
-            return cloneMethod switch
-            {
-                CloneMethod.SystemTextJsonSerialized => CloneChangesSystemTextJson<TEntity>.GetChanges(this),
-                CloneMethod.NewtonsoftJsonSerialized => CloneChangesNewtonsoft<TEntity>.GetChanges(this),
-                _ => this.CopyChanges()
-            };            
+#if SYSTEMTEXTJSON
+            var wrapper = new Wrapper { Result = this };
+            var cloner = new CloneLibrarySystemTextJson();
+            return cloner.CloneChanges(wrapper).Result;
+#else
+
+            return CloneChangesNewtonsoft<TEntity>.GetChanges(this);
+#endif
         }           
         finally
         {
             // Remove deletes
             this.RemoveRestoredDeletes();
         }
+    }
+
+    private class Wrapper : ITrackable
+    {
+        [JsonInclude]
+        public ChangeTrackingCollection<TEntity> Result { get; set; } = [];
+        public TrackingState TrackingState { get; set; }
+        public ICollection<string>? ModifiedProperties { get; set; }
     }
 
     /// <summary>

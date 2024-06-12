@@ -478,16 +478,14 @@ public static class TrackableExtensions
     /// </summary>
     /// <typeparam name="T">Entity type</typeparam>
     /// <param name="item">Trackable object</param>
-    /// <param name="cloneMethod">Type of cloning to perform</param>
     /// <returns>Cloned Trackable object</returns>
-    public static T? Clone<T>(this T item, CloneMethod cloneMethod = CloneMethodSetting.Default) where T : class, ITrackable
+    public static T? Clone<T>(this T item) where T : class, ITrackable
     {
-        return cloneMethod switch
-        {
-            CloneMethod.SystemTextJsonSerialized => CloneLibrarySystemTextJson.Clone(item),
-            CloneMethod.NewtonsoftJsonSerialized => CloneLibraryNewtonsoft.Clone(item),
-            _ => item.Copy() ?? throw new InvalidCastException()
-        };            
+#if SYSTEMTEXTJSON
+        return CloneLibrarySystemTextJson.Clone(item);
+#else
+        return CloneLibraryNewtonsoft.Clone(item);
+#endif
     }
 
     /// <summary>
@@ -495,16 +493,14 @@ public static class TrackableExtensions
     /// </summary>
     /// <typeparam name="T">Entity type</typeparam>
     /// <param name="items">Collection of Trackable objects</param>
-    /// /// <param name="cloneMethod">Type of cloning to perform</param>
     /// <returns>Cloned collection of Trackable object</returns>
-    public static IEnumerable<T> Clone<T>(this IEnumerable<T> items, CloneMethod cloneMethod = CloneMethodSetting.Default) where T : class, ITrackable
+    public static IEnumerable<T> Clone<T>(this IEnumerable<T> items) where T : class, ITrackable
     {
-        return cloneMethod switch
-        {
-            CloneMethod.SystemTextJsonSerialized => CloneLibrarySystemTextJson.Clone(items),
-            CloneMethod.NewtonsoftJsonSerialized => CloneLibraryNewtonsoft.Clone(items),
-            _ => items.Copy() ?? throw new InvalidCastException()
-        };        
+#if SYSTEMTEXTJSON
+        return CloneLibrarySystemTextJson.Clone(items);
+#else
+        return CloneLibraryNewtonsoft.Clone(items);
+#endif
     }
 
     /// <summary>

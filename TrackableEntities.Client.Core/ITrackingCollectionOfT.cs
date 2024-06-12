@@ -13,5 +13,5 @@ public interface ITrackingCollection<TEntity> : ICollection<TEntity>
     /// Get entities that have been marked as Added, Modified or Deleted.
     /// </summary>
     /// <returns>Collection containing only changed entities</returns>
-    ChangeTrackingCollection<TEntity> GetChanges(CloneMethod cloneMethod);
+    ChangeTrackingCollection<TEntity> GetChanges();
 }
