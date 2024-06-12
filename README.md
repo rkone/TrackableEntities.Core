@@ -1,8 +1,11 @@
 # What is this Fork?
 
 This fork updates all of the original Trackable Entities projects to the latest versions of .Net.
+
 The client no longer has a dependency on Newtonsoft, all serialization is done with System.Text.Json.
+
 Instead of T4 Templates, an Incremental Generator project is used with the idea that implementors would clone the project and make changes to suit their own needs.
+
 All unit testing has also been migrated over as well to test any changes.
 
 
