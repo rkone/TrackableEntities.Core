@@ -7,7 +7,7 @@ public class ClientEntityToGenerate(string className, bool modelOverride, IEnume
     public IEnumerable<ClientEntityProperty> Properties { get; } = properties;
 }
 
-public class ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool useNewtonsoftJson, bool useSystemTextJson, bool jsonIgnored, bool manyToMany)
+public class ClientEntityProperty(string name, string baseType, bool nullable, string? initializer, bool collection, bool tracked, bool setter, bool useNewtonsoftJson, bool useSystemTextJson, bool jsonIgnored, bool jsonIncluded, bool manyToMany)
 {
     public string Name { get; } = name;
     public string BaseType { get; } = baseType;
@@ -18,6 +18,7 @@ public class ClientEntityProperty(string name, string baseType, bool nullable, s
     public bool UseNewtonsoftJson { get; } = useNewtonsoftJson;
     public bool UseSystemTextJson { get; } = useSystemTextJson;
     public bool JsonIgnored { get; } = jsonIgnored;
+    public bool JsonIncluded { get; } = jsonIncluded;
     public bool Setter { get; } = setter;
     public bool ManyToMany { get; } = manyToMany;
 }

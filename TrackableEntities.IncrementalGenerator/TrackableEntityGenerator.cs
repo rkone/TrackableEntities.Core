@@ -223,7 +223,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
         IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
         var baseNameSpace = GetNamespace(distinctClasses.First());
         var usings = GetUsingDirectives("TrackableEntityCopy", distinctClasses);
-        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, false, false, context.CancellationToken);
+        List<ClientEntityToGenerate> entitiesToGenerate = GetTypesToGenerate(compilation, distinctClasses, usings.Contains("Newtonsoft.Json"), usings.Contains("System.Text.Json.Serialization"), context.CancellationToken);
 
         if (entitiesToGenerate.Count > 0)
         {
@@ -259,6 +259,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 if (property.Identifier.Text is "TrackingState" or "ModifiedProperties" or "EntityIdentifier") continue;
                 var tracked = false;
                 var manyToMany = false;
+                var jsonIncluded = false;
                 if (property.AttributeLists.Count > 0)
                 {
                     var ignored = false;
@@ -274,6 +275,8 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                             if (attribute.Attributes[0].ArgumentList?.Arguments.ToString() == "true")
                                 manyToMany = true;
                         }
+                        if (name == "JsonInclude")
+                            jsonIncluded = true;
                     }
                     if (ignored) continue;
                 }
@@ -291,7 +294,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 bool nullable = collection ? !tracked : property.Type is NullableTypeSyntax;
                 var jsonIgnored = genericType is not null || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
 
-                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, useNewtonsoftJson, useSytemTextJson, jsonIgnored, manyToMany));
+                properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, useNewtonsoftJson, useSytemTextJson, jsonIgnored, jsonIncluded, manyToMany));
             }
             entities.Add(new ClientEntityToGenerate(className, modelOverride, properties));
         }
@@ -451,6 +454,10 @@ public partial class {entity.ClassName}
         foreach (var prop in entity.Properties)
         {
             var n = prop.Nullable ? "?" : string.Empty;
+            if (prop.JsonIncluded && prop.UseSystemTextJson)
+            {                
+                sourcebuilder.AppendLine("    [JsonInclude]");
+            }
             if (prop.Collection)
                 sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
             else
