@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TrackableEntities.Common.Core;
 using TrackableEntities.EF.Core.Tests.Contexts;
@@ -339,7 +340,7 @@ public class LoadRelatedEntitiesTests
     #region Order-Customer: Many-to-One
 
     [Fact]
-    public async void LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer()
+    public async Task LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer()
     {
         // Arrange
         var context = _fixture.GetContext();
@@ -355,7 +356,7 @@ public class LoadRelatedEntitiesTests
     }
 
     [Fact]
-    public async void LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_With_Customer()
+    public async Task LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_With_Customer()
     {
         // Arrange
         var context = _fixture.GetContext();
@@ -370,7 +371,7 @@ public class LoadRelatedEntitiesTests
     }
 
     [Fact]
-    public async void LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer_With_Territory()
+    public async Task LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer_With_Territory()
     {
         // Arrange
         var context = _fixture.GetContext();
@@ -386,7 +387,7 @@ public class LoadRelatedEntitiesTests
     }
 
     [Fact]
-    public async void LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer_With_Setting()
+    public async Task LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer_With_Setting()
     {
         // Arrange
         var context = _fixture.GetContext();
@@ -406,7 +407,7 @@ public class LoadRelatedEntitiesTests
     #region Order-OrderDetail-Product-Category: One-to-Many-to-One
 
     [Fact]
-    public async void LoadRelatedEntitiesAsync_Should_Populate_Order_Details_With_Product_With_Category()
+    public async Task LoadRelatedEntitiesAsync_Should_Populate_Order_Details_With_Product_With_Category()
     {
         // Arrange
         var context = _fixture.GetContext();
@@ -425,7 +426,7 @@ public class LoadRelatedEntitiesTests
     }
 
     [Fact]
-    public async void LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_Details_With_Product_With_Category()
+    public async Task LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_Details_With_Product_With_Category()
     {
         // Arrange
         var context = _fixture.GetContext();
