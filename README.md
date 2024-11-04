@@ -4,6 +4,8 @@ This fork updates all of the original Trackable Entities projects to the latest 
 
 The client no longer has a dependency on Newtonsoft, all serialization is done with System.Text.Json.
 
+EF Core [skip navigations](https://learn.microsoft.com/en-us/ef/core/change-tracking/relationship-changes#skip-navigations), used with Many to Many relationships, are supported.
+
 Instead of T4 Templates, an Incremental Generator project is used with the idea that implementors would clone the project and make changes to suit their own needs.
 
 All unit testing has also been migrated over as well to test any changes.
