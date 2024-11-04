@@ -12,7 +12,7 @@ public partial class Area : ITrackable
     public int AreaId { get; set; }
     public string AreaName { get; set; } = string.Empty;
     [TrackableEntityTrackedProperty]
-    public List<Territory> Territories { get; set; } = new();    
+    public List<Territory> Territories { get; set; } = [];
 
     [NotMapped]
     public TrackingState TrackingState { get; set; }

@@ -19,7 +19,7 @@ public partial class Order : ITrackable, IMergeable
     [TrackableEntityTrackedProperty]
     public Customer? Customer { get; set; }
     [TrackableEntityTrackedProperty]
-    public List<OrderDetail> OrderDetails { get; set; } = new();
+    public List<OrderDetail> OrderDetails { get; set; } = [];
 
     [NotMapped]
     public TrackingState TrackingState { get; set; }

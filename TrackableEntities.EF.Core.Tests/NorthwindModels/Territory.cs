@@ -11,11 +11,11 @@ public partial class Territory : ITrackable
     public string TerritoryId { get; set; } = string.Empty;
     public string TerritoryDescription { get; set; } = string.Empty;
     [TrackableEntityTrackedProperty(true)]
-    public List<Employee> Employees { get; set; } = new();
+    public List<Employee> Employees { get; set; } = [];
     [TrackableEntityTrackedProperty]
-    public List<Customer> Customers { get; set; } = new();
+    public List<Customer> Customers { get; set; } = [];
     [TrackableEntityTrackedProperty]
-    public List<Area> Areas {  get; set; } = new();
+    public List<Area> Areas { get; set; } = [];
 
     [NotMapped]
     public TrackingState TrackingState { get; set; }

@@ -12,7 +12,7 @@ public partial class Category : ITrackable
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     [TrackableEntityTrackedProperty]
-    public List<Product> Products { get; set; } = new();
+    public List<Product> Products { get; set; } = [];
 
     [NotMapped]
     public TrackingState TrackingState { get; set; }

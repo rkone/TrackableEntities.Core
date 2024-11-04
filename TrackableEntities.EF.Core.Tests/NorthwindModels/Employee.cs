@@ -17,7 +17,7 @@ public partial class Employee : ITrackable
     public string City { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
     [TrackableEntityTrackedProperty(true)]
-    public List<Territory> Territories { get; set; } = new();
+    public List<Territory> Territories { get; set; } = [];
 
     [NotMapped]
     public TrackingState TrackingState { get; set; }
