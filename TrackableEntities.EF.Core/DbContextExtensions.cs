@@ -38,7 +38,6 @@ public static class DbContextExtensions
             if (node.SourceEntry != null)
             {
                 var relationship = node.InboundNavigation?.GetRelationshipType();
-
                 switch (relationship)
                 {
                     case RelationshipType.OneToOne:
@@ -85,24 +84,32 @@ public static class DbContextExtensions
                         // since it may be related to other entities.
                         if (trackable.TrackingState == TrackingState.Deleted)
                         {
-                            SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
+                            SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);                            
                             return;
                         }
-                        break;
+                        break;                        
                     case RelationshipType.ManyToMany:
-                        // If trackable is set modified, set entity state to unchanged before attaching.
+                        // If trackable state is added and the entity already exists in the database, set its state to unchanged and add it to the collection
+                        if (trackable.TrackingState == TrackingState.Added && node.Entry.IsKeySet && Exists(context, node.Entry))
+                        {                            
+                            SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
+                            node.SourceEntry.Collection(node.InboundNavigation!.Name).Metadata.GetCollectionAccessor()?.Add(node.SourceEntry.Entity, node.Entry.Entity, false);
+                            return;
+                        }
+                        // If trackable state is modified, set entity state to unchanged before attaching.
                         // this tells the skip navigation to be unchanged.
                         if (trackable.TrackingState == TrackingState.Modified)
                         {
                             SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
                         }
-                        // If trackable is set deleted, set skip navigation as deleted.
-                        // then return return entity state to unchanged since it may be related to other entities.                            
+                        // If trackable state is deleted, set entity state to unchanged before attaching.
+                        // find and delete only the skip navigation                            
                         if (trackable.TrackingState == TrackingState.Deleted)
                         {
                             SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
-                            node.SourceEntry.Collection(node.InboundNavigation?.Name ?? string.Empty)?.Metadata?.GetCollectionAccessor()?
-                                .Remove(node.SourceEntry.Entity, node.Entry.Entity);
+                            var collection = node.SourceEntry.Collection(node.InboundNavigation!.Name);
+                            collection.Load();
+                            collection.Metadata.GetCollectionAccessor()?.Remove(node.SourceEntry.Entity, node.Entry.Entity);
                             return;
                         }
                         break;
@@ -256,6 +263,23 @@ public static class DbContextExtensions
                 property.IsModified = trackable.ModifiedProperties.Any(p =>
                     string.Compare(p, property.Metadata.Name, StringComparison.InvariantCultureIgnoreCase) == 0);
         }
+    }
+
+    /// <summary>  
+    /// Determine if the given EntityEntry is already in the database.
+    /// </summary>
+    /// <param name="context">Used to query and save changes to a database</param>
+    /// <param name="entry">The Entry to check.</param>
+    /// <returns>True if the entity exists in the database, false otherwise.</returns>
+    private static bool Exists(DbContext context, EntityEntry entry)
+    {
+        var keys = entry.Metadata.FindPrimaryKey()?.Properties
+            .Select(p => entry.Property(p.Name).CurrentValue).ToArray();
+        if (keys == null) return false;
+        var entity = context.Find(entry.Entity.GetType(), keys);
+        if (entity == null) return false;
+        context.Entry(entity).State = EntityState.Detached;
+        return true;
     }
 }
 

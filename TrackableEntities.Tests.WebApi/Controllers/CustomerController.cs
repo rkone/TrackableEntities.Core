@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-//using TrackableEntities.Client.Core;
 using TrackableEntities.EF.Core;
 using TrackableEntities.EF.Core.Tests.NorthwindModels;
 using TrackableEntities.Tests.WebApi.Services;
@@ -12,7 +11,7 @@ namespace TrackableEntities.Tests.Acceptance.Controllers;
 public class CustomerController(NorthwindTestDbContext context) : ControllerBase
 {
     private readonly NorthwindTestDbContext _context = context;
-
+    
     // GET api/Customer
     [HttpGet]
     public IAsyncEnumerable<Customer> GetCustomers()
@@ -47,8 +46,8 @@ public class CustomerController(NorthwindTestDbContext context) : ControllerBase
             throw;
         }
 
+        _context.AcceptChanges(customer);
         await _context.LoadRelatedEntitiesAsync(customer);
-        //customer.AcceptChanges();
         return CreatedAtAction(nameof(GetCustomer), new { id = customer.CustomerId }, customer);
     }
 
@@ -58,7 +57,6 @@ public class CustomerController(NorthwindTestDbContext context) : ControllerBase
     {
         if (id != customer.CustomerId) return BadRequest();
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        customer.TrackingState = Common.Core.TrackingState.Modified;
         _context.ApplyChanges(customer);
         try
         {
@@ -71,8 +69,8 @@ public class CustomerController(NorthwindTestDbContext context) : ControllerBase
             throw;
         }
 
-        await _context.LoadRelatedEntitiesAsync(customer);
-        //customer.AcceptChanges();
+        _context.AcceptChanges(customer);
+        await _context.LoadRelatedEntitiesAsync(customer);        
         return Ok(customer);
     }
 
@@ -85,6 +83,7 @@ public class CustomerController(NorthwindTestDbContext context) : ControllerBase
         customer.TrackingState = Common.Core.TrackingState.Deleted;
         _context.ApplyChanges(customer);
         await _context.SaveChangesAsync();
+        _context.AcceptChanges(customer);
         return Ok();
     }
 }

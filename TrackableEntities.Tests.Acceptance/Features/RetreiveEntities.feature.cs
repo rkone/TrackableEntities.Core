@@ -101,17 +101,17 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId",
                             "CustomerName"});
-                table2.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "ABCD",
                             "Test Customer ABCD"});
-                table2.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "EFGH",
                             "Test Customer EFGH"});
 #line 8
- testRunner.Given("the following customers", ((string)(null)), table2, "Given ");
+ testRunner.Given("the following customers", ((string)(null)), table6, "Given ");
 #line hidden
 #line 12
  testRunner.When("I submit a GET request for customers", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -143,21 +143,21 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId",
                             "CustomerName"});
-                table3.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "ABCD",
                             "Test Customer ABCD"});
 #line 17
- testRunner.Given("the following customers", ((string)(null)), table3, "Given ");
+ testRunner.Given("the following customers", ((string)(null)), table7, "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId"});
-                table4.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "ABCD"});
 #line 20
- testRunner.And("the following customer orders", ((string)(null)), table4, "And ");
+ testRunner.And("the following customer orders", ((string)(null)), table8, "And ");
 #line hidden
 #line 23
  testRunner.When("I submit a GET request for customer orders", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -189,21 +189,21 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId",
                             "CustomerName"});
-                table5.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "ABCD",
                             "Test Customer ABCD"});
 #line 28
- testRunner.Given("the following customers", ((string)(null)), table5, "Given ");
+ testRunner.Given("the following customers", ((string)(null)), table9, "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId"});
-                table6.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "ABCD"});
 #line 31
- testRunner.And("the following customer orders", ((string)(null)), table6, "And ");
+ testRunner.And("the following customer orders", ((string)(null)), table10, "And ");
 #line hidden
 #line 34
  testRunner.When("I submit a GET request for an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");

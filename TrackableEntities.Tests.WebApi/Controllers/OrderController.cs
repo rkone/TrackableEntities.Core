@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-//using TrackableEntities.Client.Core;
 using TrackableEntities.EF.Core;
 using TrackableEntities.EF.Core.Tests.NorthwindModels;
 using TrackableEntities.Tests.WebApi.Services;
@@ -23,7 +22,7 @@ public class OrderController(NorthwindTestDbContext context) : ControllerBase
             .AsAsyncEnumerable();
     }
     // GET api/Order?customerId=ABCD
-    [HttpGet("customerId:string")]
+    [HttpGet("customerId")]
     public IAsyncEnumerable<Order> GetOrders(string customerId)
     {
         return _context.Orders
@@ -62,9 +61,8 @@ public class OrderController(NorthwindTestDbContext context) : ControllerBase
                 return Conflict();
             throw;
         }
-
+        _context.AcceptChanges(order);
         await _context.LoadRelatedEntitiesAsync(order);
-        //order.AcceptChanges();
         return CreatedAtAction(nameof(GetOrder), new { id = order.OrderId }, order);
     }
 
@@ -74,7 +72,6 @@ public class OrderController(NorthwindTestDbContext context) : ControllerBase
     {
         if (id != order.OrderId) return BadRequest();
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        order.TrackingState = Common.Core.TrackingState.Modified;
         _context.ApplyChanges(order);
         try
         {
@@ -86,9 +83,8 @@ public class OrderController(NorthwindTestDbContext context) : ControllerBase
                 return NotFound();
             throw;
         }
-
+        _context.AcceptChanges(order);
         await _context.LoadRelatedEntitiesAsync(order);
-        //customer.AcceptChanges();
         return Ok(order);
     }
 
@@ -103,6 +99,7 @@ public class OrderController(NorthwindTestDbContext context) : ControllerBase
         order.TrackingState = Common.Core.TrackingState.Deleted;
         _context.ApplyChanges(order);
         await _context.SaveChangesAsync();
+        _context.AcceptChanges(order);
         return Ok();
     }
 }

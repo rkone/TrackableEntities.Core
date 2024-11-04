@@ -7,7 +7,7 @@
 Scenario: Create Customer Setting
 	Given the following new customers
 	| CustomerId | CustomerName |
-	| IJKL       | Acme Company |
+	| ACMEC      | Acme Company |
 	When I submit POSTs to create customers
 	And I add a customer setting
 	And I submit a PUT to update the customer
