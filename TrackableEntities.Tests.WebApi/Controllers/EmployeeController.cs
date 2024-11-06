@@ -35,11 +35,11 @@ public class EmployeeController(NorthwindTestDbContext context) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Employee>> GetEmployee(int id)
     {
-        var order = await _context.Employees
+        var employee = await _context.Employees
             .Include(o => o.Territories).ThenInclude(t => t.Areas)
             .SingleOrDefaultAsync(o => o.EmployeeId == id);
-        if (order == null) return NotFound();
-        return Ok(order);
+        if (employee == null) return NotFound();
+        return Ok(employee);
     }
 
     // POST api/Employee
