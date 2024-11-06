@@ -92,6 +92,14 @@ public class RelationsFeatureSteps(ScenarioContext scenarioContext, CustomWebApp
         _scenarioContext["Employees"] = new List<Employee>() { employee };
     }
 
+    [When(@"I GET the territory by id ""(.*)""")]
+    public void WhenIGETTheTerritoryById(string p0)
+    {
+        var territory = _client.GetEntity<Territory, string>(p0);
+        Assert.NotNull(territory);
+        _scenarioContext["Territories"] = new List<Territory>() { territory };
+    }
+
     [When(@"I submit POSTs to create customers")]
     public void WhenISubmitPostToCreateCustomers()
     {
@@ -220,6 +228,14 @@ public class RelationsFeatureSteps(ScenarioContext scenarioContext, CustomWebApp
         territory.TerritoryDescription = territoryDescription;
         _scenarioContext["ChangeTracker"] = changeTracker;
         _scenarioContext["TerritoryResult"] = territory;
+        _scenarioContext["EmployeeResult"] = employee;
+    }
+
+    [When(@"I GET employee (.*) to the results")]
+    public void WhenIGetEmployeeToTheResults(int employeeId)
+    {
+        var employee = _client.GetEntity<Employee, int>(employeeId);
+        Assert.NotNull(employee);
         _scenarioContext["EmployeeResult"] = employee;
     }
 

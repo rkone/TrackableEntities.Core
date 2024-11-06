@@ -101,12 +101,12 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId"});
-                table11.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "ABCD"});
 #line 8
- testRunner.Given("the following new customer orders", ((string)(null)), table11, "Given ");
+ testRunner.Given("the following new customer orders", ((string)(null)), table9, "Given ");
 #line hidden
 #line 11
  testRunner.When("I submit a POST to create an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -138,12 +138,12 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId"});
-                table12.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "ABCD"});
 #line 16
- testRunner.Given("the following existing customer orders", ((string)(null)), table12, "Given ");
+ testRunner.Given("the following existing customer orders", ((string)(null)), table10, "Given ");
 #line hidden
 #line 19
  testRunner.And("the order is modified", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -178,12 +178,12 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId"});
-                table13.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "ABCD"});
 #line 25
- testRunner.Given("the following existing customer orders", ((string)(null)), table13, "Given ");
+ testRunner.Given("the following existing customer orders", ((string)(null)), table11, "Given ");
 #line hidden
 #line 28
  testRunner.And("order details are added", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -221,12 +221,12 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId"});
-                table14.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "ABCD"});
 #line 35
- testRunner.Given("the following existing customer orders", ((string)(null)), table14, "Given ");
+ testRunner.Given("the following existing customer orders", ((string)(null)), table12, "Given ");
 #line hidden
 #line 38
  testRunner.When("I submit a DELETE to delete an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");

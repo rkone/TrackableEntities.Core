@@ -101,39 +101,22 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                            "EmployeeId",
-                            "LastName",
-                            "FirstName"});
-                table1.AddRow(new string[] {
-                            "314",
-                            "Suyama",
-                            "Michael"});
 #line 8
- testRunner.Given("the following new employees", ((string)(null)), table1, "Given ");
+ testRunner.When("I GET the employee by id 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
-                            "TerritoryId",
-                            "TerritoryDescription"});
-                table2.AddRow(new string[] {
-                            "1",
-                            "Seattle"});
+#line 9
+ testRunner.And("I GET the territory by id \"02116\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 10
+ testRunner.And("I add territory \"02116\" to employee 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
 #line 11
- testRunner.And("the following new territories", ((string)(null)), table2, "And ");
-#line hidden
-#line 14
- testRunner.When("I submit POSTs to create employees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
-#line 15
- testRunner.And("I submit POSTs to create territories", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 16
- testRunner.And("I add territory \"1\" to employee 314", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 17
  testRunner.And("I submit a PUT to update the employee", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 18
+#line 12
+ testRunner.And("I GET employee 1 to the results", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 13
  testRunner.Then("the employee should have the territory", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
@@ -150,7 +133,7 @@ this.ScenarioInitialize(scenarioInfo);
                     "entity_relations"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Attach New Territory to Employee", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 21
+#line 16
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -160,36 +143,39 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                             "EmployeeId",
                             "LastName",
                             "FirstName"});
-                table3.AddRow(new string[] {
+                table1.AddRow(new string[] {
                             "314",
                             "Suyama",
                             "Michael"});
-#line 22
- testRunner.Given("the following new employees", ((string)(null)), table3, "Given ");
+#line 17
+ testRunner.Given("the following new employees", ((string)(null)), table1, "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                             "TerritoryId",
                             "TerritoryDescription"});
-                table4.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "1",
                             "Seattle"});
-#line 25
- testRunner.And("the following new territories", ((string)(null)), table4, "And ");
+#line 20
+ testRunner.And("the following new territories", ((string)(null)), table2, "And ");
 #line hidden
-#line 28
+#line 23
  testRunner.When("I submit POSTs to create employees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 29
+#line 24
  testRunner.And("I add territory \"1\" to employee 314", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 30
+#line 25
  testRunner.And("I submit a PUT to update the employee", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 31
+#line 26
+ testRunner.And("I GET employee 314 to the results", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 27
  testRunner.Then("the employee should have the territory", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
@@ -206,7 +192,7 @@ this.ScenarioInitialize(scenarioInfo);
                     "entity_relations"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Modify Employee Territory", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 34
+#line 30
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -216,19 +202,19 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 35
+#line 31
  testRunner.When("I GET the employee by id 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 36
+#line 32
  testRunner.And("I modify territory \"01581\" from employee 1 to have description \"1Seattle\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 37
+#line 33
  testRunner.And("I submit a PUT to update the employee", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 38
- testRunner.And("I GET the employee by id 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 34
+ testRunner.And("I GET employee 1 to the results", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 39
+#line 35
  testRunner.Then("the employee should have territory \"01581\" with description \"1Seattle\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
@@ -245,7 +231,7 @@ this.ScenarioInitialize(scenarioInfo);
                     "entity_relations"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove Territory from Employee", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 42
+#line 38
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -255,19 +241,19 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 43
+#line 39
  testRunner.When("I GET the employee by id 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 44
+#line 40
  testRunner.And("I remove territory \"01581\" from employee 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 45
+#line 41
  testRunner.And("I submit a PUT to update the employee", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 46
- testRunner.And("I GET the employee by id 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 42
+ testRunner.And("I GET employee 1 to the results", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 47
+#line 43
  testRunner.Then("the employee should not have the territory", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

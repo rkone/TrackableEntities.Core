@@ -22,6 +22,9 @@ public static class DbContextExtensions
         // Detach root entity
         context.Entry(item).State = EntityState.Detached;
 
+        // track entities added to many-to-many collections that exist in the database. They need to be set to unchanged before saving.
+        List<Tuple<EntityEntry, ITrackable>> manyToManySetUnchanged = [];
+
         // Recursively set entity state for DbContext entry
         context.ChangeTracker.TrackGraph(item, node =>
         {
@@ -89,13 +92,12 @@ public static class DbContextExtensions
                         }
                         break;                        
                     case RelationshipType.ManyToMany:
-                        // If trackable state is added and the entity already exists in the database, set its state to unchanged and add it to the collection
+                        // If trackable state is added and the entity already exists in the database, record it to set to unchanged later, so it doesn't try to save the entity.
                         if (trackable.TrackingState == TrackingState.Added && node.Entry.IsKeySet && Exists(context, node.Entry))
-                        {                            
-                            SetEntityState(node.Entry, TrackingState.Unchanged.ToEntityState(), trackable);
-                            node.SourceEntry.Collection(node.InboundNavigation!.Name).Metadata.GetCollectionAccessor()?.Add(node.SourceEntry.Entity, node.Entry.Entity, false);
-                            return;
+                        {
+                            manyToManySetUnchanged.Add(new Tuple<EntityEntry, ITrackable>(node.Entry, trackable));
                         }
+                            
                         // If trackable state is modified, set entity state to unchanged before attaching.
                         // this tells the skip navigation to be unchanged.
                         if (trackable.TrackingState == TrackingState.Modified)
@@ -110,6 +112,8 @@ public static class DbContextExtensions
                             var collection = node.SourceEntry.Collection(node.InboundNavigation!.Name);
                             collection.Load();
                             collection.Metadata.GetCollectionAccessor()?.Remove(node.SourceEntry.Entity, node.Entry.Entity);
+                            //ensure other side does not have the entity in its collection either.
+                            node.Entry.Collection(node.InboundNavigation.Inverse!.Name).Metadata.GetCollectionAccessor()?.Remove(node.Entry.Entity, node.SourceEntry.Entity);
                             return;
                         }
                         break;
@@ -118,6 +122,11 @@ public static class DbContextExtensions
             // Set entity state to tracking state
             SetEntityState(node.Entry, trackable.TrackingState.ToEntityState(), trackable);
         });
+
+        foreach (var tuple in manyToManySetUnchanged)
+        {
+            SetEntityState(tuple.Item1, TrackingState.Unchanged.ToEntityState(), tuple.Item2);
+        }
     } 
 
     /// <summary>

@@ -102,14 +102,14 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
                             "CustomerId",
                             "CustomerName"});
-                table5.AddRow(new string[] {
+                table3.AddRow(new string[] {
                             "ACMEC",
                             "Acme Company"});
 #line 8
- testRunner.Given("the following new customers", ((string)(null)), table5, "Given ");
+ testRunner.Given("the following new customers", ((string)(null)), table3, "Given ");
 #line hidden
 #line 11
  testRunner.When("I submit POSTs to create customers", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
