@@ -27,8 +27,10 @@ public class FamilyDbContextTests
     {
         // Arrange
         var context = _fixture.GetContext();
-        var parent = new Parent("Parent");
-        parent.TrackingState = TrackingState.Added;
+        var parent = new Parent("Parent")
+        {
+            TrackingState = TrackingState.Added
+        };
 
         // Act
         context.ApplyChanges(parent);
@@ -42,8 +44,10 @@ public class FamilyDbContextTests
     {
         // Arrange
         var context = _fixture.GetContext();
-        var parent = new Parent("Parent");
-        parent.TrackingState = TrackingState.Modified;
+        var parent = new Parent("Parent")
+        {
+            TrackingState = TrackingState.Modified
+        };
 
         // Act
         context.ApplyChanges(parent);
@@ -57,10 +61,12 @@ public class FamilyDbContextTests
     {
         // Arrange
         var context = _fixture.GetContext();
-        var parent = new Parent("Parent");
-        parent.Hobby = "Hobby_Changed";
-        parent.TrackingState = TrackingState.Modified;
-        parent.ModifiedProperties = new List<string> { "Hobby" };
+        var parent = new Parent("Parent")
+        {
+            Hobby = "Hobby_Changed",
+            TrackingState = TrackingState.Modified,
+            ModifiedProperties = ["Hobby"]
+        };
 
         // Act
         context.ApplyChanges(parent);
@@ -75,8 +81,10 @@ public class FamilyDbContextTests
     {
         // Arrange
         var context = _fixture.GetContext();
-        var parent = new Parent("Parent");
-        parent.TrackingState = TrackingState.Deleted;
+        var parent = new Parent("Parent")
+        {
+            TrackingState = TrackingState.Deleted
+        };
 
         // Act
         context.ApplyChanges(parent);
@@ -92,14 +100,14 @@ public class FamilyDbContextTests
         var context = _fixture.GetContext();
         var parent = new Parent("Parent")
         {
-            Children = new List<Child>
-                {
-                    new Child("Child1"), 
+            Children =
+                [
+                    new Child("Child1"),
                     new Child("Child2"),
                     new Child("Child3")
-                }
+                ],
+            TrackingState = TrackingState.Added
         };
-        parent.TrackingState = TrackingState.Added;
         parent.Children[0].TrackingState = TrackingState.Added;
         parent.Children[1].TrackingState = TrackingState.Added;
         parent.Children[2].TrackingState = TrackingState.Added;
@@ -176,7 +184,7 @@ public class FamilyDbContextTests
         var child3 = new Child("Child3");
         var parent = new Parent("Parent")
         {
-            Children = new List<Child> { child1, child2, child3 }
+            Children = [child1, child2, child3]
         };
         child1.TrackingState = TrackingState.Added;
         child2.TrackingState = TrackingState.Modified;
@@ -204,7 +212,7 @@ public class FamilyDbContextTests
         child.Children.RemoveAt(2);
         child.Children.RemoveAt(1);
         var grandchild = child.Children[0];
-        grandchild.Children = new List<Child>();
+        grandchild.Children = [];
         parent.TrackingState = TrackingState.Unchanged;
         child.TrackingState = TrackingState.Deleted;
         grandchild.TrackingState = TrackingState.Deleted;
@@ -258,10 +266,10 @@ public class FamilyDbContextTests
     {
         // Arrange
         var parent = new MockFamily().Parent;
-        parent.ModifiedProperties = new List<string> { "Name" };
-        parent.Children[0].ModifiedProperties = new List<string> { "Name" };
-        parent.Children[0].Children[0].ModifiedProperties = new List<string> { "Name" };
-        parent.Children[0].Children[0].Children[1].ModifiedProperties = new List<string> { "Name" };
+        parent.ModifiedProperties = ["Name"];
+        parent.Children[0].ModifiedProperties = ["Name"];
+        parent.Children[0].Children[0].ModifiedProperties = ["Name"];
+        parent.Children[0].Children[0].Children[1].ModifiedProperties = ["Name"];
 
         // Act
         var context = _fixture.GetContext();

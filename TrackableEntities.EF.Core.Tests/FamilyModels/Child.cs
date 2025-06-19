@@ -16,7 +16,7 @@ public class Child : ITrackable
     [Key]
     public string Name { get; set; } = string.Empty;
     [TrackableEntityTrackedProperty]
-    public List<Child> Children { get; set; } = new List<Child>();
+    public List<Child> Children { get; set; } = [];
 
     [NotMapped]
     public TrackingState TrackingState { get; set; }

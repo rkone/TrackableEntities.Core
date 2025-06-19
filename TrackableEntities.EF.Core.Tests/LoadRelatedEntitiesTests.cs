@@ -173,21 +173,21 @@ public class LoadRelatedEntitiesTests
         {
             OrderDate = DateTime.Today,
             Customer = customer1,
-            OrderDetails = new List<OrderDetail>
-            {
+            OrderDetails =
+            [
                 detail1,
                 detail2,
-            }
+            ]
         };
         var order2 = new Order
         {
             OrderDate = DateTime.Today,
             Customer = customer2,
-            OrderDetails = new List<OrderDetail>
-            {
+            OrderDetails =
+            [
                 detail3,
                 detail4,
-            }
+            ]
         };
 
         // Persist entities
@@ -211,11 +211,11 @@ public class LoadRelatedEntitiesTests
         detail2.Product = null;
         detail3.Product = null;
         detail4.Product = null;
-        order1.OrderDetails = new List<OrderDetail> { detail1, detail2 };
-        order2.OrderDetails = new List<OrderDetail> { detail3, detail4 };
+        order1.OrderDetails = [detail1, detail2];
+        order2.OrderDetails = [detail3, detail4];
 
         // Return orders
-        return new List<Order> { order1, order2 };
+        return [order1, order2];
     }
 
     //private List<Employee> CreateTestEmployees(NorthwindDbContext context)
@@ -299,7 +299,7 @@ public class LoadRelatedEntitiesTests
         product1.HolidayPromo = null;
 
         // Return entities
-        return new List<Product> { product1 };
+        return [product1];
     }
 
     private List<Product> CreateTestProductsWithProductInfo(NorthwindDbContext context)
@@ -332,7 +332,7 @@ public class LoadRelatedEntitiesTests
         product1.ProductInfo = null;
 
         // Return entities
-        return new List<Product> { product1 };
+        return [product1];
     }
 
     #endregion

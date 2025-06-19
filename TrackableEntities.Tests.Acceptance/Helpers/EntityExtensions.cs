@@ -77,7 +77,7 @@ internal static class EntityExtensions
         };
         if (order.OrderDetails != null)
         {
-            clientOrder.OrderDetails = new ChangeTrackingCollection<EF.Core.Tests.FamilyModels.Client.OrderDetail>();
+            clientOrder.OrderDetails = [];
             foreach (var detail in order.OrderDetails.Select(d => d.ToClientEntity(clientOrder)))
             {
                 if (detail != null)
@@ -93,12 +93,12 @@ internal static class EntityExtensions
         {
             CustomerId = customerId,
             OrderDate = DateTime.Today, 
-            OrderDetails = new ChangeTrackingCollection<EF.Core.Tests.FamilyModels.Client.OrderDetail>
-                {
+            OrderDetails =
+                [
                     new EF.Core.Tests.FamilyModels.Client.OrderDetail { ProductId = productIds[0], Quantity = 5, UnitPrice = 10 },
                     new EF.Core.Tests.FamilyModels.Client.OrderDetail { ProductId = productIds[1], Quantity = 10, UnitPrice = 20 },
                     new EF.Core.Tests.FamilyModels.Client.OrderDetail { ProductId = productIds[2], Quantity = 40, UnitPrice = 40 }
-                }
+                ]
         };            
     }
 }

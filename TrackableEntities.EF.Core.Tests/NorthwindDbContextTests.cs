@@ -71,7 +71,7 @@ public class NorthwindDbContextTests
         var context = _fixture.GetContext();
         var product = new Product();
         product.TrackingState = TrackingState.Modified;
-        product.ModifiedProperties = new List<string> { nameof(Product.UnitPrice) };
+        product.ModifiedProperties = [nameof(Product.UnitPrice)];
 
         // Act
         context.ApplyChanges(product);
@@ -109,8 +109,8 @@ public class NorthwindDbContextTests
         var context = _fixture.GetContext();
         var products = new List<Product>
             {
-                new Product {ProductId = 1},
-                new Product { ProductId = 2}
+                new() { ProductId = 1 },
+                new() { ProductId = 2 }
             };
         products.ForEach(p => p.TrackingState = TrackingState.Unchanged);
 
@@ -129,8 +129,8 @@ public class NorthwindDbContextTests
         var context = _fixture.GetContext();
         var products = new List<Product>
             {
-                new Product {ProductId = 1},
-                new Product { ProductId = 2}
+                new() { ProductId = 1 },
+                new() { ProductId = 2 }
             };
         products.ForEach(p => p.TrackingState = TrackingState.Added);
 
@@ -149,8 +149,8 @@ public class NorthwindDbContextTests
         var context = _fixture.GetContext();
         var products = new List<Product>
             {
-                new Product {ProductId = 1},
-                new Product { ProductId = 2}
+                new() { ProductId = 1 },
+                new() { ProductId = 2 }
             };
         products.ForEach(p => p.TrackingState = TrackingState.Modified);
 
@@ -169,8 +169,8 @@ public class NorthwindDbContextTests
         var context = _fixture.GetContext();
         var products = new List<Product>
             {
-                new Product {ProductId = 1},
-                new Product { ProductId = 2}
+                new() { ProductId = 1 },
+                new() { ProductId = 2 }
             };
         products.ForEach(p => p.TrackingState = TrackingState.Deleted);
 
@@ -189,10 +189,10 @@ public class NorthwindDbContextTests
         var context = _fixture.GetContext();
         var products = new List<Product>
             {
-                new Product { ProductId = 1},
-                new Product { ProductId = 2},
-                new Product { ProductId = 3},
-                new Product { ProductId = 4},
+                new() { ProductId = 1 },
+                new() { ProductId = 2 },
+                new() { ProductId = 3 },
+                new() { ProductId = 4 },
             };
         products[1].TrackingState = TrackingState.Modified;
         products[2].TrackingState = TrackingState.Added;
@@ -469,7 +469,7 @@ public class NorthwindDbContextTests
         detail1.TrackingState = TrackingState.Added;
         detail2.TrackingState = TrackingState.Added;
         order.TrackingState = TrackingState.Modified;
-        order.ModifiedProperties = new List<string> { "OrderDate" };
+        order.ModifiedProperties = ["OrderDate"];
 
         // Act
         context.ApplyChanges(order);
@@ -490,7 +490,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new List<OrderDetail>();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -505,8 +505,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer!.CustomerAddresses = new List<CustomerAddress>
-            { address1, address2 };
+        order.Customer!.CustomerAddresses = [address1, address2];
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
 
@@ -526,7 +525,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new List<OrderDetail>();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -548,7 +547,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
         address3.TrackingState = TrackingState.Modified;
@@ -570,7 +569,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new List<OrderDetail>();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -592,7 +591,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
         address3.TrackingState = TrackingState.Deleted;
@@ -614,7 +613,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new List<OrderDetail>();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -636,7 +635,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
         address3.TrackingState = TrackingState.Unchanged;
@@ -658,7 +657,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -673,7 +672,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2 };
+        order.Customer.CustomerAddresses = [address1, address2];
         order.Customer.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -694,7 +693,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -716,7 +715,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         order.Customer.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -739,7 +738,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -761,7 +760,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         order.Customer.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -784,7 +783,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -806,7 +805,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         order.Customer.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -829,7 +828,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -844,7 +843,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2 };
+        order.Customer.CustomerAddresses = [address1, address2];
         order.Customer.TrackingState = TrackingState.Deleted;
 
         // Act / Assert
@@ -860,7 +859,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -875,7 +874,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2 };
+        order.Customer.CustomerAddresses = [address1, address2];
         order.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -896,7 +895,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -918,7 +917,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         order.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -941,7 +940,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -963,7 +962,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         order.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -986,7 +985,7 @@ public class NorthwindDbContextTests
         // Arrange
         var context = _fixture.GetContext();
         var order = new MockNorthwind().Orders[0];
-        order.OrderDetails = new();
+        order.OrderDetails = [];
         var address1 = new CustomerAddress
         {
             CustomerAddressId = 0,
@@ -1008,7 +1007,7 @@ public class NorthwindDbContextTests
             CustomerId = order.Customer!.CustomerId!,
             Customer = order.Customer
         };
-        order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
+        order.Customer.CustomerAddresses = [address1, address2, address3];
         order.TrackingState = TrackingState.Modified;
         address1.TrackingState = TrackingState.Added;
         address2.TrackingState = TrackingState.Added;
@@ -1408,10 +1407,10 @@ public class NorthwindDbContextTests
         customer.CustomerSetting = customerSetting;
 
         var order = new Order() { OrderDate = DateTime.Now };
-        customer.Orders = new List<Order>() { order };
+        customer.Orders = [order];
 
         var orderDetail = new OrderDetail() { ProductId = nw.Products[0].ProductId, Quantity = 1, UnitPrice = 1 };
-        order.OrderDetails = new List<OrderDetail>() { orderDetail };
+        order.OrderDetails = [orderDetail];
 
         // Act
         context.ApplyChanges(customer);
@@ -1836,9 +1835,9 @@ public class NorthwindDbContextTests
         var northwind = new MockNorthwind();
         var order = northwind.Orders[0];
         order.TrackingState = TrackingState.Modified;
-        order.ModifiedProperties = new List<string> { "OrderDate" };
+        order.ModifiedProperties = ["OrderDate"];
         order.Customer!.TrackingState = TrackingState.Modified;
-        order.Customer.ModifiedProperties = new List<string> { "CustomerName" };
+        order.Customer.ModifiedProperties = ["CustomerName"];
 
         // Act
         var context = _fixture.GetContext();

@@ -368,7 +368,7 @@ public class ChangeTrackingExtensionsTests
         {
             TerritoryId = "91360",
             TerritoryDescription = "SouthernCalifornia",
-            Employees = new ChangeTrackingCollection<Employee> { employee }
+            Employees = [employee]
         };
         var changeTracker = new ChangeTrackingCollection<Employee>(employee);
         var name = employee.LastName = "xxx";
@@ -397,15 +397,15 @@ public class ChangeTrackingExtensionsTests
         var modifiedTerritory = employee.Territories[1];
         var deletedTerritory = employee.Territories[2];
         var addedExistingTerritory = database.Territories[3];
-        var area1 = new Area { AreaId = 1, AreaName = "Northern", Territories = new ChangeTrackingCollection<Territory> { unchangedTerritory } };
-        var area2 = new Area { AreaId = 2, AreaName = "Southern", Territories = new ChangeTrackingCollection<Territory> { modifiedTerritory } };
-        var area3 = new Area { AreaId = 3, AreaName = "Eastern", Territories = new ChangeTrackingCollection<Territory> { deletedTerritory } };
-        var area4 = new Area { AreaId = 4, AreaName = "Western", Territories = new ChangeTrackingCollection<Territory> { addedExistingTerritory } };
+        var area1 = new Area { AreaId = 1, AreaName = "Northern", Territories = [unchangedTerritory] };
+        var area2 = new Area { AreaId = 2, AreaName = "Southern", Territories = [modifiedTerritory] };
+        var area3 = new Area { AreaId = 3, AreaName = "Eastern", Territories = [deletedTerritory] };
+        var area4 = new Area { AreaId = 4, AreaName = "Western", Territories = [addedExistingTerritory] };
         var addedNewTerritory = new Territory
         {
             TerritoryId = "91360",
             TerritoryDescription = "SouthernCalifornia",
-            Employees = new ChangeTrackingCollection<Employee> { employee },
+            Employees = [employee],
             AreaId = 5,
             TrackingState = TrackingState.Added // Must explicitly mark as added
         };
@@ -521,8 +521,10 @@ public class ChangeTrackingExtensionsTests
     {
         // Arrange
         var parent = new Parent("Parent");
-        var changeTracker = new ChangeTrackingCollection<Parent>(true);
-        changeTracker.Add(parent);
+        var changeTracker = new ChangeTrackingCollection<Parent>(true)
+        {
+            parent
+        };
 
         // Act
         bool hasChanges = parent.HasChanges();
@@ -552,11 +554,11 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
 
@@ -573,11 +575,11 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children[0].Name += "_Changed";
@@ -595,11 +597,11 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children.Add(new Child("Child3"));
@@ -617,11 +619,11 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children.RemoveAt(0);
@@ -639,18 +641,18 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1")
                         {
-                            Children = new ChangeTrackingCollection<Child>
-                            {
+                            Children =
+                            [
                                 new Child("Grandchild1"),
                                 new Child("Grandchild2")
-                            }
+                            ]
                         },
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
 
@@ -667,18 +669,18 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1")
                         {
-                            Children = new ChangeTrackingCollection<Child>
-                            {
+                            Children =
+                            [
                                 new Child("Grandchild1"),
                                 new Child("Grandchild2")
-                            }
+                            ]
                         },
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children[0].Children[0].Name += "_Changed";
@@ -696,18 +698,18 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1")
                         {
-                            Children = new ChangeTrackingCollection<Child>
-                            {
+                            Children =
+                            [
                                 new Child("Grandchild1"),
                                 new Child("Grandchild2")
-                            }
+                            ]
                         },
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children[0].Children.Add(new Child("Grandchild3"));
@@ -725,18 +727,18 @@ public class ChangeTrackingExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1")
                         {
-                            Children = new ChangeTrackingCollection<Child>
-                            {
+                            Children =
+                            [
                                 new Child("Grandchild1"),
                                 new Child("Grandchild2")
-                            }
+                            ]
                         },
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children[0].Children.RemoveAt(0);
@@ -851,7 +853,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         var territory = database.Territories[0];
         var employee = database.Employees[0];
-        territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+        territory.Employees = [employee];
         order.Customer!.Territory = territory;
         var changeTracker = new ChangeTrackingCollection<Order>(order);
 
@@ -870,7 +872,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         var territory = database.Territories[0];
         var employee = database.Employees[0];
-        territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+        territory.Employees = [employee];
         order.Customer!.Territory = territory;
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         order.Customer.Territory = null;
@@ -890,7 +892,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         var territory = database.Territories[0];
         var employee = database.Employees[0];
-        territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+        territory.Employees = [employee];
         order.Customer!.Territory = territory;
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         order.Customer.Territory = database.Territories[1];
@@ -910,7 +912,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         var territory = database.Territories[0];
         var employee = database.Employees[0];
-        territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+        territory.Employees = [employee];
         order.Customer!.Territory = territory;
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         territory.Data = "xxx";
@@ -930,7 +932,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         var territory = database.Territories[0];
         var employee = database.Employees[0];
-        territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+        territory.Employees = [employee];
         order.Customer!.Territory = territory;
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         territory.Employees[0].LastName = "xxx";
@@ -950,7 +952,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         var territory = database.Territories[0];
         var employee = database.Employees[0];
-        territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+        territory.Employees = [employee];
         order.Customer!.Territory = territory;
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         territory.Employees.Add(database.Employees[1]);
@@ -970,7 +972,7 @@ public class ChangeTrackingExtensionsTests
         var order = database.Orders[0];
         var territory = database.Territories[0];
         var employee = database.Employees[0];
-        territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+        territory.Employees = [employee];
         order.Customer!.Territory = territory;
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         territory.Employees.Remove(employee);
@@ -1234,13 +1236,13 @@ public class ChangeTrackingExtensionsTests
             {
                 AreaId = 5,
                 AreaName = "Southwestern",
-                Territories = new ChangeTrackingCollection<Territory> { addedNewTerritory }
+                Territories = [addedNewTerritory]
             };
             var area6 = new Area
             {
                 AreaId = 6,
                 AreaName = "Central",
-                Territories = new ChangeTrackingCollection<Territory> { modifiedTerritory }
+                Territories = [modifiedTerritory]
             };
             addedNewTerritory.Area = area5;
             modifiedTerritory.Area = area6;

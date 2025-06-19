@@ -13,8 +13,8 @@ public class MockNorthwind
 
     public MockNorthwind()
     {
-        Categories = new ChangeTrackingCollection<Category>
-            {
+        Categories =
+            [
                 new Category { CategoryId = 1, CategoryName = "Beverages" },
                 new Category { CategoryId = 2, CategoryName = "Condiments" },
                 new Category { CategoryId = 3, CategoryName = "Confections" },
@@ -23,9 +23,9 @@ public class MockNorthwind
                 new Category { CategoryId = 6, CategoryName = "Meat/Poultry" },
                 new Category { CategoryId = 7, CategoryName = "Produce" },
                 new Category { CategoryId = 8, CategoryName = "Seafood" }
-            };
-        Products = new ChangeTrackingCollection<Product>
-            {
+            ];
+        Products =
+            [
                 new PromotionalProduct { ProductId = 1, ProductName = "Chai", UnitPrice = 21.0000M, Discontinued = false, CategoryId = 1, Category = Categories[0], PromoCode = "SOME-TEE" },
                 new PromotionalProduct { ProductId = 2, ProductName = "Chang", UnitPrice = 20.0000M, Discontinued = false, CategoryId = 1, Category = Categories[0], PromoCode = "THAI-EXPO" },
                 new Product { ProductId = 3, ProductName = "Aniseed Syrup", UnitPrice = 10.0000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
@@ -55,7 +55,7 @@ public class MockNorthwind
                 new Product { ProductId = 60, ProductName = "Camembert Pierrot", UnitPrice = 34.50M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
                 new Product { ProductId = 65, ProductName = "Louisiana Fiery Hot Pepper Sauce", UnitPrice = 21.05M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
                 new Product { ProductId = 72, ProductName = "Mozzarella di Giovanni", UnitPrice = 34.80M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
-            };
+            ];
         Categories[0].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 1), true);
         Categories[1].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 2), true);
         Categories[2].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 2), true);
@@ -64,8 +64,8 @@ public class MockNorthwind
         Categories[5].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 6), true);
         Categories[6].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 7), true);
         Categories[7].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 8), true);
-        Customers = new ChangeTrackingCollection<Customer>
-            {
+        Customers =
+            [
                 new Customer { CustomerId = "ALFKI", CustomerName = "Alfreds Futterkiste"},
                 new Customer { CustomerId = "ANATR", CustomerName = "Ana Trujillo Emparedados y helados"},
                 new Customer { CustomerId = "ANTON", CustomerName = "Antonio Moreno Taquería"},
@@ -81,46 +81,46 @@ public class MockNorthwind
                 new Customer { CustomerId = "TOMSP", CustomerName = "Toms Spezialitäten"},
                 new Customer { CustomerId = "VICTE", CustomerName = "Victuailles en stock"},
                 new Customer { CustomerId = "VINET", CustomerName = "Vins et alcools Chevalier"}
-            };
-        Orders = new ChangeTrackingCollection<Order>
-            {
+            ];
+        Orders =
+            [
                 new Order { OrderId = 10248, OrderDate = DateTime.Parse("1996-07-04"), CustomerId = "VINET", Customer = Customers[14],
-                    OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                        {
+                    OrderDetails =
+                        [
                             new OrderDetail{ ProductId = 11, OrderId = 10248, Quantity = 12, UnitPrice = 14.0000M, Product = Products[10] },
                             new OrderDetail{ ProductId = 42, OrderId = 10248, Quantity = 10, UnitPrice = 9.8000M, Product = Products[23] },
                             new OrderDetail{ ProductId = 72, OrderId = 10248, Quantity = 5, UnitPrice = 34.8000M, Product = Products[28] }
-                        }},
+                        ]},
                 new Order { OrderId = 10249, OrderDate = DateTime.Parse("1996-07-05"), CustomerId = "TOMSP", Customer = Customers[12],
-                    OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                        {
+                    OrderDetails =
+                        [
                             new OrderDetail{ ProductId = 14, OrderId = 10249, Quantity = 9, UnitPrice = 18.6000M, Product = Products[13] },
                             new OrderDetail{ ProductId = 51, OrderId = 10249, Quantity = 40, UnitPrice = 42.4000M, Product = Products[24] }
-                        }},
+                        ]},
                 new Order { OrderId = 10250, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "HANAR", Customer = Customers[10],
-                    OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                        {
+                    OrderDetails =
+                        [
                             new OrderDetail{ ProductId = 41, OrderId = 10250, Quantity = 10, UnitPrice = 7.7000M, Product = Products[22] },
                             new OrderDetail{ ProductId = 51, OrderId = 10250, Quantity = 12, UnitPrice = 42.4000M, Product = Products[24] },
                             new OrderDetail{ ProductId = 65, OrderId = 10250, Quantity = 12, UnitPrice = 16.8000M, Product = Products[27] }
-                        }},
+                        ]},
                 new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[14],
-                    OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                        {
+                    OrderDetails =
+                        [
                             new OrderDetail{ ProductId = 22, OrderId = 10251, Quantity = 6, UnitPrice = 16.8000M, Product = Products[20] },
                             new OrderDetail{ ProductId = 57, OrderId = 10251, Quantity = 15, UnitPrice = 15.6000M, Product = Products[25] },
                             new OrderDetail{ ProductId = 65, OrderId = 10251, Quantity = 20, UnitPrice = 16.8000M, Product = Products[27] }
-                        }},
+                        ]},
                 new Order { OrderId = 10252, OrderDate = DateTime.Parse("1996-07-09"), CustomerId = "SUPRD", Customer = Customers[11],
-                    OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                        {
+                    OrderDetails =
+                        [
                             new OrderDetail{ ProductId = 20, OrderId = 10252, Quantity = 40, UnitPrice = 64.8000M, Product = Products[19] },
                             new OrderDetail{ ProductId = 33, OrderId = 10252, Quantity = 25, UnitPrice = 2.0000M, Product = Products[21] },
                             new OrderDetail{ ProductId = 60, OrderId = 10252, Quantity = 40, UnitPrice = 27.2000M, Product = Products[26] },
-                        }},
-            };
-        Territories = new ChangeTrackingCollection<Territory>
-        {
+                        ]},
+            ];
+        Territories =
+        [
             new Territory { TerritoryId = "01581", TerritoryDescription = "Westboro"},
             new Territory { TerritoryId = "01730", TerritoryDescription = "Bedford"},
             new Territory { TerritoryId = "01833", TerritoryDescription = "Georgetown"},
@@ -141,28 +141,28 @@ public class MockNorthwind
             new Territory { TerritoryId = "20852", TerritoryDescription = "Rockville"},
             new Territory { TerritoryId = "27403", TerritoryDescription = "Greensboro"},
             new Territory { TerritoryId = "27511", TerritoryDescription = "Cary"},
-        };
-        Employees = new ChangeTrackingCollection<Employee>
-        {
+        ];
+        Employees =
+        [
             new Employee { EmployeeId = 1, LastName = "Davolio", FirstName = "Nancy", BirthDate = DateTime.Parse("1948-12-08"), HireDate = DateTime.Parse("1992-05-01"), City = "Seattle", Country = "USA",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[0], Territories[1], Territories[2] } },
+              Territories = [Territories[0], Territories[1], Territories[2]] },
             new Employee { EmployeeId = 2, LastName = "Fuller", FirstName = "Andrew", BirthDate = DateTime.Parse("1952-02-19"), HireDate = DateTime.Parse("1992-08-14"), City = "Tacoma", Country = "USA",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[1], Territories[2] } },
+              Territories = [Territories[1], Territories[2]] },
             new Employee { EmployeeId = 3, LastName = "Leverling", FirstName = "Janet", BirthDate = DateTime.Parse("1963-08-30"), HireDate = DateTime.Parse("1992-05-01"), City = "Kirkland", Country = "USA",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[2], Territories[3] } },
+              Territories = [Territories[2], Territories[3]] },
             new Employee { EmployeeId = 4, LastName = "Peacock", FirstName = "Margaret", BirthDate = DateTime.Parse("1937-09-19"), HireDate = DateTime.Parse("1993-05-03"), City = "Redmond", Country = "USA",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[3], Territories[4] } },
+              Territories = [Territories[3], Territories[4]] },
             new Employee { EmployeeId = 5, LastName = "Buchanan", FirstName = "Steven", BirthDate = DateTime.Parse("1955-03-04"), HireDate = DateTime.Parse("1993-10-17"), City = "London", Country = "UK",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[4], Territories[5] } },
+              Territories = [Territories[4], Territories[5]] },
             new Employee { EmployeeId = 6, LastName = "Suyama", FirstName = "Michael", BirthDate = DateTime.Parse("1963-07-02"), HireDate = DateTime.Parse("1993-10-17"), City = "London", Country = "UK",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[5], Territories[6] } },
+              Territories = [Territories[5], Territories[6]] },
             new Employee { EmployeeId = 7, LastName = "King", FirstName = "Robert", BirthDate = DateTime.Parse("1960-05-29"), HireDate = DateTime.Parse("1994-01-02"), City = "London", Country = "UK",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[6], Territories[7] } },
+              Territories = [Territories[6], Territories[7]] },
             new Employee { EmployeeId = 8, LastName = "Callahan", FirstName = "Laura", BirthDate = DateTime.Parse("1958-01-09"), HireDate = DateTime.Parse("1994-03-05"), City = "Seattle", Country = "USA",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[7], Territories[8] } },
+              Territories = [Territories[7], Territories[8]] },
             new Employee { EmployeeId = 9, LastName = "Dodsworth", FirstName = "Anne", BirthDate = DateTime.Parse("1966-01-27"), HireDate = DateTime.Parse("1994-11-15"), City = "London", Country = "UK",
-              Territories = new ChangeTrackingCollection<Territory>{ Territories[8], Territories[9] } },
-        };
+              Territories = [Territories[8], Territories[9]] },
+        ];
         FixupEmployeeTerritories();
     }
 
@@ -172,8 +172,7 @@ public class MockNorthwind
         {
             foreach (var territory in employee.Territories)
             {
-                if (territory.Employees == null)
-                    territory.Employees = new ChangeTrackingCollection<Employee>() { Parent = territory};
+                territory.Employees ??= new ChangeTrackingCollection<Employee>() { Parent = territory};
                 if (!territory.Employees.Contains(employee))
                     territory.Employees.Add(employee);
             }

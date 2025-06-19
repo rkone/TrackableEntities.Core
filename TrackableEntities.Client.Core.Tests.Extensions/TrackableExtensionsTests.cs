@@ -55,8 +55,10 @@ public class TrackableExtensionsTests
     {
         // Arrange
         var parent = _family.Parent;
-        var changeTracker = new ChangeTrackingCollection<Parent>();
-        changeTracker.Add(parent);
+        var changeTracker = new ChangeTrackingCollection<Parent>
+        {
+            parent
+        };
 
         // Act
         changeTracker.Tracking = true;
@@ -165,8 +167,10 @@ public class TrackableExtensionsTests
     {
         // Arrange
         var parent = _family.Parent;
-        var changeTracker = new ChangeTrackingCollection<Parent>(true);
-        changeTracker.Add(parent);
+        var changeTracker = new ChangeTrackingCollection<Parent>(true)
+        {
+            parent
+        };
 
         // Act
         changeTracker.Remove(parent);
@@ -184,7 +188,7 @@ public class TrackableExtensionsTests
         var parent = _family.Parent;
 
         // Act
-        parent.SetModifiedProperties(new List<string> { "Children" });
+        parent.SetModifiedProperties(["Children"]);
 
         // Assert
         IEnumerable<ICollection<string>> modifieds = GetModifieds(parent);
@@ -213,7 +217,7 @@ public class TrackableExtensionsTests
         visitationHelper.TryVisit(order.OrderDetails);
 
         // Act
-        detail1.SetModifiedProperties(new List<string> { propName }, visitationHelper.Clone());
+        detail1.SetModifiedProperties([propName], visitationHelper.Clone());
 
         // Assert
         Assert.Null(order.ModifiedProperties);
@@ -233,11 +237,11 @@ public class TrackableExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children[0].Name += "_Changed";
@@ -257,10 +261,10 @@ public class TrackableExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children.RemoveAt(0);
@@ -280,12 +284,12 @@ public class TrackableExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2"),
                     new Child("Child3")
-                }
+                ]
         };
         var changeTracker = new ChangeTrackingCollection<Parent>(parent);
         parent.Children.Add(new Child("Child4"));
@@ -368,12 +372,12 @@ public class TrackableExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2"),
                     new Child("Child3")
-                }
+                ]
         };
         parent.Children.Tracking = true;
         parent.Children.RemoveAt(2);
@@ -392,12 +396,12 @@ public class TrackableExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1"),
                     new Child("Child2"),
                     new Child("Child3")
-                }
+                ]
         };
         parent.Children[0].TrackingState = TrackingState.Deleted;
         parent.Children.Tracking = true;
@@ -418,17 +422,17 @@ public class TrackableExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1")
                     {
-                        Children = new ChangeTrackingCollection<Child>
-                            {
+                        Children =
+                            [
                                 new Child("Grandchild1"),
                                 new Child("Grandchild2")
-                            }
+                            ]
                     }
-                }
+                ]
         };
         var count = parent.Children[0].Children.Count;
         parent.SetTracking(true, new());
@@ -447,17 +451,17 @@ public class TrackableExtensionsTests
         // Arrange
         var parent = new Parent("Parent")
         {
-            Children = new ChangeTrackingCollection<Child>
-                {
+            Children =
+                [
                     new Child("Child1")
                     {
-                        Children = new ChangeTrackingCollection<Child>
-                            {
+                        Children =
+                            [
                                 new Child("Grandchild1"),
                                 new Child("Grandchild2")
-                            }
+                            ]
                     }
-                }
+                ]
         };
         var deleted = parent.Children[0].Children[1];
         parent.Children[0].Children.Tracking = true;
@@ -619,8 +623,10 @@ public class TrackableExtensionsTests
 
     private IEnumerable<bool> GetTrackings(Parent parent)
     {
-        var trackings = new List<bool>();
-        trackings.Add(parent.Children.Tracking);
+        var trackings = new List<bool>
+        {
+            parent.Children.Tracking
+        };
         trackings.AddRange(from c in parent.Children
                            let ch = c.Children
                            select ch.Tracking);

@@ -37,7 +37,7 @@ public partial class Territory : ClientBase, IClientBase
             if (value == _area) return;
             _area = value;
             AreaChangeTracker = _area == null ? null
-                : new ChangeTrackingCollection<Area> { _area };
+                : [_area];
             NotifyPropertyChanged();
         }
     }

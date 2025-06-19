@@ -14,10 +14,11 @@ public class ChangeTrackingCollectionTests
         // Arrange
         var database = new MockNorthwind();
         var product = database.Products[0];
-        var changeTracker = new ChangeTrackingCollection<Product>();
-
-        // Act
-        changeTracker.Add(product);
+        var changeTracker = new ChangeTrackingCollection<Product>
+        {
+            // Act
+            product
+        };
 
         // Assert
         Assert.Equal(TrackingState.Unchanged, changeTracker[0].TrackingState);
@@ -32,8 +33,10 @@ public class ChangeTrackingCollectionTests
         var product = database.Products[1];
 
         // Act
-        var changeTracker = new ChangeTrackingCollection<Product>(products);
-        changeTracker.Add(product);
+        var changeTracker = new ChangeTrackingCollection<Product>(products)
+        {
+            product
+        };
 
         // Assert
         Assert.Equal(TrackingState.Added, changeTracker[1].TrackingState);
@@ -47,8 +50,10 @@ public class ChangeTrackingCollectionTests
         var product = database.Products[1];
 
         // Act
-        var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
-        changeTracker.Add(product);
+        var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0])
+        {
+            product
+        };
 
         // Assert
         Assert.Equal(TrackingState.Added, changeTracker[1].TrackingState);
@@ -97,10 +102,11 @@ public class ChangeTrackingCollectionTests
         // Arrange
         var database = new MockNorthwind();
         var product = database.Products[0];
-        var changeTracker = new ChangeTrackingCollection<Product>(true);
-
-        // Act
-        changeTracker.Add(product);
+        var changeTracker = new ChangeTrackingCollection<Product>(true)
+        {
+            // Act
+            product
+        };
 
         // Assert
         Assert.Equal(TrackingState.Added, product.TrackingState);
@@ -140,10 +146,11 @@ public class ChangeTrackingCollectionTests
         var database = new MockNorthwind();
         var employee = database.Employees[0];
         employee.Territories.ToList().ForEach(t => t.TrackingState = TrackingState.Added);
-        var changeTracker = new ChangeTrackingCollection<Employee>(true);
-
-        // Act
-        changeTracker.Add(employee);
+        var changeTracker = new ChangeTrackingCollection<Employee>(true)
+        {
+            // Act
+            employee
+        };
 
         // Assert
         Assert.Equal(TrackingState.Added, employee.TrackingState);
@@ -627,9 +634,10 @@ public class ChangeTrackingCollectionTests
         var updatedProduct = database.Products[1];
         var deletedProduct = database.Products[2];
 
-        var changeTracker = new ChangeTrackingCollection<Product>(updatedProduct, deletedProduct);
-
-        changeTracker.Add(addedProduct);
+        var changeTracker = new ChangeTrackingCollection<Product>(updatedProduct, deletedProduct)
+        {
+            addedProduct
+        };
         updatedProduct.UnitPrice++;
         changeTracker.Remove(deletedProduct);
 

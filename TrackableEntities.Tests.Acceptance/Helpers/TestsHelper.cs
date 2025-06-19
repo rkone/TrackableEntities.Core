@@ -101,12 +101,12 @@ internal static class TestsHelper
         {
             OrderDate = DateTime.Today,
             CustomerId = customerId,
-            OrderDetails = new List<OrderDetail>
-                {
+            OrderDetails =
+                [
                     detail1,
                     detail2,
                     detail3
-                }
+                ]
         };
 
         context.Orders.Add(order);

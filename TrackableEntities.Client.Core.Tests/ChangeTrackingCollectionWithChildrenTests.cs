@@ -1034,8 +1034,10 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Arrange
         var database = new MockNorthwind();
         var order = database.Orders[0];
-        var changeTracker = new ChangeTrackingCollection<Order>(true);
-        changeTracker.Add(order);
+        var changeTracker = new ChangeTrackingCollection<Order>(true)
+        {
+            order
+        };
 
         // Act
 
@@ -1053,8 +1055,10 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Arrange
         var database = new MockNorthwind();
         var order = database.Orders[0];
-        var changeTracker = new ChangeTrackingCollection<Order>(true);
-        changeTracker.Add(order);
+        var changeTracker = new ChangeTrackingCollection<Order>(true)
+        {
+            order
+        };
 
         // Act
         order.Customer!.CustomerName = "xxx";
@@ -1075,8 +1079,10 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Arrange
         var database = new MockNorthwind();
         var order = database.Orders[0];
-        var changeTracker = new ChangeTrackingCollection<Order>(true);
-        changeTracker.Add(order);
+        var changeTracker = new ChangeTrackingCollection<Order>(true)
+        {
+            order
+        };
 
         // Act
         // Because not marked as added, refers to existing customer
@@ -1101,8 +1107,10 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Arrange
         var database = new MockNorthwind();
         var order = database.Orders[0];
-        var changeTracker = new ChangeTrackingCollection<Order>(true);
-        changeTracker.Add(order);
+        var changeTracker = new ChangeTrackingCollection<Order>(true)
+        {
+            order
+        };
 
         // Act
         order.Customer = new Customer
@@ -1127,8 +1135,10 @@ public class ChangeTrackingCollectionWithChildrenTests
         // Arrange
         var database = new MockNorthwind();
         var order = database.Orders[0];
-        var changeTracker = new ChangeTrackingCollection<Order>(true);
-        changeTracker.Add(order);
+        var changeTracker = new ChangeTrackingCollection<Order>(true)
+        {
+            order
+        };
         var customer = order.Customer!;
 
         // Act
@@ -1300,14 +1310,14 @@ public class ChangeTrackingCollectionWithChildrenTests
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         var modifiedCustomer = order.Customer!;
         modifiedCustomer.CustomerName = "xxx";
-        order.OrderDetails[0].ModifiedProperties = new List<string> { "UnitPrice " };
+        order.OrderDetails[0].ModifiedProperties = ["UnitPrice "];
 
         // Act
         changeTracker.Remove(order);
 
         // Assert
-        Assert.True(modifiedCustomer.ModifiedProperties?.Count == 1);
-        Assert.True(order.OrderDetails[0].ModifiedProperties == null);
+        Assert.Equal(1, modifiedCustomer.ModifiedProperties?.Count);
+        Assert.Null(order.OrderDetails[0].ModifiedProperties);
     }
 
     #endregion
@@ -1426,7 +1436,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         {
             TerritoryId = "91360",
             TerritoryDescription = "Southern California",
-            Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            Customers = [order.Customer]
         };
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         order.Customer.Territory.TerritoryDescription = "xxx";
@@ -1451,7 +1461,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         {
             TerritoryId = "91360",
             TerritoryDescription = "Southern California",
-            Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            Customers = [order.Customer]
         };
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         order.OrderDate = order.OrderDate.AddDays(1);
@@ -1475,7 +1485,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         {
             TerritoryId = "91360",
             TerritoryDescription = "Southern California",
-            Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            Customers = [order.Customer]
         };
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         order.Customer.CustomerName = "xxx";
@@ -1500,7 +1510,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         {
             TerritoryId = "91360",
             TerritoryDescription = "Southern California",
-            Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            Customers = [order.Customer]
         };
         var changeTracker = new ChangeTrackingCollection<Order>(order);
         order.Customer.CustomerName = "xxx";
@@ -1526,7 +1536,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         {
             TerritoryId = "91360",
             TerritoryDescription = "Southern California",
-            Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            Customers = [order.Customer]
         };
         var employee1 = database.Employees[0];
         var employee2 = database.Employees[1];
@@ -1536,8 +1546,7 @@ public class ChangeTrackingCollectionWithChildrenTests
         employee2.Territories.Add(order.Customer.Territory);
         employee3.Territories.Add(order.Customer.Territory);
         employee4.Territories.Add(order.Customer.Territory);
-        order.Customer.Territory.Employees = new ChangeTrackingCollection<Employee>
-            { employee1, employee2, employee3 };
+        order.Customer.Territory.Employees = [employee1, employee2, employee3];
         var changeTracker = new ChangeTrackingCollection<Order>(order);
 
         employee2.FirstName = "xxx";

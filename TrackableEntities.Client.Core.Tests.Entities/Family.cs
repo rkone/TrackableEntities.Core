@@ -29,7 +29,7 @@ public class Family : ClientBase
         {
             if (value == _father) return;
             _father = value;
-            FatherChangeTracker = _father == null ? null : new ChangeTrackingCollection<Parent> { _father };
+            FatherChangeTracker = _father == null ? null : [_father];
             NotifyPropertyChanged(() => Father);
 
         }
@@ -44,7 +44,7 @@ public class Family : ClientBase
         {
             if (value == _child) return;
             _child = value;
-            ChildChangeTracker = _child == null ? null : new ChangeTrackingCollection<Child> { _child };
+            ChildChangeTracker = _child == null ? null : [_child];
             NotifyPropertyChanged(() => Child);
         }
     }
