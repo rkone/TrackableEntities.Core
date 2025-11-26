@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using TrackableEntities.Common.Core;
 using TrackableEntities.EF.Core.Tests.FamilyModels;
 using TrackableEntities.EF.Core.Tests.Helpers;
 using TrackableEntities.EF.Core.Tests.Mocks;
 using Xunit;
+using Assert = Xunit.Assert;
+[assembly: Parallelize]
 
 namespace TrackableEntities.EF.Core.Tests;
-
 [Collection("FamilyDbContext")]
 public class FamilyDbContextTests
 {
