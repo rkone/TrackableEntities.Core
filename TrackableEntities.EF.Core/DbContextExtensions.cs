@@ -70,9 +70,9 @@ public static class DbContextExtensions
                         if (node.SourceEntry.State == EntityState.Deleted
                             || parent?.TrackingState == TrackingState.Deleted)
                         {
+                            SetEntityState(node.Entry, TrackingState.Deleted.ToEntityState(), trackable);
                             try
                             {
-                                // Will throw if there are added children
                                 SetEntityState(node.Entry, TrackingState.Deleted.ToEntityState(), trackable);
                             }
                             catch (InvalidOperationException e)
