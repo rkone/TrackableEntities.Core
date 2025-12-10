@@ -70,15 +70,7 @@ public static class DbContextExtensions
                         if (node.SourceEntry.State == EntityState.Deleted
                             || parent?.TrackingState == TrackingState.Deleted)
                         {
-                            SetEntityState(node.Entry, TrackingState.Deleted.ToEntityState(), trackable);
-                            try
-                            {
-                                SetEntityState(node.Entry, TrackingState.Deleted.ToEntityState(), trackable);
-                            }
-                            catch (InvalidOperationException e)
-                            {
-                                throw new InvalidOperationException(Constants.ExceptionMessages.DeletedWithAddedChildren, e);
-                            }
+                            SetEntityState(node.Entry, TrackingState.Deleted.ToEntityState(), trackable);                            
                             return;
                         }
                         break;
