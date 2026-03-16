@@ -175,6 +175,26 @@ public class ChangeTrackingCollectionTests
         Assert.Equal(3, employee.Territories.Count);
     }
 
+
+    [Fact]
+    public void Removing_And_Adding_The_Same_Territory_Should_Keep_Added_Territory_In_Territory_Collection()
+    {
+        // Arrange
+        var database = new MockNorthwind();
+        var employee = database.Employees[0];
+        var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+        var territory = employee.Territories[0];
+
+        // Act
+        employee.Territories.Remove(territory);
+        employee.Territories.Add(territory);
+
+        // Assert
+        var changes = changeTracker.GetChanges();
+        Assert.Empty(changes);
+        Assert.Equal(3, employee.Territories.Count);
+    }
+
     #endregion
 
     #region Modified Items Tests

@@ -195,7 +195,11 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
             item.SetTracking(Tracking, visitationHelper.Clone());
 
             // Mark item and trackable collection properties
-            item.SetState(TrackingState.Added, visitationHelper.Clone());
+            // Restore item if it was previously deleted
+            if (_deletedEntities.Remove(item))
+                    item.SetState(TrackingState.Unchanged, visitationHelper.Clone());
+                else
+                    item.SetState(TrackingState.Added, visitationHelper.Clone());
 
             // Fire EntityChanged event
             EntityChanged?.Invoke(this, EventArgs.Empty);

@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	  <PackageId>TrackableEntities.Client.Core</PackageId>
-	  <PackageVersion>10.0.0</PackageVersion>
+	  <PackageVersion>10.0.1</PackageVersion>
 	  <Authors>Tony Sneed</Authors>
 	  <Company>Tony Sneed</Company>
 	  <Title>Trackable Entities Client</Title>
