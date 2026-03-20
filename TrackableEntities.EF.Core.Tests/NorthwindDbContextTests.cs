@@ -69,9 +69,11 @@ public class NorthwindDbContextTests
     {
         // Arrange
         var context = _fixture.GetContext();
-        var product = new Product();
-        product.TrackingState = TrackingState.Modified;
-        product.ModifiedProperties = [nameof(Product.UnitPrice)];
+        var product = new Product
+        {
+            TrackingState = TrackingState.Modified,
+            ModifiedProperties = [nameof(Product.UnitPrice)]
+        };
 
         // Act
         context.ApplyChanges(product);

@@ -143,8 +143,7 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
                 PortableReflectionHelper.Instance.IsAssignable(typeof(ITrackable), prop.PropertyType))
             {
                 ITrackingCollection? refPropChangeTracker = entity.GetRefPropertyChangeTracker(e.PropertyName);
-                if (refPropChangeTracker != null)
-                    refPropChangeTracker.Tracking = Tracking;
+                refPropChangeTracker?.Tracking = Tracking;
                 return;
             }
 

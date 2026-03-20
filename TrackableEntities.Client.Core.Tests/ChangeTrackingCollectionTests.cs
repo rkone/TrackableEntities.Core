@@ -102,7 +102,7 @@ public class ChangeTrackingCollectionTests
         // Arrange
         var database = new MockNorthwind();
         var product = database.Products[0];
-        var changeTracker = new ChangeTrackingCollection<Product>(true)
+        _ = new ChangeTrackingCollection<Product>(true)
         {
             // Act
             product
@@ -204,8 +204,7 @@ public class ChangeTrackingCollectionTests
     {
         // Arrange
         var database = new MockNorthwind();
-        var changeTracker = new ChangeTrackingCollection<Product>();
-        changeTracker.Tracking = true;
+        var changeTracker = new ChangeTrackingCollection<Product>(true);
         var product = new Product
         {
             ProductId = 100,
@@ -228,8 +227,7 @@ public class ChangeTrackingCollectionTests
     {
         // Arrange
         var database = new MockNorthwind();
-        var changeTracker = new ChangeTrackingCollection<Product>();
-        changeTracker.Tracking = true;
+        var changeTracker = new ChangeTrackingCollection<Product>(true);
         var product = new Product
         {
             ProductId = 100,
@@ -361,8 +359,7 @@ public class ChangeTrackingCollectionTests
     {
         // Arrange
         var database = new MockNorthwind();
-        var changeTracker = new ChangeTrackingCollection<Product>();
-        changeTracker.Tracking = true;
+        var changeTracker = new ChangeTrackingCollection<Product>(true);
         var product = new Product
         {
             ProductId = 100,
@@ -386,8 +383,7 @@ public class ChangeTrackingCollectionTests
     {
         // Arrange
         var database = new MockNorthwind();
-        var changeTracker = new ChangeTrackingCollection<Product>();
-        changeTracker.Tracking = true;
+        var changeTracker = new ChangeTrackingCollection<Product>(true);
         var product = new Product
         {
             ProductId = 100,
@@ -704,11 +700,11 @@ public class ChangeTrackingCollectionTests
 
         // Delete all territories, so employee.Territories.Count is 0
         employee.Territories.Remove(employee.Territories[2]);
-        var changesA = changeTracker.GetChanges();
+        _ = changeTracker.GetChanges();
         employee.Territories.Remove(employee.Territories[1]);
-        var changesB = changeTracker.GetChanges();
+        _ = changeTracker.GetChanges();
         employee.Territories.Remove(employee.Territories[0]);
-        var changesC = changeTracker.GetChanges();
+        _ = changeTracker.GetChanges();
 
         // Act
         var changes = changeTracker.GetChanges();
