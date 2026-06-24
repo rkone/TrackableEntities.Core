@@ -292,7 +292,7 @@ internal sealed class TrackableEntityCopyAttribute : Attribute
                 }
                 var initializer = property.Initializer?.Value.ToFullString();
                 bool nullable = collection ? !tracked : property.Type is NullableTypeSyntax;
-                var jsonIgnored = genericType is not null || baseType is not "DateTime" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
+                var jsonIgnored = genericType is not null || baseType is not "DateTime" && baseType is not "DateOnly" && baseType is not "TimeOnly" && property.Type is not PredefinedTypeSyntax && property.Type is NullableTypeSyntax pType && pType.ElementType is not PredefinedTypeSyntax;
 
                 properties.Add(new(property.Identifier.Text, baseType, nullable, initializer, collection, tracked, setter, useNewtonsoftJson, useSytemTextJson, jsonIgnored, jsonIncluded, manyToMany));
             }
@@ -411,8 +411,8 @@ public partial interface IClientBase {{}}
                     }
                     else
                         sourcebuilder.AppendLine("    [JsonIgnore]");
-                }
-                if (prop.Collection)
+                }                        
+            if (prop.Collection)
                     sourcebuilder.AppendLine($"    public ICollection<{prop.BaseType}>? {prop.Name} {{ get; {(prop.Setter ? "set; " : string.Empty)}}}");
                 else
                 {
