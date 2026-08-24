@@ -428,6 +428,30 @@ public class ChangeTrackingCollectionTests
     }
 
     [Fact]
+    public void Removed_Added_Items_Should_Not_Be_Cached_As_Deletes()
+    {
+        // Arrange
+        var database = new MockNorthwind();
+        var changeTracker = new ChangeTrackingCollection<Product>(true);
+        var product = new Product
+        {
+            ProductId = 100,
+            ProductName = "Test Beverage",
+            CategoryId = 1,
+            Category = database.Categories[0],
+            UnitPrice = 10M
+        };
+
+        // Act
+        changeTracker.Add(product);
+        changeTracker.Remove(product);
+
+        // Assert
+        Assert.Empty(((ITrackingCollection)changeTracker).CachedDeletes);
+        Assert.Empty(changeTracker.GetChanges());
+    }
+
+    [Fact]
     public void Removed_Existing_Unchanged_Items_Should_Be_Marked_As_Deleted()
     {
         // Arrange

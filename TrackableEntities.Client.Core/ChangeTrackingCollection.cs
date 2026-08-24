@@ -236,14 +236,16 @@ public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>, 
             item.SetTracking(false, visitationHelper.Clone(), true);
 
             // Mark item and trackable collection properties
-            bool manyToManyAdded = Parent != null && item.TrackingState == TrackingState.Added;
+            // Capture Added state before SetState, which resets an Added item to Unchanged
+            bool wasAdded = item.TrackingState == TrackingState.Added;
+            bool manyToManyAdded = Parent != null && wasAdded;
             item.SetState(TrackingState.Deleted, visitationHelper.Clone());
 
             // Fire EntityChanged event
             EntityChanged?.Invoke(this, EventArgs.Empty);
 
             // Cache deleted item if not added or already cached
-            if (item.TrackingState != TrackingState.Added
+            if (!wasAdded
                 && !manyToManyAdded
                 && !_deletedEntities.Contains(item))
                 _deletedEntities.Add(item);
