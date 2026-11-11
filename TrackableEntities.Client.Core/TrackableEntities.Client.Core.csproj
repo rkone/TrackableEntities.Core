@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	  <PackageId>TrackableEntities.Client.Core</PackageId>
-	  <PackageVersion>10.0.2</PackageVersion>
+	  <PackageVersion>11.0.0</PackageVersion>
 	  <Authors>Tony Sneed</Authors>
 	  <Company>Tony Sneed</Company>
 	  <Title>Trackable Entities Client</Title>
