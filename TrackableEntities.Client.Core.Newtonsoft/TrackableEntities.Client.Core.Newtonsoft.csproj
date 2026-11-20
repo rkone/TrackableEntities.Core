@@ -4,10 +4,24 @@
     <TargetFramework>net11.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	  <PackageId>TrackableEntities.Client.Core.Newtonsoft</PackageId>
 	  <PackageVersion>11.0.0</PackageVersion>
+	  <Authors>Tony Sneed</Authors>
+	  <Company>Tony Sneed</Company>
+	  <Title>Trackable Entities Client (Newtonsoft.Json)</Title>
+	  <Description>Change-tracking utility for client applications that wish to transmit entities to a web service for batch updates. This build uses Newtonsoft.Json instead of System.Text.Json.</Description>
+	  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	  <PackageTags>change-tracking entity-framework n-tier wcf web-api newtonsoft</PackageTags>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageProjectUrl>https://github.com/TrackableEntities/TrackableEntities.Core</PackageProjectUrl>
+	  <PackageIcon>icon.png</PackageIcon>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\TrackableEntities.Client.Core\icon.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\TrackableEntities.Client.Core\ChangeTrackingCollection.cs" Link="ChangeTrackingCollection.cs" />
